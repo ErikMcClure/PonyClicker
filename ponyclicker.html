@@ -530,7 +530,7 @@
           var y2 = Math.sin(a*p2 + th)*r;
           var rot = Math.atan2(y2-y1,x2-x1);
           var d= distance(x1,y1,x2,y2);
-        html += '<div class="connect" style="top:'+((y1+y2)/2)+'px;left:'+((x1+x2)/2-(d/2))+'px;width:'+d+'px;height:'+1+'px;-webkit-transform: rotate('+rot+'rad);"></div>';
+        html += '<div class="connect" style="top:'+((y1+y2)/2)+'px;left:'+((x1+x2)/2-(d/2))+'px;width:'+d+'px;height:'+1+'px;-webkit-transform: rotate('+rot+'rad);transform: rotate('+rot+'rad);"></div>';
           j += 1;
           if((j+k) >= n) { j=0; k-=1; }
       }
