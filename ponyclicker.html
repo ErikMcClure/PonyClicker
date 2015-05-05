@@ -653,9 +653,9 @@
     var xcount = Game.store[item];
     var xcost = x.cost(xcount);
     overlay.style.display = 'block';
-    var html = '<span><p>'+x.name+'</p><span>'+smilethumb+PrettyNum(xcost)+'</span>';
+    var html = '<div class="title"><p>'+x.name+'</p><span>'+smilethumb+PrettyNum(xcost)+'</span>';
     if(xcount > 0) { html += '<div>['+PrettyNum(xcount)+' owned]</div>'; }
-    html += '</span><hr/><p>'+x.desc+'</p><hr/><ol>';
+    html += '</div><hr/><p>'+x.desc+'</p><hr/><ol>';
     if(x.formula) { html += '<li>'+x.formula+'</li>'; }
     if(x.SPS_cache > 0) { html += '<li>Each '+x.name.toLowerCase()+' generates <b>'+Pluralize(x.SPS_cache, ' smile')+'</b> per second</li>'; }
     if(xcount > 0 && x.SPS_cache > 0) { html += '<li><b>'+PrettyNum(xcount)+'</b> '+x.plural.toLowerCase()+' generating <b>'+Pluralize(xcount*x.SPS_cache, ' smile')+'</b> per second</li>'; }
