@@ -194,12 +194,12 @@ body {
   padding: 4px;
   color: #bbb;
 }
-#overlay title p {
+#overlay .title p {
   margin: 1px 0 -3px 0;
   font: small-caps bold 18px "sans-serif";
   color:#fff;
 }
-#overlay title span {
+#overlay .title span {
   font: 16px "sans-serif";
   position:absolute;
   top:-3px;
@@ -207,15 +207,15 @@ body {
   height:5px;
   color:#fff;
 }
-#overlay title span img {
+#overlay .title span img {
   position:relative;
   top:5px;
   right:2px;
 }
-#overlay title div {
+#overlay .title div {
   font: 14px "sans-serif";
 }
-#overlay title {
+#overlay .title {
   display:inline;
 }
 #overlay p {
