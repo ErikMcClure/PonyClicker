@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>Pony Clicker</title>
-  <meta http-equiv="X-UA-Compatible" content="IE=Edge;chrome=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
   <meta charset="utf-8" />
   <meta name="description" content="Pony Clicker v0.1 by Cloud Hop" />
   <meta name="copyright" content="Copyright (c)2015 Cloud Hop" />
@@ -10,32 +10,35 @@
   <link rel="stylesheet" type="text/css" href="./ponyclicker.css" media="screen"/>
   <link href='http://fonts.googleapis.com/css?family=Open+Sans:700,400' rel='stylesheet' type='text/css'>
 </head>
-<body >
+<body onresize="ResizeCanvas();">
   <div class="container">
     <div id="ponyboard">
-      <div class="bg">
-      <img class="rays" src="rays.svg" />
-      <img class="rays2" src="rays2.svg" />
-      <img class="ground" src="ground.svg" />
+      <canvas id="canvas" width="100" height="100" style="position:absolute;background:#000"></canvas>
+      <div id="ponybg" class="bg">
+      <img id="img_rays" style="display:none;" src="rays.svg" alt=""/>
+      <img id="img_rays2" style="display:none;" src="rays2.svg" alt=""/>
+      <img id="img_ground" style="display:none;" src="ground.svg" alt=""/>
       </div>
       <div id="score"><span id="scorenum">0 Smiles</span><div id="SPS">+0.1 per second</div></div>
-      <div id="ponywrapper" class="ponies">
+      <div class="ponies">
+        <canvas id="canvaslines" width="520" height="520" style="position:relative;background:transparent;left:-260px;top:-260px;"></canvas>
+        <div id="ponywrapper"></div>
       </div>
-      </div>
+      <div class="newsactive"><p><span id="news">News: stuff</span></p></div>
     </div>
   </div>
   <div class="button" id="menubutton" onclick="ShowMenu(true);">Menu &raquo;</div>
   <div id="menu" class="menu">
   <div class="button" onclick="ShowMenu(false);">Menu &laquo;</div>
-  <div class="button" onclick="">Save</div>
-  <div class="button" onclick="">Export</div>
-  <div class="button" onclick="document.getElementById('credits').style.display='block';">Credits</div>
+  <div class="button" onclick="SaveGame()">Save</div>
+  <div class="button" onclick="document.getElementById('exportarea').innerHTML = ExportGame(); document.getElementById('exportwindow').style.display='inline-block';">Export</div>
+  <div class="button" onclick="document.getElementById('credits').style.display='inline-block';">Credits</div>
     <hr/>
-    <input type="checkbox" id="EnableEffects" />
+    <input type="checkbox" id="EnableEffects" onchange="GetSettings()" />
     <label for="EnableEffects" >Enable canvas effects</label>
-    <br/><input type="checkbox" id="EnableFocus" />
+    <br/><input type="checkbox" id="EnableFocus" onchange="GetSettings()" />
     <label for="EnableFocus" >Lower FPS when not focused</label>
-    <br/><input type="checkbox" id="EnableWarn" />
+    <br/><input type="checkbox" id="EnableWarn" onchange="GetSettings()" />
     <label for="EnableWarn" >Warn when closing window</label>
       <hr/>
       Smiles Available: <span id="stat_cursmiles">0</span>
@@ -45,6 +48,11 @@
       <br/>Smiles Per Click: <span id="stat_SPC">0</span>
       <br/>Buildings Owned: <span id="stat_buildings">0</span>
       <br/>Time Played: <span id="stat_time">0</span>
+      <br/>Muffins: <span id="stat_muffins">0</span> <span class="fade">(<span id="stat_achievementmuffins">0</span> from achievements)</span>
+      <hr/>
+      <div class="button" onclick="var x = window.prompt('Paste your exported game data here to import it. WARNING: This will overwrite your current game, even if the data is corrupt! Be sure you export your current game if you don\'t want to lose anything!',''); if(x!==null) { ImportGame(x); }">Import</div>
+      <div class="button" onclick="" style="color:#c00">Reset</div>
+      <div class="button" onclick="if(window.confirm('This will irreversibly wipe ALL your data, including all settings and all achievements! Are you certain you want to do this?')) { WipeAllData(); }" style="color:#c00">Wipe All Data</div>
       <hr/>
       Upgrades Owned: <span id="upgrades_owned"></span>/<span id="upgrades_total"></span>
       
@@ -61,7 +69,7 @@
   </ol>
   
   <div id="overlay" data-item="2">
-    <span><p>Party</p><span>8 smiles</span><div>[8 owned]</div></span>
+    <div class="title"><p>Party</p><span>8 smiles</span><div>[8 owned]</div></div>
     <hr/>
     <p>Throw a party for all of your friends!</p>
     <hr/>
@@ -75,11 +83,21 @@
     </ol>
   </div>
   
-    <div id="credits" class="modal" style="width: 450px;height: 400px;display:none;">
+    <div id="exportwindow" class="modal" style="width: 350px;display:none;margin-top:-150px;">
+      <b>Export Save</b>
+      <hr/>
+      Copy and paste this somewhere safe. To restore your game, click the import button and paste this into the dialog box.
+      <br/>
+      <br/><textarea id="exportarea" style="width:345px;height:150px;" readonly></textarea>
+      <hr/>
+      <div class="button" style="position:relative;left:50%;margin-left:-26px;" onclick="document.getElementById('exportwindow').style.display='none';">Done!</div>
+      
+    </div>
+    <div id="credits" class="modal" style="width: 450px;display:none;margin-top:-200px;">
       <div class="button" style="position:absolute; right:0; top:0" onclick="document.getElementById('credits').style.display='none';">[x]</div>
       <b>Pony Clicker v0.1 <i>by</i> Cloud Hop</b>
       <hr/>
-      <p><a href="http://www.fimfiction.net/user/Cloud%20Hop"><img style="float:left;" src="./Cloudhop_goggles.png" alt="Cloud Hop Avatar" title="Look at those cute little goggles! ^.^" /></a> Cloud Hop is an adorable pegasus who works at the weather factory. He's also an <a href="http://blackhole12.blogspot.com/">applied mathematician</a> who makes <a href="https://github.com/blackhole12">games</a> and <a href="https://erikmcclure.bandcamp.com/album/aurora-theory">music</a>. Sometimes he puts them on the internet, to the dismay of everypony else.
+      <p><a href="http://www.fimfiction.net/user/Cloud%20Hop"><img style="float:left;" src="./Cloudhop_goggles.png" alt="Cloud Hop Avatar" title="If you aren't careful, he might cute you to death." /></a> Cloud Hop is a pegasus who works at the weather factory. He's also an <a href="http://blackhole12.blogspot.com/">applied mathematician</a> who makes <a href="https://github.com/blackhole12">games</a> and <a href="https://erikmcclure.bandcamp.com/album/aurora-theory">music</a>. Sometimes he puts them on the internet, corrupting it with the magic of friendship.
         <ul><li><a href="http://www.fimfiction.net/user/Cloud%20Hop">Fimfiction</a></li>
         <li><a href="http://blackhole12.newgrounds.com">Newgrounds</a></li>
         <li><a href="https://soundcloud.com/blackhole12">Soundcloud</a></li>
@@ -91,43 +109,91 @@
         <p>
           Pinkie Pie vector originally created by <a href="http://blackhole12.deviantart.com/art/Pinkie-Pie-PARTY-TIME-274526114">Takua770</a>
           <br/>Pinkie Pie face taken from Fimfiction emoticons.
-          <br/><strong>Playtesters:</strong> Ambris, Fyrestorm, Zaron
+          <br/><strong>Playtesters:</strong> Fyrestorm, Karzafal, #fimfiction IRC
         </p>
         <hr/>
-        <div class="footer"><a href="#">Fork this project on Github</a></div>
+        <div class="footer"><a href="https://github.com/blackhole12/PonyClicker">Fork this project on Github</a></div>
     </div>
   <script type="text/javascript">
-  var Game = { store:[],
-    upgrades:[], // list of upgrade IDs that are owned.
-    smiles:0,
-    totalsmiles:0,
-    SPC:1,
-    SPS:0,
-    ponies:[[]], //adjacency list
-    buildings:0, // All non-pony, non-friend objects
-    shiftDown:false,
-    startTime:0,
-    clicks:0,
-    achievements:[]
-  };
-  Game.store = [
-    {cost:15,count:1,pbonus:0,mbonus:1,name:"Pony", plural: "ponies", desc: "This is a pony. Ponies need friendships to generate smiles."}, 
-    {cost:20,count:0,pbonus:0,mbonus:1,name:"Friend", plural: "friends", desc: "A friendship between two ponies. You can't buy a friendship if everypony is friends with everypony else!", formula: "Each friendship generates 0.5 smiles per second"}, 
-    {cost:100,count:0,pbonus:0,mbonus:1,name:"Recital", plural: "recitals", desc: "A small recital for everypony you know.", formula: "Generates one smile per pony.<i>SPS = P</i>"}, // P
-    {cost:1200,count:0,pbonus:0,mbonus:1,name:"Party", plural: "parties", desc: "Throw a party for all your friends!", formula: "Generates one smile per friendship.<i>SPS = F</i>"}, // F
-    {cost:3000,count:0,pbonus:0,mbonus:1,name:"Parade", plural: "parades", desc: "Throw a big parade for everypony and all their friends!"}, // P+F
-    {cost:10000,count:0,pbonus:0,mbonus:1,name:"Concert", plural: "concerts", desc: "Throw a concert for the whole town!"}, // P+F+B
-    {cost:150000,count:0,pbonus:0,mbonus:1,name:"Festival", plural: "festivals", desc: "Celebrate a festival for a whole weekend!"}, // P*F
-    {cost:25000000,count:0,pbonus:0,mbonus:1,name:"Rave", plural: "raves", desc: "Throw a gigantic rave party in Canterlot!"}, // P*(F+B)
-    {cost:987654321,count:0,pbonus:0,mbonus:1,name:"Grand Galloping Gala", plural: "grand galloping galas", desc: "Celebrate the Grand Galloping Gala with ponies from all over Equestria!"}, //P*F*B
-    {cost:10000000000,count:0,pbonus:0,mbonus:1,name:"Coronation", plural: "coronations", desc: "Make some random pony a princess so you have an excuse to party all night!"}, //2^P
-    {cost:9999999999999,count:0,pbonus:0,mbonus:1,name:"National Holiday", plural: "national holidays", desc: "Declare a national holiday so everypony in equestria can party with you instead of doing anything useful!"}, //2^P*F
-    {cost:99999999999999999,count:0,pbonus:0,mbonus:1,name:"Elements Of Harmony", plural: "Elements of Harmony", desc: "Use a giant rainbow friendship beam to solve all your problems!"}, //2^P*(F+B)
-    {cost:1,count:1,name:"DEBUGMOUSE", plural:"DEBUGMOUSES", desc: "DEBUG DO NOT USE"}
+  function CreateGame() {
+    return { store:[],
+      upgrades:[], // list of upgrade IDs that are owned.
+      smiles:0,
+      totalsmiles:0,
+      SPC:1,
+      SPS:0,
+      //ponies:[[]], //adjacency list
+      //buildings:0, // All non-pony, non-friend objects
+      shiftDown:false,
+      startTime:0,
+      lastNews:0,
+      clicks:0,
+      achievements:[],
+      muffins:0, // total muffin count, which is a combination of muffins gained from achievements and prestige.
+      achievement_muffins:0, // Muffins from achievements only, recalculated every time an achievement is earned
+      store:[1,0,0,0,0,0,0,0,0,0,0,0,0], // amount player has bought of each store item.
+      settings: {
+        useCanvas:true,
+        optimizeFocus:false,
+        closingWarn:false,
+      }
+    };
+  }
+  var Game = CreateGame();
+  
+  function WipeAllData() { localStorage.removeItem('game'); Game = CreateGame(); InitializeGame(); }
+  function ParseGame(src) { Game = JSON.parse(src); }
+  function ImportGame(src) { 
+    ParseGame(src);
+    InitializeGame();
+  }
+  function InitializeGame() {
+    Earn(0);
+    UpdateSPS();
+    OrganizePonies();
+    ApplySettings();
+    UpdateNews();
+  }
+  function LoadGame() { 
+    if(localStorage.getItem('game')!==null) { ParseGame(localStorage.getItem('game')); } 
+    ApplySettings(); 
+  }
+  
+  function ExportGame() { return JSON.stringify(Game); }
+  function SaveGame() { localStorage.setItem('game', ExportGame()); }
+  function ApplySettings() {
+    document.getElementById('EnableEffects').checked = Game.settings.useCanvas;
+    document.getElementById('EnableFocus').checked = Game.settings.optimizeFocus;
+    document.getElementById('EnableWarn').checked = Game.settings.closingWarn;
+  }
+  function GetSettings() {
+    Game.settings.useCanvas = document.getElementById('EnableEffects').checked;
+    Game.settings.optimizeFocus = document.getElementById('EnableFocus').checked;
+    Game.settings.closingWarn = document.getElementById('EnableWarn').checked;
+  }
+  
+  LoadGame();
+  
+  var Store = [
+    {cost:0,count:1,pbonus:0,mbonus:1,name:"Pony", plural: "ponies", desc: "This is a pony. Ponies need friendships to generate smiles."}, 
+    {cost:0,count:0,pbonus:0,mbonus:1,name:"Friend", plural: "friends", desc: "A friendship between two ponies. You can't buy a friendship if everypony is friends with everypony else!", formula: "Each friendship generates 0.5 smiles per second"}, 
+    {cost:0,count:0,pbonus:0,mbonus:1,name:"Recital", plural: "recitals", desc: "A small recital for everypony you know.", formula: "Generates one smile per pony.<i>SPS = P</i>"}, // P
+    {cost:0,count:0,pbonus:0,mbonus:1,name:"Party", plural: "parties", desc: "Throw a party for all your friends!", formula: "Generates one smile per friendship.<i>SPS = F</i>"}, // F
+    {cost:0,count:0,pbonus:0,mbonus:1,name:"Parade", plural: "parades", desc: "Throw a big parade for everypony and all their friends!"}, // P+F
+    {cost:0,count:0,pbonus:0,mbonus:1,name:"Concert", plural: "concerts", desc: "Throw a concert for the whole town!"}, // P+F+B
+    {cost:0,count:0,pbonus:0,mbonus:1,name:"Festival", plural: "festivals", desc: "Celebrate a festival for a whole weekend!"}, // P*F
+    {cost:0,count:0,pbonus:0,mbonus:1,name:"Rave", plural: "raves", desc: "Throw a gigantic rave party in Canterlot!"}, // P*(F+B)
+    {cost:0,count:0,pbonus:0,mbonus:1,name:"Grand Galloping Gala", plural: "grand galloping galas", desc: "Celebrate the Grand Galloping Gala with ponies from all over Equestria!"}, //P*F*B
+    {cost:0,count:0,pbonus:0,mbonus:1,name:"Coronation", plural: "coronations", desc: "Make some random pony a princess so you have an excuse to party all night!"}, //2^P
+    {cost:0,count:0,pbonus:0,mbonus:1,name:"National Holiday", plural: "national holidays", desc: "Declare a national holiday so everypony in equestria can party with you instead of doing anything useful!"}, //2^P*F
+    {cost:0,count:0,pbonus:0,mbonus:1,name:"Elements Of Harmony", plural: "Elements of Harmony", desc: "Use a giant rainbow friendship beam to solve all your problems!"}, //2^P*(F+B)
+    {cost:0,count:1,name:"DEBUGMOUSE", plural:"DEBUGMOUSES", desc: "DEBUG DO NOT USE"}
   ];
-  function basic_upgrade(item, p, m) { Game.store[item].mbonus *= (1.0+m); Game.store[item].pbonus *= (1.0+m); Game.store[item].pbonus += p; }
-  function global_upgrade(p, m) { for(var i = 0; i < Game.store.length; ++i) basic_upgrade(i, p, m); }
-  function gen_upgradetype1(item, pSPS, mSPS) { return function() { var c = Game.store[item].count; basic_upgrade(item, pSPS*c, mSPS*c); } }
+  
+  function basic_upgrade(item, p, m) { Store[item].mbonus *= (1.0+m); Store[item].pbonus *= (1.0+m); Store[item].pbonus += p; }
+  function global_upgrade(p, m) { for(var i = 0; i < Store.length; ++i) basic_upgrade(i, p, m); }
+  function gen_upgradetype1(item, pSPS, mSPS) { return function() { var c = Store[item].count; basic_upgrade(item, pSPS*c, mSPS*c); } }
+  function gen_muffinupgrade(item, pSPS, mSPS) { return function() { var c = Game.muffins; global_upgrade(item, pSPS*c, mSPS*c); } }
   function factorial(n) { var r = n; while(--n > 1) { r = r*n; } return r; }
   function max_binomial(n) { var n2=Math.floor(n/2); var r = n; while(--n > n2) { r = r*n; } return Math.floor(r/factorial(n2)); }
   
@@ -154,6 +220,85 @@
   "vigintillion",
   "centillion"];
   
+  var xorshift_state = Date.now();
+  function xorshift64star() {
+  	xorshift_state ^= (xorshift_state >> 12); // a
+  	xorshift_state ^= (xorshift_state << 25); // b
+  	xorshift_state ^= (xorshift_state >> 27); // c
+  	// return (xorshift_state * 2685821657736338717)&0xFFFFFFFFFFFFFFFF; // Javascript doesn't do this right
+    return xorshift_state; // This is not a high quality random number, but we don't really care.
+  }
+  function GetNews() {
+    var news = [];
+    
+    // These are specific smile count related messages
+    if(Game.totalsmiles < 30) {
+      news.push(
+        "Ponyville down in the dumps, reports anonymous bystander.",
+        "Ponyville reports distinct lack of smiles.",
+        "Smile forecast for today: Depression with a touch of despair.",
+        "Ponyville in desperate need of excitement.",
+        "Antidepressants selling out all across Ponyville.",
+        "Mayor Mare asked why everyone is feeling so down, reports she can't be bothered to figure it out."
+      );
+    } else if(Game.totalsmiles < 1000) {
+      news.push("Ponyville citizens wonder what this strange new sensation is! Scientists call it 'smiling', conspiracy theorists denounce it as a ploy to take over the world.",
+        "Morose ponies increasingly out of place in chipper Ponyville!",
+        "Small foals spotted playing in the streets! Parents unsure if so called 'fun' should be allowed.");
+    } else if(Game.totalsmiles < 1000000) {
+      news.push();
+      
+    } else if(Game.totalsmiles < 1000000000) {
+      news.push();
+      
+    } else if(Game.totalsmiles < 1000000000000) {
+      news.push("Princess Twilight found overdosed on friendship, taken to rehab center!");
+      
+    } else if(Game.totalsmiles < 1000000000000000) {
+      news.push("Ponyville citizens suffer from chronic happiness! Not sure if it's actually a problem or not!");
+      
+    } else if(Game.totalsmiles < 1000000000000000000) {
+      news.push();
+      
+    } else {
+      news.push();
+      
+    }
+    
+    // After 10000 smiles we start putting in most of the standard news messages into rotation.
+    if(Game.totalsmiles > 10000) {
+      news.push(
+        'Twilight found shipping Rainbow Dash with everything in the universe! Riots erupt all across Equestria!',
+        'Lyra and BonBon revealed as "just friends"! Ponies everywhere faint in shock!',
+        "Celestia's insatiable desire for cake causes caketastrophe in the Royal Kitchen! A memorial service for the lost chocolate chips to be held on Monday.",
+        "Pink menace at Sugarcube corner goes batty, takes 15 cookies hostage!",
+        "Citizens of Ponyville vote to create a public library instead of relying on a private collection organized by a crazed purple mare!",
+        "Small colt finds lost Apple barn floating in space. Rainbow Dash claims she has no idea how it got up there.",
+        "Rarity joins environmentalists, declares she will no longer go to the spa. Ponyville's spa immediately goes bankrupt.",
+        "[TBD]",
+        "[TBD]",
+        "[TBD]",
+        "[TBD]",
+        "[TBD]"
+      );
+      
+      if(Game.muffins > 10) {
+        news.push(
+          'When asked how she saved the bakery from certain disaster, Derpy Hooves claims there was "Muffin to it!"',
+          "Try new smile-powered Muffins today!",
+          'Mayor held hostage by crazed Doctor, who demanded that a muffin factory be built "for the sake of all ponykind!"'
+        );
+      }
+      if(Game.muffins > 100) {
+        
+      }
+    }
+    
+    return news[xorshift64star()%news.length];
+  }
+  function UpdateNews() {
+    document.getElementById('news').innerHTML = "News: " + GetNews();
+  }
   function PrettyNum(x) {
     var d = Math.floor(Math.log10(x));
     if(d<6) return x.toFixed(0);
@@ -168,6 +313,10 @@
     {cost:5000, name:"Friendship Is Magic", desc: "Friendships generate +1 SPS for every other friendship.", fn:gen_upgradetype1(1, 1, 0) },
     {cost:50000, name:"Friendship Is Magic", desc: "Friendships generate +10 SPS for every other friendship.", fn:gen_upgradetype1(1, 10, 0) },
     {cost:50000, name:"Upgrade 3", desc: "Parties generate +1 SPS for every other party.", fn:gen_upgradetype1(2, 1, 0) },
+    {cost:5000, name:"I just don't know what went wrong!", desc: "You gain +1% SPS for every muffin you have.", fn:gen_muffinupgrade(2, 0, 0.01) },
+    {cost:50000, name:"That one mailmare", desc: "You gain +2% SPS for every muffin you have.", fn:gen_muffinupgrade(2, 0, 0.02) },
+    {cost:500000, name:"Derpy Delivery Service", desc: "You gain +3% SPS for every muffin you have.", fn:gen_muffinupgrade(2, 0, 0.03) },
+    {cost:5000000, name:"Muffin Factories", desc: "You gain +4% SPS for every muffin you have.", fn:gen_muffinupgrade(2, 0, 0.04) },
     {cost:0, name:"DEBUGMOUSE", desc: "DEBUG ONLY", fn:function(){Game.SPC*=2;}}
   ];
   for(var i = 0; i < upgradeList.length; ++i) {
@@ -175,39 +324,39 @@
   }
   document.getElementById('upgrades_total').innerHTML = (upgradeList.length-1).toFixed(0); //-1 for the error one at 0
   
-  var achievementList = [ {name: "ERROR", desc: "Congratulations, you broke the game!"},
-    {name:"Participation Award", desc: "You moved the mouse!"},
-    {name:"Hi there!", desc: "Click a pony <i>once</i>." },
-    {name:"That tickles!", desc: "Click a pony <i>10</i> times." },
-    {name:"Tickle War", desc: "Click a pony <i>100</i> times." },  
-    {name:"Tickle War II: The Retickling", desc: "Click a pony <i>"+PrettyNum(1000)+"</i> times." },  
-    {name:"This Can't Be Healthy", desc: "Click a pony <i>"+PrettyNum(10000)+"</i> times." },  
-    {name:"Carpal Tunnel Syndrome", desc: "Click a pony <i>"+PrettyNum(100000)+"</i> times." },
-    {name:"Wrist In Pieces", desc: "Click a pony <i>"+PrettyNum(1000000)+"</i> times." },  
-    {name:"Wrist In Pieces", desc: "Click a pony <i>"+PrettyNum(1000000)+"</i> times." },  
-    {name:"Clickception", desc: "Click a pony <i>"+PrettyNum(10000000)+"</i> times." },  
-    {name:"Smile!", desc: "Get <i>"+PrettyNum(1)+"</i> smile." },  
-    {name:"Laughter", desc: "Get <i>"+PrettyNum(100)+"</i> smiles." },  
-    {name:"Joy", desc: "Get <i>"+PrettyNum(10000)+"</i> smiles." },  
-    {name:"Bliss", desc: "Get <i>"+PrettyNum(1000000)+"</i> smiles." },  
-    {name:"Nirvana", desc: "Get <i>"+PrettyNum(100000000)+"</i> smiles." },  
-    {name:"Ecstasy", desc: "Get <i>"+PrettyNum(10000000000)+"</i> smiles." },  
-    {name:"Pursuit of Happyness", desc: "Get <i>"+PrettyNum(1000000000000)+"</i> smiles." },  
-    {name:"You Can Stop Now", desc: "Get <i>"+PrettyNum(100000000000000)+"</i> smiles." },  
-    {name:"Go Read A Book", desc: "Get <i>"+PrettyNum(10000000000000000)+"</i> smiles." },  
-    {name:"To Infinity And Beyond", desc: "Get <i>"+PrettyNum(1000000000000000000)+"</i> smiles." },  
-    {name:"How?!", desc: "Get <i>"+PrettyNum(100000000000000000000)+"</i> smiles." },  
-    {name:"Hobbyist", desc: "Buy <i>"+PrettyNum(1)+"</i> recital." },  
-    {name:"Musician", desc: "Buy <i>"+PrettyNum(50)+"</i> recitals." },
-    {name:"Cellist", desc: "Buy <i>"+PrettyNum(100)+"</i> recitals." },
-    {name:"Multi-instrumentalist", desc: "Buy <i>"+PrettyNum(200)+"</i> recitals." },
-    {name:"Conductor", desc: "Buy <i>"+PrettyNum(300)+"</i> recitals." },
+  var achievementList = [ {id:0, name: "ERROR", desc: "Congratulations, you broke the game!", muffins:0},
+    {id:1, name:"Participation Award", desc: "You moved the mouse!", muffins:0},
+    {id:2, name:"Hi there!", desc: "Click a pony <i>once</i>.", muffins:0 },
+    {id:3, name:"That tickles!", desc: "Click a pony <i>10</i> times.", muffins:1 },
+    {id:4, name:"Tickle War", desc: "Click a pony <i>100</i> times.", muffins:2 },  
+    {id:5, name:"Tickle War II: The Retickling", desc: "Click a pony <i>"+PrettyNum(1000)+"</i> times.", muffins:3 },  
+    {id:6, name:"This Can't Be Healthy", desc: "Click a pony <i>"+PrettyNum(10000)+"</i> times.", muffins:4 },  
+    {id:7, name:"Carpal Tunnel Syndrome", desc: "Click a pony <i>"+PrettyNum(100000)+"</i> times.", muffins:5 },
+    {id:8, name:"Wrist In Pieces", desc: "Click a pony <i>"+PrettyNum(1000000)+"</i> times.", muffins:6 },  
+    {id:9, name:"Clickception", desc: "Click a pony <i>"+PrettyNum(10000000)+"</i> times.", muffins:7 },  
+    {id:10, name:"Smile!", desc: "Get <i>"+PrettyNum(1)+"</i> smile.", muffins:0 },  
+    {id:11, name:"Laughter", desc: "Get <i>"+PrettyNum(100)+"</i> smiles.", muffins:1 },  
+    {id:12, name:"Joy", desc: "Get <i>"+PrettyNum(10000)+"</i> smiles.", muffins:2 },  
+    {id:13, name:"Bliss", desc: "Get <i>"+PrettyNum(1000000)+"</i> smiles.", muffins:3 },  
+    {id:14, name:"Nirvana", desc: "Get <i>"+PrettyNum(100000000)+"</i> smiles.", muffins:4 },  
+    {id:15, name:"Ecstasy", desc: "Get <i>"+PrettyNum(10000000000)+"</i> smiles.", muffins:5 },  
+    {id:16, name:"Pursuit of Happyness", desc: "Get <i>"+PrettyNum(1000000000000)+"</i> smiles.", muffins:6 },  
+    {id:17, name:"You Can Stop Now", desc: "Get <i>"+PrettyNum(100000000000000)+"</i> smiles.", muffins:7 },  
+    {id:18, name:"Go Read A Book", desc: "Get <i>"+PrettyNum(10000000000000000)+"</i> smiles.", muffins:8 },  
+    {id:19, name:"To Infinity And Beyond", desc: "Get <i>"+PrettyNum(1000000000000000000)+"</i> smiles.", muffins:9 },  
+    {id:20, name:"How?!", desc: "Get <i>"+PrettyNum(100000000000000000000)+"</i> smiles.", muffins:10 },  
+    {id:21, name:"Hobbyist", desc: "Buy <i>"+PrettyNum(1)+"</i> recital.", muffins:1 },  
+    {id:22, name:"Musician", desc: "Buy <i>"+PrettyNum(50)+"</i> recitals.", muffins:2 },
+    {id:23, name:"Cellist", desc: "Buy <i>"+PrettyNum(100)+"</i> recitals.", muffins:3 },
+    {id:24, name:"Multi-instrumentalist", desc: "Buy <i>"+PrettyNum(200)+"</i> recitals.", muffins:4 },
+    {id:25, name:"Conductor", desc: "Buy <i>"+PrettyNum(300)+"</i> recitals.", muffins:5 },
  
-    {name:"Cautious", desc: "Manually save the game."},
-    {name:"Paranoid", desc: "Manually save the game <i>10</i> times."},
-    {name:"Goggles!", desc: "Click the image of Cloud Hop on the credits page."},
-    {name:"Music Makes Everything Better", desc: "Listen to the smile song."},
-    {name:"Completionist", desc: "Get all the achievements."}
+    {id:200, name:"Cautious", desc: "Manually save the game.", muffins:1},
+    {id:201, name:"Paranoid", desc: "Export a save.", muffins:1},
+    {id:202, name:"Time Machine", desc: "Import a save.", muffins:1},
+    {id:203, name:"Narcissism!", desc: "Click the image of Cloud Hop on the credits page.", muffins:1},
+    {id:204, name:"Music Makes Everything Better", desc: "Listen to the smile song.", muffins:1},
+    {id:205, name:"Completionist", desc: "Get all the achievements.", muffins:100}
   ];
   
   document.getElementById('achievements_total').innerHTML = (achievementList.length-1).toFixed(0); //-1 for the error one at 0
@@ -225,16 +374,24 @@
   var upgrades_owned = document.getElementById('upgrades_owned');
   var ponywrapper = document.getElementById('ponywrapper');
   var smilethumb = '<img src="./pinkiehappy.png" alt="Smiles: " title="Smiles" />';
-  var framelength = 33; // 33 is 30 FPS
-  
+  var canvas = document.getElementById("canvas");
+  var ctx = canvas.getContext("2d");
+  var canvaslines = document.getElementById("canvaslines");
+  var ctxlines = canvaslines.getContext("2d");
+
   achievements_owned.innerHTML = Game.achievements.length.toFixed(0);
   upgrades_owned.innerHTML = Game.upgrades.length.toFixed(0);
   
+  function ResizeCanvas() {
+    canvas.width  = document.getElementById('ponybg').offsetWidth;
+    canvas.height = document.getElementById('ponyboard').offsetHeight;
+  }
+  
   // Generate store HTML
   var storehtml = '';
-  for(var i = 0; i < Game.store.length; ++i) {
+  for(var i = 0; i < Store.length; ++i) {
     var ponyreq = (i!=1)?'':'<span id="ponycost">(2 PONIES)</span>';
-    storehtml += '<li class="disable" id="buy' + i + '" onclick="if(this.className != \'disable\') { Buy(' + i + ') }" oncontextmenu="Sell(' + i + '); return false;">' + Game.store[i].name.toLowerCase() + '<br/><span class="cost">'+smilethumb+'<span id="cost' + i + '">0</span></span>' + ponyreq + '<span class="count" id="count' + i + '">0</span></li>';
+    storehtml += '<li class="disable" id="buy' + i + '" onclick="if(this.className != \'disable\') { Buy(' + i + ') }" oncontextmenu="Sell(' + i + '); return false;">' + Store[i].name.toLowerCase() + '<br/><span class="cost">'+smilethumb+'<span id="cost' + i + '">0</span></span>' + ponyreq + '<span class="count" id="count' + i + '">0</span></li>';
   }
   store.innerHTML += storehtml;
   
@@ -267,26 +424,26 @@
   // The cost of ponies is based on the cost of buying k+1 friendships, where k is the number of edges in a complete graph of n-nodes, which is just a triangular number. So, we take the current number of ponies, find the corresponding triangular number, add one and plug that into the friendship cost function.
   var fn_cost0 = function(n) { return (n<2)?15:fn_cost1(triangular(n)+1); };
   
-  function default_cost(i, n) { return Game.store[i].initcost*Math.pow(Game.store[i].costcurve,n); };
-  function inv_cost(i, cost) { return Math.log(cost/Game.store[i].initcost)/Math.log(Game.store[i].costcurve); }
+  function default_cost(i, n) { return Store[i].initcost*Math.pow(Store[i].costcurve,n); };
+  function inv_cost(i, cost) { return Math.log(cost/Store[i].initcost)/Math.log(Store[i].costcurve); }
   
-  Game.store[0].fn_SPS = function(P,F,B) { return 0; };
-  Game.store[1].fn_SPS = function(P,F,B) { return 1.0; };
-  Game.store[2].fn_SPS = function(P,F,B) { return P; };
-  Game.store[3].fn_SPS = function(P,F,B) { return F; };
-  Game.store[4].fn_SPS = function(P,F,B) { return (P+F)*4.0; };
-  Game.store[5].fn_SPS = function(P,F,B) { return (P+F+B); };
-  Game.store[6].fn_SPS = function(P,F,B) { return (P*F)*1.5; };
-  Game.store[7].fn_SPS = function(P,F,B) { return (P*(F+B)); };
-  Game.store[8].fn_SPS = function(P,F,B) { return (P*F*(B+1)); };
-  Game.store[9].fn_SPS = function(P,F,B) { return Math.pow(2, P)*F*(B+1); };
-  Game.store[10].fn_SPS = function(P,F,B) { return max_binomial(P*2)*(F+B); };
-  Game.store[11].fn_SPS = function(P,F,B) { return factorial(P)*(F+B); };
-  Game.store[12].fn_SPS = function(P,F,B) { return 0; };
+  Store[0].fn_SPS = function(P,F,B) { return 0; };
+  Store[1].fn_SPS = function(P,F,B) { return 1.0; };
+  Store[2].fn_SPS = function(P,F,B) { return P; };
+  Store[3].fn_SPS = function(P,F,B) { return F; };
+  Store[4].fn_SPS = function(P,F,B) { return (P+F)*4.0; };
+  Store[5].fn_SPS = function(P,F,B) { return (P+F+B); };
+  Store[6].fn_SPS = function(P,F,B) { return (P*F)*1.5; };
+  Store[7].fn_SPS = function(P,F,B) { return (P*(F+B)); };
+  Store[8].fn_SPS = function(P,F,B) { return (P*F*(B+1)); };
+  Store[9].fn_SPS = function(P,F,B) { return Math.pow(2, P)*F*(B+1); };
+  Store[10].fn_SPS = function(P,F,B) { return max_binomial(P*2)*(F+B); };
+  Store[11].fn_SPS = function(P,F,B) { return factorial(P)*(F+B); };
+  Store[12].fn_SPS = function(P,F,B) { return 0; };
   
   // A store's initial cost is based on the number of friendships you (should) have already bought, or can currently afford, which is then used to calculate how many of everything else you have to generate a SPS and then apply the relevant SPS ratio to derive the appropriate cost
   
-  function initSPS(f,r,b) { return Game.store[r].fn_SPS(Math.floor(inv_triangular(f)),f,b); }
+  function initSPS(f,r,b) { return Store[r].fn_SPS(Math.floor(inv_triangular(f)),f,b); }
   function initcost(f,r,b) { return initSPS(f,r,b)*fn_rratio(r-2); }
   
   // You are expected to build n instances of a building before the cost of one SPS on the old building becomes equal to to the per SPS cost of the next building up. n itself is defined as a curve on the building level.
@@ -303,7 +460,7 @@
   // solve this for curve:
   // curve = ((fn_rratio(3-2)*initSPS(6,2,n))/init)^(1/n)
     var n = fn_nratio(r-2);
-    return Math.pow((fn_rratio(r-2)*initSPS(f,r,n+b))/Game.store[r].initcost,2.0/n); // modify 1.0/n to 2.0/n for balancing tweaking
+    return Math.pow((fn_rratio(r-2)*initSPS(f,r,n+b))/Store[r].initcost,2.0/n); // modify 1.0/n to 2.0/n for balancing tweaking
   }
   
   var Fvals = [4,6,10,16,32,42,68,80,90,104,140];
@@ -314,41 +471,38 @@
     for(var j = 2; j < i-1; ++j) {
       b += inv_cost(j, cost);
     }
-    Game.store[i].initcost = initcost(Fvals[i-2],i,b+fn_nratio(i-3));
-    Game.store[i].costcurve = fn_costcurve(Fvals[i-1],i,b);
+    Store[i].initcost = initcost(Fvals[i-2],i,b+fn_nratio(i-3));
+    Store[i].costcurve = fn_costcurve(Fvals[i-1],i,b);
   }  
   
-  Game.store[0].cost = fn_cost0;
-  Game.store[1].cost = fn_cost1;
-  Game.store[2].cost = function(n) { return default_cost(2, n); };
-  Game.store[3].cost = function(n) { return default_cost(3, n); }; 
-  Game.store[4].cost = function(n) { return default_cost(4, n); }; 
-  Game.store[5].cost = function(n) { return default_cost(5, n); }; 
-  Game.store[6].cost = function(n) { return default_cost(6, n); }; 
-  Game.store[7].cost = function(n) { return default_cost(7, n); }; 
-  Game.store[8].cost = function(n) { return default_cost(8, n); }; 
-  Game.store[9].cost = function(n) { return default_cost(9, n); }; 
-  Game.store[10].cost = function(n) { return default_cost(10, n); }; 
-  Game.store[11].cost = function(n) { return default_cost(11, n); };
-  Game.store[12].cost = function(n) { return 1; };
+  Store[0].cost = fn_cost0;
+  Store[1].cost = fn_cost1;
+  Store[2].cost = function(n) { return default_cost(2, n); };
+  Store[3].cost = function(n) { return default_cost(3, n); }; 
+  Store[4].cost = function(n) { return default_cost(4, n); }; 
+  Store[5].cost = function(n) { return default_cost(5, n); }; 
+  Store[6].cost = function(n) { return default_cost(6, n); }; 
+  Store[7].cost = function(n) { return default_cost(7, n); }; 
+  Store[8].cost = function(n) { return default_cost(8, n); }; 
+  Store[9].cost = function(n) { return default_cost(9, n); }; 
+  Store[10].cost = function(n) { return default_cost(10, n); }; 
+  Store[11].cost = function(n) { return default_cost(11, n); };
+  Store[12].cost = function(n) { return 1; };
   
   // Effects of buying a store item
-  Game.store[0].effect = function(obj) {
-    //obj.cost = fbnext(obj.cost*Math.max(1,obj.count/10));
-    Game.ponies.push([]);
-  };
-  Game.store[1].effect = function(obj) { };
-  Game.store[2].effect = function(obj) { Game.buildings += 1; };
-  Game.store[3].effect = function(obj) { Game.buildings += 1; };
-  Game.store[4].effect = function(obj) { Game.buildings += 1; };
-  Game.store[5].effect = function(obj) { Game.buildings += 1; };
-  Game.store[6].effect = function(obj) { Game.buildings += 1; };
-  Game.store[7].effect = function(obj) { Game.buildings += 1; };
-  Game.store[8].effect = function(obj) { Game.buildings += 1; };
-  Game.store[9].effect = function(obj) { Game.buildings += 1; };
-  Game.store[10].effect = function(obj) { Game.buildings += 1; };
-  Game.store[11].effect = function(obj) { Game.buildings += 1; };
-  Game.store[12].effect = function(obj) {
+  Store[0].effect = function(obj) { };
+  Store[1].effect = function(obj) { };
+  Store[2].effect = function(obj) { };
+  Store[3].effect = function(obj) { };
+  Store[4].effect = function(obj) { };
+  Store[5].effect = function(obj) { };
+  Store[6].effect = function(obj) { };
+  Store[7].effect = function(obj) { };
+  Store[8].effect = function(obj) { };
+  Store[9].effect = function(obj) { };
+  Store[10].effect = function(obj) { };
+  Store[11].effect = function(obj) { };
+  Store[12].effect = function(obj) {
     Game.upgrades.push(upgradeList.length-1);
   };
   
@@ -362,9 +516,9 @@
   }
   function UpdateUpgrades() {
     Game.SPC = 1;
-    for(var i = 0; i < Game.store.length; ++i) {
-      Game.store[i].pbonus = 0;
-      Game.store[i].mbonus = 1;
+    for(var i = 0; i < Store.length; ++i) {
+      Store[i].pbonus = 0;
+      Store[i].mbonus = 1;
     }
     for(var i = 0; i < Game.upgrades.length; ++i) {
       upgradeList[Game.upgrades[i]].fn();
@@ -374,31 +528,46 @@
   function UpdateStore() {
     UpdateUpgrades();
     var ponycost = document.getElementById("ponycost");
-    ponycost.innerHTML = "(NEEDS " + Math.ceil(inv_triangular(Game.store[1].count+1)) + " PONIES)";
+    ponycost.innerHTML = "(NEEDS " + Math.ceil(inv_triangular(Game.store[1]+1)) + " PONIES)";
     ponycost.style.display = 'none';
-    for(var i = 0; i < Game.store.length; ++i) { 
-      var item = Game.store[i];
-      var cost = item.cost(item.count);
-      if(i == 1 && item.count >= triangular(Game.ponies.length)) {
+    for(var i = 0; i < Store.length; ++i) { 
+      var item = Store[i];
+      var count = Game.store[i];
+      var cost = item.cost(count);
+      if(i == 1 && count >= triangular(Game.store[0])) {
         document.getElementById("buy" + i).className = "disable";
         ponycost.style.display = 'inline';
       } else {
         document.getElementById("buy" + i).className = (cost>Game.smiles)?"disable":"";
       }
       document.getElementById("cost" + i).innerHTML = PrettyNum(cost);
-      document.getElementById("count" + i).innerHTML = item.count;
+      document.getElementById("count" + i).innerHTML = count;
     }
     UpdateOverlay(null, null);
   }
-  function UpdateSPS() {
-    var P = Game.ponies.length;
-    var F = Game.store[1].count;
-    var B = Game.buildings;
-    Game.SPS = 0;
-    for(var i = 0; i < Game.store.length; ++i) {
-      Game.store[i].SPS_cache = Game.store[i].fn_SPS(P,F,B);
-      Game.SPS += Game.store[i].count*Game.store[i].SPS_cache;
+  function CountBuildings(store) {
+    var count = 0;
+    for(var i = 2; i < store.length; ++i) {
+      count += store[i];
     }
+    return count;
+  }
+  // Seperating this out lets us make predictions on what a purchase will do to your SPS
+  function CalcSPS(store, docache) {
+    var P = store[0];
+    var F = store[1];
+    var B = CountBuildings(store);
+    var SPS = 0;
+    var cache;
+    for(var i = 0; i < Store.length; ++i) {
+      cache = Store[i].fn_SPS(P,F,B);
+      if(docache) { Store[i].SPS_cache = cache; }
+      SPS += store[i]*cache;
+    }
+    return SPS;
+  }
+  function UpdateSPS() {
+    Game.SPS = CalcSPS(Game.store, true);
   
     var s = document.getElementById("SPS");
     if(Game.SPS > 0) {
@@ -415,15 +584,52 @@
     var minutes = Math.floor(milliseconds/60000)%60;
     return Math.floor(milliseconds/3600000).toFixed(0) + ':' + (minutes<10?'0':'') +  minutes.toFixed(0) + ':' + (seconds<10?'0':'') + seconds.toFixed(0);
   }
+  function drawImage(img, x, y, r) {
+    if(r != 0) {
+      ctx.translate(img.width/2, img.height/2); 
+      ctx.translate(x, y);
+      ctx.rotate(r); 
+      ctx.drawImage(img,-img.width/2,-img.height/2);
+    } else {
+      ctx.drawImage(img, x, y);
+    }
+    ctx.restore();
+  }
+  
   function UpdateGame(timestamp) {
     if (!Game.startTime) Game.startTime = timestamp;
+    if (!Game.lastNews) Game.lastNews = timestamp;
     if (!Game.time) Game.time = timestamp;
     Game.delta = timestamp - Game.time;
+    var hasFocus = !Game.settings.optimizeFocus || document.hasFocus();
+    var framelength = (hasFocus?33:500); // 33 is 30 FPS
     if(Game.delta>framelength) { // play at 30 FPS or the text starts flickering
       ProcessSPS(Game.delta);
       Game.time = timestamp;
       stat_time.innerHTML = displayTime(Game.time - Game.startTime);
     }
+    if((timestamp - Game.lastNews)>15000) {
+      UpdateNews();
+      Game.lastNews = timestamp;
+    }
+    if(Game.settings.useCanvas && (hasFocus || Game.delta>framelength)) {
+      var grd = ctx.createLinearGradient(0,0,0,canvas.height);
+      grd.addColorStop(0,"#d8f6ff");
+      grd.addColorStop(1,"#1288e2");
+      ctx.fillStyle = grd;
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+          
+      var img_rays = document.getElementById('img_rays');
+      img_rays.width = 2470;
+      img_rays.height = 2460;
+      var img_ground = document.getElementById('img_ground');
+      img_ground.width = 2051;
+      img_ground.height = 560;
+      ctx.save(); 
+      drawImage(img_rays, canvas.width/2-img_rays.width/2, canvas.height-img_rays.height/2, ((timestamp - Game.startTime)/3000)%(2*Math.PI));
+      drawImage(img_ground, canvas.width/2-img_ground.width/2, canvas.height-img_ground.height/2, 0);     
+    }
+    
     window.requestAnimationFrame(UpdateGame);
   }
   function UpdateOverlay(item, y) {
@@ -443,15 +649,21 @@
       return;
     }
     
-    var x = Game.store[item];
+    var x = Store[item];
+    var xcount = Game.store[item];
+    var xcost = x.cost(xcount);
     overlay.style.display = 'block';
-    var html = '<span><p>'+x.name+'</p><span>'+smilethumb+PrettyNum(x.cost(x.count))+'</span>';
-    if(x.count > 0) { html += '<div>['+PrettyNum(x.count)+' owned]</div>'; }
+    var html = '<span><p>'+x.name+'</p><span>'+smilethumb+PrettyNum(xcost)+'</span>';
+    if(xcount > 0) { html += '<div>['+PrettyNum(xcount)+' owned]</div>'; }
     html += '</span><hr/><p>'+x.desc+'</p><hr/><ol>';
     if(x.formula) { html += '<li>'+x.formula+'</li>'; }
     if(x.SPS_cache > 0) { html += '<li>Each '+x.name.toLowerCase()+' generates <b>'+Pluralize(x.SPS_cache, ' smile')+'</b> per second</li>'; }
-    if(x.count > 0 && x.SPS_cache > 0) { html += '<li><b>'+PrettyNum(x.count)+'</b> '+x.plural.toLowerCase()+' generating <b>'+Pluralize(x.count*x.SPS_cache, ' smile')+'</b> per second</li>'; }
-    html += '<li>Buying one '+x.name.toLowerCase()+' will increase your SPS by <b>'+PrettyNum(27.3)+'</b><i>You pay <b>'+Pluralize(6.2, ' smile') + '</b> per +1 SPS</li></ol>';
+    if(xcount > 0 && x.SPS_cache > 0) { html += '<li><b>'+PrettyNum(xcount)+'</b> '+x.plural.toLowerCase()+' generating <b>'+Pluralize(xcount*x.SPS_cache, ' smile')+'</b> per second</li>'; }
+    var nstore = Game.store.slice();
+    nstore[item]+=1;
+    var nSPS = CalcSPS(nstore, false);
+    
+    html += '<li>Buying one '+x.name.toLowerCase()+' will increase your SPS by <b>'+PrettyNum(nSPS - Game.SPS)+'</b><i>You pay <b>'+Pluralize(xcost/(nSPS - Game.SPS), ' smile') + '</b> per +1 SPS</li></ol>';
     
     overlay.innerHTML = html;
   }
@@ -463,34 +675,33 @@
   function Buy(id) {
     var n = Game.shiftDown?10:1;
     for(var i = 0; i < n; ++i) {
-      var cost = Game.store[id].cost(Game.store[id].count);
+      var cost = Store[id].cost(Game.store[id]);
       if(Game.smiles >= cost) {
         Earn(-1 * cost);
-        Game.store[id].count += 1;
-        Game.store[id].effect(Game.store[id]);
+        Game.store[id] += 1;
+        Store[id].effect(Store[id]);
       }
     }
     UpdateStore();
     UpdateSPS();
     OrganizePonies();
-    stat_buildings.innerHTML = Game.buildings.toFixed(0);
+    stat_buildings.innerHTML = CountBuildings(Game.store).toFixed(0);
   }
   function Sell(id) {
     if(!id) return; // you can't sell ponies you heartless monster
     var n = Game.shiftDown?10:1;
     for(var i = 0; i < n; ++i) {
-      if(Game.store[id].count>0) {
-        Game.store[id].count -= 1;
-        Game.store[id].effect(Game.store[id]);
-        Earn(0.5 * Game.store[id].cost(Game.store[id].count));
+      if(Game.store[id]>0) {
+        Game.store[id] -= 1;
+        Store[id].effect(Store[id]);
+        Earn(0.5 * Store[id].cost(Game.store[id]));
       }
     }
     UpdateStore();
     UpdateSPS();
     OrganizePonies();
-    stat_buildings.innerHTML = Game.buildings.toFixed(0);
+    stat_buildings.innerHTML = CountBuildings(Game.store).toFixed(0);
   }
-  Game.smiles = 9999999999999999999999999999;
   function distance(x1,y1,x2,y2) {
      return Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
   }
@@ -508,34 +719,46 @@
     return Math.pow(ty*ty + tx*tx,0.5*0.95);
   }
   function OrganizePonies() {
-    var n = Game.ponies.length;
+    var n = Game.store[0];
     var r=(n>1?260:0);
-    var html = '';
     var a = (2*Math.PI)/n;
     var th = (n-2)*0.08;
+    var html = '';
     var edge = GetEdgeLength(r, n);
     for(var i = 0; i < n; ++i) {
       html += '<div class="pony" id="pony'+i+'" onclick="Click('+i+');" style="top:'+(Math.sin(a*i + th)*r-(edge/2))+'px;left:'+(Math.cos(a*i + th)*r-(edge/2))+'px;width:'+edge+'px;height:'+edge+'px;background-size: '+edge+'px '+edge+'px;"></div>';
     }
+    ponywrapper.innerHTML = html;
+    
+    var grd = ctxlines.createLinearGradient(0,0,0,canvas.height);
+    grd.addColorStop(0,"#d8f6ff");
+    grd.addColorStop(1,"#1288e2");
+    ctxlines.fillStyle = grd;
+    ctxlines.fillRect(0,0,canvas.width,canvas.height);
+    
+    // Draw friendship lines
+    ctxlines.clearRect(0, 0, canvaslines.width, canvaslines.height);
+    ctxlines.beginPath();
+    ctxlines.lineWidth="3";
+    ctxlines.strokeStyle="#333";
     if(n>1) {
-      var f = Game.store[1].count;
+      var f = Game.store[1];
       var k = n-1;
       var j = 0;
       for(var i = 0; i < f; ++i) {
           var p1 = j;
           var p2 = j+k;
-          var y1 = Math.sin(a*p1 + th)*r;
-          var x1 = Math.cos(a*p1 + th)*r;
-          var x2 = Math.cos(a*p2 + th)*r;
-          var y2 = Math.sin(a*p2 + th)*r;
-          var rot = Math.atan2(y2-y1,x2-x1);
-          var d= distance(x1,y1,x2,y2);
-        html += '<div class="connect" style="top:'+((y1+y2)/2)+'px;left:'+((x1+x2)/2-(d/2))+'px;width:'+d+'px;height:'+1+'px;-webkit-transform: rotate('+rot+'rad);transform: rotate('+rot+'rad);"></div>';
+          var x1 = Math.cos(a*p1 + th)*r + r;
+          var y1 = Math.sin(a*p1 + th)*r + r;
+          var x2 = Math.cos(a*p2 + th)*r + r;
+          var y2 = Math.sin(a*p2 + th)*r + r;
+          ctxlines.moveTo(x1,y1);
+          ctxlines.lineTo(x2,y2);
           j += 1;
           if((j+k) >= n) { j=0; k-=1; }
       }
     }
-    ponywrapper.innerHTML = html;
+    ctxlines.stroke();
   }
   
   var setShiftDown = function(event){
@@ -563,15 +786,15 @@
       menu.style.display = 'none';
       board.style.paddingLeft = '0';
     }
+    ResizeCanvas();
   }
   // You would not believe the horrific sequence of events that led to the creation of this function.
   var setMouseMove = function(event){
-    var store = document.getElementById('store');
     var root = document.getElementById('buy0');
     var item = -1;
     if((event.clientX>store.offsetLeft) && (event.clientY>root.offsetTop)) {
       item = Math.floor((event.clientY - root.offsetTop)/root.offsetHeight);
-      if(item >= Game.store.length) { item = -1; }
+      if(item >= Store.length) { item = -1; }
     }
     
     UpdateOverlay(item, event.clientY);
@@ -579,13 +802,17 @@
   document.onmousemove = setMouseMove;
   window.addEventListener? document.addEventListener('keydown', setShiftDown) : document.attachEvent('keydown', setShiftDown);
   window.addEventListener? document.addEventListener('keyup', setShiftUp) : document.attachEvent('keyup', setShiftUp);
-  
-  Earn(0);
-  UpdateSPS();
-  OrganizePonies();
+  window.onbeforeunload = function (e) {
+      if(!Game.settings.closingWarn) { return null; }
+      e = e || window.event;
+      var text = "You are about to leave Pony Clicker!";
+      if (e) { e.returnValue = text; }
+      return text;
+  };
+
+  InitializeGame();
+  ResizeCanvas();
   window.requestAnimationFrame(UpdateGame);
-  // +1% SPS per digit of SPS
-  // +1% SPS per other building of same type
   </script>
 </body>
 </html>
