@@ -13,18 +13,17 @@
 <body onresize="ResizeCanvas();">
   <div class="container">
     <div id="ponyboard">
-      <canvas id="canvas" width="100" height="100" style="position:absolute;background:#000"></canvas>
+      <canvas id="canvas" width="100" height="100"></canvas>
       <div id="ponybg" class="bg">
       <img id="img_rays" style="display:none;" src="rays.svg" alt=""/>
-      <img id="img_rays2" style="display:none;" src="rays2.svg" alt=""/>
       <img id="img_ground" style="display:none;" src="ground.svg" alt=""/>
       </div>
-      <div id="score"><span id="scorenum">0 Smiles</span><div id="SPS">+0.1 per second</div></div>
       <div class="ponies">
         <canvas id="canvaslines" width="520" height="520" style="position:relative;background:transparent;left:-260px;top:-260px;"></canvas>
         <div id="ponywrapper"></div>
       </div>
-      <div class="newsactive"><p><span id="news">News: stuff</span></p></div>
+      <div id="score"><span id="scorenum">0 Smiles</span><div id="SPS">+0.1 per second</div></div>
+      <div class="newsactive"><p><span id="news0" class="inactive">News: stuff</span></p><p><span id="news1" class="inactive">News: other stuff</span></p></div>
     </div>
   </div>
   <div class="button" id="menubutton" onclick="ShowMenu(true);">Menu &raquo;</div>
@@ -51,7 +50,7 @@
       <br/>Muffins: <span id="stat_muffins">0</span> <span class="fade">(<span id="stat_achievementmuffins">0</span> from achievements)</span>
       <hr/>
       <div class="button" onclick="var x = window.prompt('Paste your exported game data here to import it. WARNING: This will overwrite your current game, even if the data is corrupt! Be sure you export your current game if you don\'t want to lose anything!',''); if(x!==null) { ImportGame(x); }">Import</div>
-      <div class="button" onclick="" style="color:#c00">Reset</div>
+      <div class="button" onclick="if(window.confirm('This will destroy all your cookies, buildings, and upgrades, but you\'ll keep you\'re achievements and your muffins. Are you sure you want to do this?')) { ResetGame(); }" style="color:#c00">Reset</div>
       <div class="button" onclick="if(window.confirm('This will irreversibly wipe ALL your data, including all settings and all achievements! Are you certain you want to do this?')) { WipeAllData(); }" style="color:#c00">Wipe All Data</div>
       <hr/>
       Upgrades Owned: <span id="upgrades_owned"></span>/<span id="upgrades_total"></span>
@@ -68,70 +67,57 @@
     </ol>
   </ol>
   
-  <div id="overlay" data-item="2">
-    <div class="title"><p>Party</p><span>8 smiles</span><div>[8 owned]</div></div>
+  <div id="overlay" data-item="2"></div>
+  <div id="exportwindow" class="modal" style="width: 350px;display:none;margin-top:-150px;">
+    <b>Export Save</b>
     <hr/>
-    <p>Throw a party for all of your friends!</p>
+    Copy and paste this somewhere safe. To restore your game, click the import button and paste this into the dialog box.
+    <br/>
+    <br/><textarea id="exportarea" style="width:345px;height:150px;" readonly></textarea>
     <hr/>
-    <ol>
-      <li>Generates one smile per friendship.
-        <i>SPS = F</i>
-      </li>
-      <li>Each party generates <b>2738 smiles</b> per second</li>
-      <li><b>28</b> parties generating <b>273848 smiles</b> per second</li>
-      <li>Buying one party will increase your SPS by <b>27.3</b></li>
-    </ol>
+    <div class="button" style="position:relative;left:50%;margin-left:-26px;" onclick="document.getElementById('exportwindow').style.display='none';">Done!</div>
+    
   </div>
-  
-    <div id="exportwindow" class="modal" style="width: 350px;display:none;margin-top:-150px;">
-      <b>Export Save</b>
+  <div id="credits" class="modal" style="width: 450px;display:none;margin-top:-200px;">
+    <div class="button" style="position:absolute; right:0; top:0" onclick="document.getElementById('credits').style.display='none';">[x]</div>
+    <b>Pony Clicker v0.5 <i>by</i> Cloud Hop</b>
+    <hr/>
+    <p><a href="http://www.fimfiction.net/user/Cloud%20Hop"><img style="float:left;" src="./Cloudhop_goggles.png" alt="Cloud Hop Avatar" title="If you aren't careful, he might cute you to death." /></a> Cloud Hop is a pegasus who works at the weather factory. He's also an <a href="http://blackhole12.blogspot.com/">applied mathematician</a> who makes <a href="https://github.com/blackhole12">games</a> and <a href="https://erikmcclure.bandcamp.com/album/aurora-theory">music</a>. Sometimes he puts them on the internet, corrupting it with the magic of friendship.
+      <ul><li><a href="http://www.fimfiction.net/user/Cloud%20Hop">Fimfiction</a></li>
+      <li><a href="http://blackhole12.newgrounds.com">Newgrounds</a></li>
+      <li><a href="https://soundcloud.com/blackhole12">Soundcloud</a></li>
+      <li><a href="http://blackhole12.blogspot.com/">Blogger</a></li>
+      <li><a href="https://www.youtube.com/channel/UCWC8FC5JryUP7I1oN1twBeQ">Youtube</a></li>
+      <li><a href="https://twitter.com/blackhole0173">Twitter</a></li>
+      </ul>
+      </p>
+      <p>
+        Pony vectors by: <a href="http://blackhole12.deviantart.com/art/Pinkie-Pie-PARTY-TIME-274526114">Takua770</a>, <a href="http://destroyer735.deviantart.com/art/Octavia-375057218">destroyer735</a>, <a href="http://90sigma.deviantart.com/art/Vector-All-the-Ponies-SVG-Files-302442314">90sigma</a>, <a href="http://www.deviantart.com/art/Rainbow-Dash-244004139">Nethear</a>, <a href="http://www.deviantart.com/art/Applebloom-490330115">LMan225</a>, <a href="http://www.deviantart.com/art/MLP-Resource-Dinky-Hooves-01-212564935">ZuTheSkunk</a>,<a href="http://90sigma.deviantart.com/art/Snooty-Princess-Cadance-321870154">90sigma (again)</a>, <a href="http://racefox.deviantart.com/art/Rarity-405280335">racefox</a>, <a href="http://qazwsx302.deviantart.com/art/Sweetie-Belle-316776921">qazwsx302</a>, <a href="http://sakatagintoki117.deviantart.com/art/Shining-Armor-339746794">sakatagintoki117</a>
+        <br/>Pinkie Pie face taken from Fimfiction emoticons.
+        <br/><strong>Playtesters:</strong> Fyrestorm, Karzafal, #fimfiction IRC
+      </p>
       <hr/>
-      Copy and paste this somewhere safe. To restore your game, click the import button and paste this into the dialog box.
-      <br/>
-      <br/><textarea id="exportarea" style="width:345px;height:150px;" readonly></textarea>
-      <hr/>
-      <div class="button" style="position:relative;left:50%;margin-left:-26px;" onclick="document.getElementById('exportwindow').style.display='none';">Done!</div>
-      
-    </div>
-    <div id="credits" class="modal" style="width: 450px;display:none;margin-top:-200px;">
-      <div class="button" style="position:absolute; right:0; top:0" onclick="document.getElementById('credits').style.display='none';">[x]</div>
-      <b>Pony Clicker v0.1 <i>by</i> Cloud Hop</b>
-      <hr/>
-      <p><a href="http://www.fimfiction.net/user/Cloud%20Hop"><img style="float:left;" src="./Cloudhop_goggles.png" alt="Cloud Hop Avatar" title="If you aren't careful, he might cute you to death." /></a> Cloud Hop is a pegasus who works at the weather factory. He's also an <a href="http://blackhole12.blogspot.com/">applied mathematician</a> who makes <a href="https://github.com/blackhole12">games</a> and <a href="https://erikmcclure.bandcamp.com/album/aurora-theory">music</a>. Sometimes he puts them on the internet, corrupting it with the magic of friendship.
-        <ul><li><a href="http://www.fimfiction.net/user/Cloud%20Hop">Fimfiction</a></li>
-        <li><a href="http://blackhole12.newgrounds.com">Newgrounds</a></li>
-        <li><a href="https://soundcloud.com/blackhole12">Soundcloud</a></li>
-        <li><a href="http://blackhole12.blogspot.com/">Blogger</a></li>
-        <li><a href="https://www.youtube.com/channel/UCWC8FC5JryUP7I1oN1twBeQ">Youtube</a></li>
-        <li><a href="https://twitter.com/blackhole0173">Twitter</a></li>
-        </ul>
-        </p>
-        <p>
-          Pinkie Pie vector originally created by <a href="http://blackhole12.deviantart.com/art/Pinkie-Pie-PARTY-TIME-274526114">Takua770</a>
-          <br/>Pinkie Pie face taken from Fimfiction emoticons.
-          <br/><strong>Playtesters:</strong> Fyrestorm, Karzafal, #fimfiction IRC
-        </p>
-        <hr/>
-        <div class="footer"><a href="https://github.com/blackhole12/PonyClicker">Fork this project on Github</a></div>
-    </div>
+      <div class="footer"><a href="https://github.com/blackhole12/PonyClicker">Fork this project on Github</a></div>
+  </div>
+  <div id="mousetexts"></div>
+  <div id="notices"></div>
   <script type="text/javascript">
   function CreateGame() {
-    return { store:[],
-      upgrades:[], // list of upgrade IDs that are owned.
+    return { 
+      upgrades:[], // list of upgrade IDs that are owned
       smiles:0,
       totalsmiles:0,
       SPC:1,
       SPS:0,
-      //ponies:[[]], //adjacency list
-      //buildings:0, // All non-pony, non-friend objects
       shiftDown:false,
-      startTime:0,
-      lastNews:0,
+      totalTime:0,
       clicks:0,
-      achievements:[],
+      achievements:{}, // List of achievements as an object that we pretend is a hash.
+      achievementcount:0, // We can't efficiently count properties so we store a length ourselves.
       muffins:0, // total muffin count, which is a combination of muffins gained from achievements and prestige.
       achievement_muffins:0, // Muffins from achievements only, recalculated every time an achievement is earned
       store:[1,0,0,0,0,0,0,0,0,0,0,0,0], // amount player has bought of each store item.
+      ponyList:genPonyList(), // precalculated list of randomized ponies (so we can reconstruct them after a save/load)
       settings: {
         useCanvas:true,
         optimizeFocus:false,
@@ -139,20 +125,59 @@
       }
     };
   }
-  var Game = CreateGame();
   
-  function WipeAllData() { localStorage.removeItem('game'); Game = CreateGame(); InitializeGame(); }
+  var PonyList = ["pinkie.svg", "Adagio Dazzle.svg", "Aloe.svg", "Amethyst Star.svg", "Applebloom.svg", "Applejack.svg", "Aria Blaze.svg", "Babs Seed.svg", "Berry Punch.svg", "Big Macintosh.svg", "Braeburn.svg", "Carrot Top.svg", "Cheerilee.svg", "Cheese Sandwich.svg", "Chrysalis.svg", "Cloudchaser.svg", "Coco Pommel.svg", "Colgate.svg", "Daring Do.svg", "Diamond Tiara.svg", "Dinky Doo.svg", "Ditsy Doo.svg", "Dr Whooves.svg", "Fancy Pants.svg", "Flam.svg", "Fleur de Lis.svg", "Flim.svg", "Flitter.svg", "Fluttershy.svg", "Hoity Toity.svg", "King Sombra.svg", "Lightning Dust.svg", "Lotus.svg", "Lyra Heartstrings.svg", "Maud Pie.svg", "Mrs Harshwhinny.svg", "octavia.svg", "Prince Blueblood.svg", "Princess Cadance.svg", "Princess Celestia.svg", "Princess Luna.svg", "Rainbow Dash.svg", "Rarity.svg", "Scootaloo.svg", "Shining Armor.svg", "Silver Spoon.svg", "Sonata Dusk.svg", "Starlight Glimmer.svg", "Sunset Shimmer.svg", "Sweetie Belle.svg", "Thunderlane.svg", "Trenderhoof.svg", "Trixie.svg", "Trouble Shoes.svg", "Twilight Sparkle.svg", "Zecora.svg" ];
+  function shuffle(o){
+      for(var j, x, i = o.length; i; j = (xorshift64star()%i), x = o[--i], o[i] = o[j], o[j] = x);
+      return o;
+  };
+  function genPonyList() {
+    var list = [];
+    for(var i = 1; i < PonyList.length; ++i) {
+      list.push(i);
+    }
+    shuffle(list);
+    list.unshift(0);
+    return list;
+  }
+  
+  var Game = CreateGame();
+  var curMouseX=0;
+  var curMouseY=0;
+  
+  function UpdateMuffins() {
+    stat_muffins.innerHTML = PrettyNum(Game.muffins);
+    stat_achievementmuffins.innerHTML = PrettyNum(Game.achievement_muffins);
+  }
+  function ResetGame() {
+    var muffins = Math.floor(inv_triangular(Game.totalsmiles/1000000000))-1;
+    Game.muffins += muffins;
+    ShowNotice("Game reset", ((muffins==0)?null:"You get <b>" + Pluralize(muffins, " muffin") + "</b> for your <b>" + Pluralize(Game.totalsmiles, " smile") + "</b>"), null);
+    Game.store = [1,0,0,0,0,0,0,0,0,0,0,0,0];
+    Game.upgrades = [];
+    Game.smiles = 0;
+    Game.totalsmiles = 0;
+    Game.SPC = 1;
+    Game.SPS = 0;
+    Game.clicks = 0;
+    SaveGame();
+    InitializeGame(); 
+  }
+  function WipeAllData() { localStorage.removeItem('game'); Game = CreateGame(); SaveGame(); InitializeGame(); }
   function ParseGame(src) { Game = JSON.parse(src); }
   function ImportGame(src) { 
     ParseGame(src);
     InitializeGame();
   }
   function InitializeGame() {
+    UpdateOverlay(-1,0);
     Earn(0);
     UpdateSPS();
     OrganizePonies();
     ApplySettings();
     UpdateNews();
+    UpdateMuffins();
+    updateUpgradesAchievements();
   }
   function LoadGame() { 
     if(localStorage.getItem('game')!==null) { ParseGame(localStorage.getItem('game')); } 
@@ -160,7 +185,7 @@
   }
   
   function ExportGame() { return JSON.stringify(Game); }
-  function SaveGame() { localStorage.setItem('game', ExportGame()); }
+  function SaveGame() { localStorage.setItem('game', ExportGame()); ShowNotice("Game saved", null, null); }
   function ApplySettings() {
     document.getElementById('EnableEffects').checked = Game.settings.useCanvas;
     document.getElementById('EnableFocus').checked = Game.settings.optimizeFocus;
@@ -252,10 +277,12 @@
       news.push();
       
     } else if(Game.totalsmiles < 1000000000000) {
-      news.push("Princess Twilight found overdosed on friendship, taken to rehab center!");
+      news.push(
+        "Princess Twilight found overdosed on friendship, taken to rehab center!",
+        "Citizens of Ponyville so happy they invent new word for it! Debates about how to spell it immediately turn into murderous riots!");
       
     } else if(Game.totalsmiles < 1000000000000000) {
-      news.push("Ponyville citizens suffer from chronic happiness! Not sure if it's actually a problem or not!");
+      news.push("Ponyville citizens suffer from chronic happiness! Doctors unsure if it's actually a problem or not!");
       
     } else if(Game.totalsmiles < 1000000000000000000) {
       news.push();
@@ -296,8 +323,16 @@
     
     return news[xorshift64star()%news.length];
   }
+  var newsnum = 0;
+  var newswait = 15000;
+  var lastNews;
   function UpdateNews() {
-    document.getElementById('news').innerHTML = "News: " + GetNews();
+    var n1 = newsnum;
+    newsnum = (newsnum + 1) % 2;
+    var n2 = newsnum;
+    document.getElementById('news' + n1).className = '';
+    document.getElementById('news' + n2).className = 'inactive';
+    document.getElementById('news' + n1).innerHTML = "News: " + GetNews();
   }
   function PrettyNum(x) {
     var d = Math.floor(Math.log10(x));
@@ -370,6 +405,8 @@
   var stat_SPC = document.getElementById('stat_SPC');
   var stat_buildings = document.getElementById('stat_buildings');
   var stat_time = document.getElementById('stat_time');
+  var stat_muffins = document.getElementById('stat_muffins');
+  var stat_achievementmuffins = document.getElementById('stat_achievementmuffins');
   var achievements_owned = document.getElementById('achievements_owned');
   var upgrades_owned = document.getElementById('upgrades_owned');
   var ponywrapper = document.getElementById('ponywrapper');
@@ -379,8 +416,11 @@
   var canvaslines = document.getElementById("canvaslines");
   var ctxlines = canvaslines.getContext("2d");
 
-  achievements_owned.innerHTML = Game.achievements.length.toFixed(0);
-  upgrades_owned.innerHTML = Game.upgrades.length.toFixed(0);
+  function updateUpgradesAchievements() {
+    achievements_owned.innerHTML = Game.achievementcount.toFixed(0);
+    upgrades_owned.innerHTML = Game.upgrades.length.toFixed(0);
+    UpdateMuffins();
+  }
   
   function ResizeCanvas() {
     canvas.width  = document.getElementById('ponybg').offsetWidth;
@@ -391,14 +431,16 @@
   var storehtml = '';
   for(var i = 0; i < Store.length; ++i) {
     var ponyreq = (i!=1)?'':'<span id="ponycost">(2 PONIES)</span>';
-    storehtml += '<li class="disable" id="buy' + i + '" onclick="if(this.className != \'disable\') { Buy(' + i + ') }" oncontextmenu="Sell(' + i + '); return false;">' + Store[i].name.toLowerCase() + '<br/><span class="cost">'+smilethumb+'<span id="cost' + i + '">0</span></span>' + ponyreq + '<span class="count" id="count' + i + '">0</span></li>';
+    storehtml += '<li class="disable" id="buy' + i + '" onclick="if(this.className != \'disable\') { Buy(' + i + ') } else { ShowMouseText(\'Too expensive!\',0,-40); }" oncontextmenu="Sell(' + i + '); return false;">' + Store[i].name.toLowerCase() + '<br/><span class="cost">'+smilethumb+'<span id="cost' + i + '">0</span></span>' + ponyreq + '<span class="count" id="count' + i + '">0</span></li>';
   }
   store.innerHTML += storehtml;
   
   function Click(id) {
-      Earn(Math.floor(Game.SPC));
+      var amount = Math.floor(Game.SPC);
+      Earn(amount);
       Game.clicks += 1;
       stat_clicks.innerHTML = PrettyNum(Game.clicks);
+      ShowMouseText('+' + PrettyNum(amount), 2, -40);
   }
   function triangular(n) {
     return (n*(n-1))/2; // number of edges in a complete graph of n nodes
@@ -514,6 +556,16 @@
     stat_totalsmiles.innerHTML = PrettyNum(Game.totalsmiles);
     UpdateStore();
   }
+  function EarnAchievement(id) {
+    if(Game.achievements[''+id] === undefined) {
+      Game.achievements[''+id] = achievementList[id].muffins;
+      Game.achievementcount++;
+      ShowNotice(achievementList[id].name, achievementList[id].desc, "achievement");
+      Game.muffins += achievementList[id].muffins;
+      Game.achievement_muffins += achievementList[id].muffins;
+      updateUpgradesAchievements();
+    }
+  }
   function UpdateUpgrades() {
     Game.SPC = 1;
     for(var i = 0; i < Store.length; ++i) {
@@ -543,7 +595,6 @@
       document.getElementById("cost" + i).innerHTML = PrettyNum(cost);
       document.getElementById("count" + i).innerHTML = count;
     }
-    UpdateOverlay(null, null);
   }
   function CountBuildings(store) {
     var count = 0;
@@ -596,21 +647,32 @@
     ctx.restore();
   }
   
+  var lastTime;
+  var startTime;
+  var lastTick; // Ticks are used for things like updating the total playtime
   function UpdateGame(timestamp) {
-    if (!Game.startTime) Game.startTime = timestamp;
-    if (!Game.lastNews) Game.lastNews = timestamp;
-    if (!Game.time) Game.time = timestamp;
-    Game.delta = timestamp - Game.time;
+    if (!startTime) { 
+      startTime = timestamp;
+      lastNews = timestamp;
+      lastTime = timestamp;
+      lastTick = timestamp;
+    }
+    Game.delta = timestamp - lastTime;
     var hasFocus = !Game.settings.optimizeFocus || document.hasFocus();
     var framelength = (hasFocus?33:500); // 33 is 30 FPS
     if(Game.delta>framelength) { // play at 30 FPS or the text starts flickering
       ProcessSPS(Game.delta);
-      Game.time = timestamp;
-      stat_time.innerHTML = displayTime(Game.time - Game.startTime);
+      lastTime = timestamp;
     }
-    if((timestamp - Game.lastNews)>15000) {
+    if((timestamp - lastNews)>newswait) {
       UpdateNews();
-      Game.lastNews = timestamp;
+      lastNews = timestamp;
+    }
+    if((timestamp - lastTick)>500) {
+      Game.totalTime += 500;
+      stat_time.innerHTML = displayTime(Game.totalTime);
+      UpdateOverlay(null, null);
+      lastTick = timestamp;
     }
     if(Game.settings.useCanvas && (hasFocus || Game.delta>framelength)) {
       var grd = ctx.createLinearGradient(0,0,0,canvas.height);
@@ -626,10 +688,9 @@
       img_ground.width = 2051;
       img_ground.height = 560;
       ctx.save(); 
-      drawImage(img_rays, canvas.width/2-img_rays.width/2, canvas.height-img_rays.height/2, ((timestamp - Game.startTime)/3000)%(2*Math.PI));
+      drawImage(img_rays, canvas.width/2-img_rays.width/2, canvas.height-img_rays.height/2, ((timestamp - startTime)/3000)%(2*Math.PI));
       drawImage(img_ground, canvas.width/2-img_ground.width/2, canvas.height-img_ground.height/2, 0);     
     }
-    
     window.requestAnimationFrame(UpdateGame);
   }
   function UpdateOverlay(item, y) {
@@ -674,31 +735,48 @@
   
   function Buy(id) {
     var n = Game.shiftDown?10:1;
+    var numPurchase=0;
+    var totalCost=0;
     for(var i = 0; i < n; ++i) {
       var cost = Store[id].cost(Game.store[id]);
       if(Game.smiles >= cost) {
+        numPurchase++;
+        totalCost+=cost;
         Earn(-1 * cost);
         Game.store[id] += 1;
         Store[id].effect(Store[id]);
       }
     }
+    if(n>1) {
+      ShowNotice(Store[id].name, "Purchased <b>" + numPurchase + " " + Store[id].plural + "</b> for <b>" + Pluralize(totalCost, " smile") + "</b>");
+    }
+    
     UpdateStore();
     UpdateSPS();
+    UpdateOverlay(null, null);
     OrganizePonies();
     stat_buildings.innerHTML = CountBuildings(Game.store).toFixed(0);
   }
   function Sell(id) {
     if(!id) return; // you can't sell ponies you heartless monster
     var n = Game.shiftDown?10:1;
+    var numSell=0;
+    var totalCost=0;
     for(var i = 0; i < n; ++i) {
       if(Game.store[id]>0) {
         Game.store[id] -= 1;
-        Store[id].effect(Store[id]);
-        Earn(0.5 * Store[id].cost(Game.store[id]));
+        var cost = 0.5 * Store[id].cost(Game.store[id]);
+        Earn(cost);
+        numSell++;
+        totalCost+=cost;
       }
+    }
+    if(n>1) {
+      ShowNotice(Store[id].name, "Sold <b>" + numSell + " " + Store[id].plural + "</b> for <b>" + Pluralize(totalCost, " smile") + "</b>");
     }
     UpdateStore();
     UpdateSPS();
+    UpdateOverlay(null, null);
     OrganizePonies();
     stat_buildings.innerHTML = CountBuildings(Game.store).toFixed(0);
   }
@@ -726,7 +804,8 @@
     var html = '';
     var edge = GetEdgeLength(r, n);
     for(var i = 0; i < n; ++i) {
-      html += '<div class="pony" id="pony'+i+'" onclick="Click('+i+');" style="top:'+(Math.sin(a*i + th)*r-(edge/2))+'px;left:'+(Math.cos(a*i + th)*r-(edge/2))+'px;width:'+edge+'px;height:'+edge+'px;background-size: '+edge+'px '+edge+'px;"></div>';
+      var pone = ((i<Game.ponyList.length)?Game.ponyList[i]:0);
+      html += '<div class="pony" id="pony'+i+'" onclick="Click('+i+');" style="top:'+(Math.sin(a*i + th)*r-(edge/2))+'px;left:'+(Math.cos(a*i + th)*r-(edge/2))+'px;width:'+edge+'px;height:'+edge+'px;background-size: '+edge+'px '+edge+'px;background-image:url(\'./ponies/'+PonyList[pone]+'\');"></div>';
     }
     ponywrapper.innerHTML = html;
     
@@ -772,6 +851,29 @@
           Game.shiftDown = false;
       }
   };
+  function aniEndFunc() {
+    this.parentNode.removeChild(this);
+  }
+  function ShowMouseText(text,x,y) {
+      var div = document.createElement('div'); // We have to do this the hard way because innerHTML forces a re-evaluation of all the elements, replaying all the animations
+      div.className = 'mousetext';
+      div.style.left = (curMouseX+x)+'px';
+      div.style.top = (curMouseY+y)+'px';
+      div.innerHTML = '<p>'+text+'</p>';
+      div.addEventListener('webkitAnimationEnd', aniEndFunc, false);
+      div.addEventListener('animationend', aniEndFunc, false);
+      document.getElementById('mousetexts').appendChild(div);
+      //document.getElementById('mousetexts').innerHTML += '<div class="mousetext" style="left:'+(curMouseX+x)+'px;top:'+(curMouseY+y)+'px"><p>'+text+'</p></div>';
+  }
+  function ShowNotice(title, desc, flavor) {
+    var div = document.createElement('div');
+    div.innerHTML = '<strong>'+title+'</strong>'+(flavor!=null?'<i>['+flavor+']</i>':'') + (desc!=null?'<hr/><p>'+desc+'</p>':'');
+    div.addEventListener('webkitAnimationEnd', aniEndFunc, false);
+    div.addEventListener('animationend', aniEndFunc, false);
+    div.addEventListener('click', aniEndFunc, false);
+    var elem = document.getElementById('notices');
+    elem.insertBefore(div, elem.firstChild);
+  }
   
   function ShowMenu(b) {
     var btn = document.getElementById('menubutton');
@@ -796,8 +898,11 @@
       item = Math.floor((event.clientY - root.offsetTop)/root.offsetHeight);
       if(item >= Store.length) { item = -1; }
     }
+    curMouseX=event.clientX;
+    curMouseY=event.clientY;
     
     UpdateOverlay(item, event.clientY);
+    EarnAchievement(1);
   };
   document.onmousemove = setMouseMove;
   window.addEventListener? document.addEventListener('keydown', setShiftDown) : document.attachEvent('keydown', setShiftDown);

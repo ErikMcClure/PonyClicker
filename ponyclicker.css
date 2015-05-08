@@ -22,10 +22,9 @@ body {
 }
 .ponies .pony {
   position:absolute;
-  background: transparent url("./pinkie.svg") no-repeat;
-  -webkit-transition: transform 0.1s; /* Safari */
-  transition: transform 0.1s;
-  transition-timing-function: ease-out;
+  background: transparent no-repeat;
+  -webkit-transition: transform 0.1s ease-out; /* Safari */
+  transition: transform 0.1s ease-out;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -50,19 +49,25 @@ body {
   display:block;
   position:relative;
   height:4em;
-  text-align: center;
-  margin-top: 12px;
-  padding-left: 15%;
-  padding-right: 15%;
+  margin: 12px 15% 0 15%;
 }
 .newsactive p {
-  display:inline;
+  position:absolute;
+  width:100%;
+  margin:0;
   font: bold 16px "Open Sans";
   color:#000;
+  text-align: center;
 }
-.nnewsactive p span {
-  display:inline-block;
+.newsactive p span {
+  opacity:1;
+  -webkit-transition: opacity 0.5s ease-in;
+  transition: opacity 0.5s ease-in;
 }
+.newsactive .inactive {
+  opacity:0;
+}
+
 #score {
   position:relative;
   font: bold 40px/100% "Open Sans";
@@ -71,6 +76,8 @@ body {
   top:100px;
   overflow: visible;
   height:0;
+  color:#000;
+  text-shadow: 0 0 2px #fff;
 }
 #score #SPS {
   font-size:40%;
@@ -316,6 +323,8 @@ body {
   position: relative;
   color:#999;
   left: 0.5em;
+  font-size:80%;
+  bottom:2px;
 }
 .modal {
 	position: absolute;
@@ -360,4 +369,111 @@ a:hover {
 }
 .modal .footer {
   text-align:center;
+}
+
+@-webkit-keyframes mousefloat {
+    from {opacity: 1; margin-top: 0px;}
+    to {opacity: 0; margin-top: -140px;}
+}
+
+/* Standard syntax */
+@keyframes mousefloat {
+    from {opacity: 1; margin-top: 0px;}
+    to {opacity: 0; margin-top: -140px;}
+}
+  
+.mousetext {
+  position:absolute;
+  font: bold 18px "Open Sans";
+  color:#fff;
+  text-shadow: 0 0 1px #000; 
+  background: none !important;
+  pointer-events: none;
+  -webkit-animation-name: mousefloat; /* Chrome, Safari, Opera */
+  -webkit-animation-duration: 1s; /* Chrome, Safari, Opera */
+  -webkit-animation-timing-function: ease-in;
+  animation-name: mousefloat;
+  animation-duration: 1s;
+  animation-timing-function: ease-in;
+  opacity: 0;
+  margin-top: -140px;
+}
+.mousetext p {
+  position:relative;
+  left:-50%; 
+  background: none !important;
+  pointer-events: none;
+}
+#notices {
+  position:absolute;
+  bottom:0;
+  width:300px;
+  margin: 0 auto;
+  left:0;
+  right:0;
+}
+
+@-webkit-keyframes noticefade {
+    from {opacity: 1; max-height: 7em; }
+    to {opacity: 0; max-height: 0; margin-top:0; margin-bottom:0; padding-top:0; padding-bottom:0; }
+}
+
+/* Standard syntax */
+@keyframes noticefade {
+    from {opacity: 1; max-height: 7em; }
+    to {opacity: 0; max-height: 0; margin-top:0; margin-bottom:0; padding-top:0; padding-bottom:0; }
+}
+
+#notices div {
+  position:relative;
+  margin: 2px 0 4px 0;
+  background: #1f1d1d;
+  border-top: 2px #795339 solid; 
+  border-left: 2px #795339 solid; 
+  border-bottom: 3px #3a281c solid; 
+  border-right: 2px #3a281c solid;
+  -webkit-animation-name: noticefade; /* Chrome, Safari, Opera */
+  -webkit-animation-duration: 2s; /* Chrome, Safari, Opera */
+  -webkit-animation-timing-function: ease-in;
+  -webkit-animation-delay: 7s;
+  animation-name: noticefade;
+  animation-duration: 2s;
+  animation-timing-function: ease-in;
+  animation-delay: 7s;
+  color:#fff; 
+  padding: 2px 6px 6px 6px;
+  overflow-y: hidden;
+  cursor: pointer;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+#notices div strong {
+  display:block;
+  font: small-caps bold 18px "Open Sans";
+}
+#notices div i {
+  position:absolute;
+  top:6px;
+  right:10px;
+  font: normal 12px "Open Sans";
+  color:#aaa;
+}
+
+#notices div hr {
+  margin: 2px 0 0 0;
+  border-bottom: 0; 
+}
+#notices div p {
+  margin: 0.25em 0 0 0;
+  color:#ccc;  
+  font: normal 14px "sans-serif";
+}
+
+#canvas {
+  position:absolute;
+  background: url('./static.svg')  no-repeat bottom center;
 }
