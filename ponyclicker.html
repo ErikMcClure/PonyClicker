@@ -8,7 +8,7 @@
   <meta name="copyright" content="Copyright (c)2015 Cloud Hop" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" type="text/css" href="./ponyclicker.css" media="screen"/>
-  <!--<link href='http://fonts.googleapis.com/css?family=Open+Sans:700,400' rel='stylesheet' type='text/css'>--></link>
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:700,400' rel='stylesheet' type='text/css'></link>
 </head>
 <body onresize="ResizeCanvas();" onload="doOnLoad();">
   <div class="container">
@@ -54,7 +54,7 @@
       <div class="button" onclick="if(window.confirm('This will irreversibly wipe ALL your data, including all settings and all achievements! Are you certain you want to do this?')) { WipeAllData(); }" style="color:#c00">Wipe All Data</div>
       <hr/>
       Upgrades Owned: <span id="upgrades_owned"></span>/<span id="upgrades_total"></span>
-      
+      <div id="upgradelist"></div>
       <hr/>
       Achievements: <span id="achievements_owned"></span>/<span id="achievements_total"></span>
       <div id="achievements"></div>
@@ -62,12 +62,11 @@
       <span style="display:block;font-size:70%;height:40px;"><a href="https://www.youtube.com/watch?v=otAFRGL4yX4" onclick="EarnAchievement(204);">The smile song is mandatory while playing this.</a></span>
     <div id="menuoverlay" class="tooltip">TEST</div>
   </div>
-  <ol class="store" id="store">
+  <div class="store" id="storewrapper">
     <div class="title">Sugarcube Corner</div>
-    <ol class="upgrades">
-    
-    </ol>
-  </ol>
+    <div class="upgrades" id="storeupgrades"></div>
+    <ol id="store"></ol>
+  </div>
   
   <div id="overlay" class="tooltip" data-item="2"></div>
   <div id="exportwindow" class="modal" style="width: 350px;display:none;margin-top:-150px;">
@@ -84,7 +83,7 @@
     <div class="button" style="position:absolute; right:0; top:0" onclick="document.getElementById('credits').style.display='none';">[x]</div>
     <b>Pony Clicker v0.5 <i>by</i> Cloud Hop</b>
     <hr/>
-    <p><a href="http://www.fimfiction.net/user/Cloud%20Hop"><img style="float:left;" src="./Cloudhop_goggles.png" alt="Cloud Hop Avatar" title="If you aren't careful, he might cute you to death." onclick="EarnAchievement(203);"/></a> Cloud Hop is a pegasus who works at the weather factory. He's also an <a href="http://blackhole12.blogspot.com/">applied mathematician</a> who makes <a href="https://github.com/blackhole12">games</a> and <a href="https://erikmcclure.bandcamp.com/album/aurora-theory">music</a>. Sometimes he puts them on the internet, corrupting it with the magic of friendship.
+    <div><a href="http://www.fimfiction.net/user/Cloud%20Hop"><img style="float:left;" src="./Cloudhop_goggles.png" alt="Cloud Hop Avatar" title="If you aren't careful, he might cute you to death." onclick="EarnAchievement(203);"/></a> Cloud Hop is a pegasus who works at the weather factory. He's also an <a href="http://blackhole12.blogspot.com/">applied mathematician</a> who makes <a href="https://github.com/blackhole12">games</a> and <a href="https://erikmcclure.bandcamp.com/album/aurora-theory">music</a>. Sometimes he puts them on the internet, corrupting it with the magic of friendship.
       <ul><li><a href="http://www.fimfiction.net/user/Cloud%20Hop">Fimfiction</a></li>
       <li><a href="http://blackhole12.newgrounds.com">Newgrounds</a></li>
       <li><a href="https://soundcloud.com/blackhole12">Soundcloud</a></li>
@@ -92,7 +91,7 @@
       <li><a href="https://www.youtube.com/channel/UCWC8FC5JryUP7I1oN1twBeQ">Youtube</a></li>
       <li><a href="https://twitter.com/blackhole0173">Twitter</a></li>
       </ul>
-      </p>
+      </div>
       <p>
         Pony vectors by: <a href="http://blackhole12.deviantart.com/art/Pinkie-Pie-PARTY-TIME-274526114">Takua770</a>, <a href="http://destroyer735.deviantart.com/art/Octavia-375057218">destroyer735</a>, <a href="http://90sigma.deviantart.com/art/Vector-All-the-Ponies-SVG-Files-302442314">90sigma</a>, <a href="http://www.deviantart.com/art/Rainbow-Dash-244004139">Nethear</a>, <a href="http://www.deviantart.com/art/Applebloom-490330115">LMan225</a>, <a href="http://www.deviantart.com/art/MLP-Resource-Dinky-Hooves-01-212564935">ZuTheSkunk</a>,<a href="http://90sigma.deviantart.com/art/Snooty-Princess-Cadance-321870154">90sigma (again)</a>, <a href="http://racefox.deviantart.com/art/Rarity-405280335">racefox</a>, <a href="http://qazwsx302.deviantart.com/art/Sweetie-Belle-316776921">qazwsx302</a>, <a href="http://sakatagintoki117.deviantart.com/art/Shining-Armor-339746794">sakatagintoki117</a>
         <br/>Pinkie Pie face taken from Fimfiction emoticons.
@@ -229,10 +228,6 @@
     {cost:0,count:1,name:"DEBUGMOUSE", plural:"DEBUGMOUSES", desc: "DEBUG DO NOT USE"}
   ];
   
-  function basic_upgrade(item, p, m) { Store[item].mbonus *= (1.0+m); Store[item].pbonus *= (1.0+m); Store[item].pbonus += p; }
-  function global_upgrade(p, m) { for(var i = 0; i < Store.length; ++i) basic_upgrade(i, p, m); }
-  function gen_upgradetype1(item, pSPS, mSPS) { return function() { var c = Store[item].count; basic_upgrade(item, pSPS*c, mSPS*c); } }
-  function gen_muffinupgrade(item, pSPS, mSPS) { return function() { var c = Game.muffins; global_upgrade(item, pSPS*c, mSPS*c); } }
   function factorial(n) { var r = n; while(--n > 1) { r = r*n; } return r; }
   function max_binomial(n) { var n2=Math.floor(n/2); var r = n; while(--n > n2) { r = r*n; } return Math.floor(r/factorial(n2)); }
   
@@ -348,14 +343,36 @@
   }
   function Pluralize(n, s) { return PrettyNum(n) + s + ((n==1)?'':'s'); }
   
+  function basic_upgrade(item, p, m) { Store[item].mbonus *= (1.0+m); Store[item].pbonus *= (1.0+m); Store[item].pbonus += p; }
+  function global_upgrade(p, m) { for(var i = 0; i < Store.length; ++i) basic_upgrade(i, p, m); }
+  function gen_upgradetype1(item, pSPS, mSPS) { return function() { var c = Game.store[item]; basic_upgrade(item, pSPS*c, mSPS*c); } }
+  function gen_upgradetype2(item, pSPS, mSPS) { return function() { Game.SPC+=(pSPS*Game.store[item]); Game.SPC*=(1+mSPS); } }
+  function gen_muffinupgrade(pSPS, mSPS) { return function() {  global_upgrade(pSPS, mSPS*Game.muffins); } }
+  
   var upgradeList = [ {cost:0, name:"UNDEFINED", desc:"ERROR", fn:null},
-    {cost:5000, name:"Friendship Is Magic", desc: "Friendships generate +1 SPS for every other friendship.", fn:gen_upgradetype1(1, 1, 0) },
-    {cost:50000, name:"Friendship Is Magic", desc: "Friendships generate +10 SPS for every other friendship.", fn:gen_upgradetype1(1, 10, 0) },
+    {cost:400, name:"Clicking Assistants", desc: "Clicking gets +1 SPS for every pony you have.", fn:function(){gen_upgradetype2(Game.store[0], 0)();} },
+    {cost:4000, name:"Friendship is Clicking", desc: "Clicking gets +1 SPS for every friendship you have.", fn:function(){gen_upgradetype2(Game.store[1], 0)();} },
+    {cost:40000, name:"Ticklish Cursors", desc: "Clicking gets 1% of your SPS.", fn:gen_upgradetype2(1, 0) },
+    {cost:400000, name:"Feathered Cursors", desc: "Clicking gets 2% of your SPS.", fn:gen_upgradetype2(1, 0) },
+    {cost:4000000, name:"Advanced Tickle-fu", desc: "Clicking gets 3% of your SPS.", fn:gen_upgradetype2(1, 0) },
+    {cost:40000000, name:"Happiness Injection", desc: "Clicking gets 4% of your SPS.", fn:gen_upgradetype2(1, 0) },
+    
+    {cost:10000, name:"Friendship Is Magic", desc: "Friendships generate +1 SPS for every other friendship.", fn:gen_upgradetype1(1, 1, 0) },
+    {cost:1000000, name:"Friendship Is Spellcraft", desc: "Friendships generate +10 SPS for every other friendship.", fn:gen_upgradetype1(1, 10, 0) },
+    {cost:100000000, name:"Friendship Is Sorcery", desc: "Friendships generate +100 SPS for every other friendship.", fn:gen_upgradetype1(1, 100, 0) },
+    {cost:10000000000, name:"Friendship Is Witchcraft", desc: "Friendships generate +1000 SPS for every other friendship.", fn:gen_upgradetype1(1, 1000, 0) },
+    {cost:1000000000000, name:"Friendship Is Benefits", desc: "Friendships generate +10000 SPS for every other friendship.", fn:gen_upgradetype1(1, 10000, 0) },
     {cost:50000, name:"Upgrade 3", desc: "Parties generate +1 SPS for every other party.", fn:gen_upgradetype1(2, 1, 0) },
-    {cost:5000, name:"I just don't know what went wrong!", desc: "You gain +1% SPS for every muffin you have.", fn:gen_muffinupgrade(2, 0, 0.01) },
-    {cost:50000, name:"That one mailmare", desc: "You gain +2% SPS for every muffin you have.", fn:gen_muffinupgrade(2, 0, 0.02) },
-    {cost:500000, name:"Derpy Delivery Service", desc: "You gain +3% SPS for every muffin you have.", fn:gen_muffinupgrade(2, 0, 0.03) },
-    {cost:5000000, name:"Muffin Factories", desc: "You gain +4% SPS for every muffin you have.", fn:gen_muffinupgrade(2, 0, 0.04) },
+    {cost:7777777, name:"I just don't know what went wrong!", desc: "You gain +1% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.01) },
+    {cost:777777777, name:"That one mailmare", desc: "You gain +2% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.02) },
+    {cost:77777777777, name:"Derpy Delivery Service", desc: "You gain +3% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.03) },
+    {cost:7777777777777, name:"Blueberry Muffins", desc: "You gain +4% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.04) },
+    {cost:777777777777777, name:"Chocolate-chip Muffins", desc: "You gain +5% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.05) },
+    {cost:77777777777777777, name:"Lemon Muffins", desc: "You gain +6% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.06) },
+    {cost:7777777777777777777, name:"Poppy seed Muffins", desc: "You gain +7% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.07) },
+    {cost:777777777777777777777, name:"Muffin Bakeries", desc: "You gain +8% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.08) },
+    {cost:77777777777777777777777, name:"Designer Muffins", desc: "You gain +9% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.09) },
+    {cost:7777777777777777777777777, name:"Muffin Factories", desc: "You gain +10% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.1) },
     {cost:0, name:"DEBUGMOUSE", desc: "DEBUG ONLY", fn:function(){Game.SPC*=2;}}
   ];
   
@@ -472,6 +489,12 @@
     }    
     document.getElementById('achievements').innerHTML = html;
     
+    html = '';
+    for(var i = 0; i < Game.upgrades.length; ++i) {
+      html += '<div class="achievement"><div class="menutooltip" style="left: '+(-2-((i%5)*54))+'px;"><strong>'+dynFontSize(upgradeList[Game.upgrades[i]].name)+'</strong><i>[upgrade]</i><hr/><p>'+upgradeList[Game.upgrades[i]].desc+'</p></div></div>';
+    }
+    
+    document.getElementById('upgradelist').innerHTML = html;
     UpdateMuffins();
   }
   
@@ -660,6 +683,12 @@
       document.getElementById("cost" + i).innerHTML = PrettyNum(cost);
       document.getElementById("count" + i).innerHTML = count;
     }
+    
+    var html = '';
+    for(var i = 0; i < upgradeList.length; ++i) {
+      html += '<div class="achievement"><div class="menutooltip" style="left: '+(-2-((i%6)*54))+'px;"><strong>'+dynFontSize(upgradeList[i].name)+'</strong><i>[upgrade]</i><hr/><p>'+upgradeList[i].desc+'</p></div></div>';
+    }
+    document.getElementById('storeupgrades').innerHTML = html;
   }
   function CountBuildings(store) {
     var count = 0;
@@ -960,8 +989,9 @@
   // You would not believe the horrific sequence of events that led to the creation of this function.
   var setMouseMove = function(event){
     var root = document.getElementById('buy0');
+    var wrapper = document.getElementById('storewrapper');
     var item = -1;
-    if((event.clientX>store.offsetLeft) && (event.clientY>root.offsetTop)) {
+    if((event.clientX>wrapper.offsetLeft) && (event.clientY>root.offsetTop)) {
       item = Math.floor((event.clientY - root.offsetTop)/root.offsetHeight);
       if(item >= Store.length) { item = -1; }
     }

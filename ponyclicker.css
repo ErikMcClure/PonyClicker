@@ -87,7 +87,6 @@ body {
 .store {
   position:absolute;
   right:0;
-  list-style-type: none;
   width:350px;
   height:100%;
   background: #2a180c;
@@ -95,6 +94,11 @@ body {
   padding:0;
   border-left:4px #000 solid;
   overflow: auto;
+}
+.store ol {
+  list-style-type: none;
+  margin:0;
+  padding:0;
 }
 .store li {
   position:relative;
@@ -487,7 +491,7 @@ a:hover {
 #achievements {
   line-height: 0;
 }
-#achievements .achievement {
+.achievement {
   position:relative;
   display:inline-block;
   width:50px;
@@ -499,11 +503,19 @@ a:hover {
   -webkit-box-shadow: inset 0 0 20px #f0f0f0;
   box-shadow:         inset 0 0 20px #f0f0f0;
 }
+.achievement:hover {
+  -moz-box-shadow:    inset 0 0 30px #fff;
+  -webkit-box-shadow: inset 0 0 30px #fff;
+  box-shadow:         inset 0 0 30px #fff;
+  border: 2px #fff solid;
+  margin: 0;
+}
 #achievements .hidden {
-  -moz-box-shadow:    inset 0 0 20px #b0b0b0;
-  -webkit-box-shadow: inset 0 0 20px #b0b0b0;
-  box-shadow:         inset 0 0 20px #b0b0b0;
-  border: 1px #bbb solid;
+  -moz-box-shadow:    inset 0 0 20px #b0b0b0 !important;
+  -webkit-box-shadow: inset 0 0 20px #b0b0b0 !important;
+  box-shadow:         inset 0 0 20px #b0b0b0 !important;
+  border: 1px #bbb solid !important;
+  margin: 1px !important;
 }
 #achievements .hidden::after {
   position:absolute;
@@ -566,4 +578,11 @@ a:hover {
   margin: 0.25em 0 0 0;
   color:#ccc;  
   font: normal 14px "sans-serif";
+}
+.store .upgrades {
+  height:56px;
+  overflow:hidden;
+}
+.store .upgrades:hover {
+  height:auto;
 }
