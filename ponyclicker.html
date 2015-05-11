@@ -462,7 +462,7 @@
   var ponywrapper = document.getElementById('ponywrapper');
   var smilethumb = '<img src="./pinkiehappy.png" alt="Smiles: " title="Smiles" />';
   var canvas = document.getElementById("canvas");
-  var ctx = canvas.getContext("2d");
+  var ctx = canvas?canvas.getContext("2d"):null;
   var canvaslines = document.getElementById("canvaslines");
   var ctxlines = canvaslines.getContext("2d");
 
@@ -665,6 +665,7 @@
     }
     stat_SPC.innerHTML = PrettyNum(Game.SPC);
   }
+  var lastUpgradeHTML = '';
   function UpdateStore() {
     UpdateUpgrades();
     var ponycost = document.getElementById("ponycost");
@@ -688,7 +689,10 @@
     for(var i = 0; i < upgradeList.length; ++i) {
       html += '<div class="achievement"><div class="menutooltip" style="left: '+(-2-((i%6)*54))+'px;"><strong>'+dynFontSize(upgradeList[i].name)+'</strong><i>[upgrade]</i><hr/><p>'+upgradeList[i].desc+'</p></div></div>';
     }
-    document.getElementById('storeupgrades').innerHTML = html;
+    if(lastUpgradeHTML != html) {
+      document.getElementById('storeupgrades').innerHTML = html;
+      lastUpgradeHTML = html;
+    }
   }
   function CountBuildings(store) {
     var count = 0;
@@ -904,13 +908,7 @@
       html += '<div class="pony" id="pony'+i+'" onclick="Click('+i+');" style="top:'+(Math.sin(a*i + th)*r-(edge/2))+'px;left:'+(Math.cos(a*i + th)*r-(edge/2))+'px;width:'+edge+'px;height:'+edge+'px;background-size: '+edge+'px '+edge+'px;background-image:url(\'./ponies/'+PonyList[pone]+'\');"></div>';
     }
     ponywrapper.innerHTML = html;
-    
-    var grd = ctxlines.createLinearGradient(0,0,0,canvas.height);
-    grd.addColorStop(0,"#d8f6ff");
-    grd.addColorStop(1,"#1288e2");
-    ctxlines.fillStyle = grd;
-    ctxlines.fillRect(0,0,canvas.width,canvas.height);
-    
+        
     // Draw friendship lines
     ctxlines.clearRect(0, 0, canvaslines.width, canvaslines.height);
     ctxlines.beginPath();
