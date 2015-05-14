@@ -8,7 +8,7 @@
   <meta name="copyright" content="Copyright (c)2015 Cloud Hop" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" type="text/css" href="./ponyclicker.css" media="screen"/>
-  <link href='http://fonts.googleapis.com/css?family=Open+Sans:700,400' rel='stylesheet' type='text/css'></link>
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:700,400' rel='stylesheet' type='text/css' />
 </head>
 <body onresize="ResizeCanvas();" onload="doOnLoad();">
   <div class="container">
@@ -29,16 +29,16 @@
   <div class="button" id="menubutton" onclick="ShowMenu(true);">Menu &raquo;</div>
   <div id="menu" class="menu">
   <div class="button" onclick="ShowMenu(false);">Menu &laquo;</div>
-  <div class="button" onclick="EarnAchievement(200); SaveGame()">Save</div>
+  <div class="button" onclick="EarnAchievement(200); SaveGame()" title="Manually save the game (the game auto-saves every 60 seconds).">Save</div>
   <div class="button" onclick="EarnAchievement(201); document.getElementById('exportarea').innerHTML = ExportGame(); document.getElementById('exportwindow').style.display='inline-block';">Export</div>
   <div class="button" onclick="document.getElementById('credits').style.display='inline-block';">Credits</div>
     <hr/>
     <input type="checkbox" id="EnableEffects" onchange="GetSettings()" />
-    <label for="EnableEffects" >Enable canvas effects</label>
+    <label for="EnableEffects" title="Enables animated canvas effects in the background.">Enable canvas effects</label>
     <br/><input type="checkbox" id="EnableFocus" onchange="GetSettings()" />
-    <label for="EnableFocus" >Lower FPS when not focused</label>
+    <label for="EnableFocus" title="Reduces the update frequency of the game when it isn't focused so it uses fewer resources.'">Lower FPS when not focused</label>
     <br/><input type="checkbox" id="EnableWarn" onchange="GetSettings()" />
-    <label for="EnableWarn" >Warn when closing window</label>
+    <label for="EnableWarn" title="Put up a warning message before you close the window.">Warn when closing window</label>
       <hr/>
       Smiles Available: <span id="stat_cursmiles">0</span>
       <br/>Total Smiles: <span id="stat_totalsmiles">0</span>
@@ -47,7 +47,7 @@
       <br/>Smiles Per Click: <span id="stat_SPC">0</span>
       <br/>Buildings Owned: <span id="stat_buildings">0</span>
       <br/>Time Played: <span id="stat_time">0</span>
-      <br/>Muffins: <span id="stat_muffins">0</span> <span class="fade">(<span id="stat_achievementmuffins">0</span> from achievements)</span>
+      <br/>Muffins: <span id="stat_muffins">0</span> <span class="fade" style="display:none;">(<span id="stat_achievementmuffins">0</span> from achievements)</span>
       <hr/>
       <div class="button" onclick="var x = window.prompt('Paste your exported game data here to import it. WARNING: This will overwrite your current game, even if the data is corrupt! Be sure you export your current game if you don\'t want to lose anything!',''); if(x!==null) { ImportGame(x); }">Import</div>
       <div class="button" onclick="if(window.confirm('This will destroy all your cookies, buildings, and upgrades, but you\'ll keep you\'re achievements and your muffins. Are you sure you want to do this?')) { ResetGame(); }" style="color:#c00">Reset</div>
@@ -81,7 +81,7 @@
   </div>
   <div id="credits" class="modal" style="width: 450px;display:none;margin-top:-200px;">
     <div class="button" style="position:absolute; right:0; top:0" onclick="document.getElementById('credits').style.display='none';">[x]</div>
-    <b>Pony Clicker v0.5 <i>by</i> Cloud Hop</b>
+    <b>Pony Clicker v0.8 <i>by</i> Cloud Hop</b>
     <hr/>
     <div><a href="http://www.fimfiction.net/user/Cloud%20Hop"><img style="float:left;" src="./Cloudhop_goggles.png" alt="Cloud Hop Avatar" title="If you aren't careful, he might cute you to death." onclick="EarnAchievement(203);"/></a> Cloud Hop is a pegasus who works at the weather factory. He's also an <a href="http://blackhole12.blogspot.com/">applied mathematician</a> who makes <a href="https://github.com/blackhole12">games</a> and <a href="https://erikmcclure.bandcamp.com/album/aurora-theory">music</a>. Sometimes he puts them on the internet, corrupting it with the magic of friendship.
       <ul><li><a href="http://www.fimfiction.net/user/Cloud%20Hop">Fimfiction</a></li>
@@ -100,12 +100,15 @@
       <hr/>
       <div class="footer"><a href="https://github.com/blackhole12/PonyClicker">Fork this project on Github</a></div>
   </div>
+  <div id="upgradeoverlay" class="tooltip" data-item="-1"></div>
   <div id="mousetexts"></div>
   <div id="notices"></div>
+  <div id="loadscreen"><div class="spinner"></div><div class="spinner2"></div><div class="spinner3"></div></div>
   <script type="text/javascript">
   function CreateGame() {
     return { 
       upgrades:[], // list of upgrade IDs that are owned
+      upgradeHash:{},
       smiles:0,
       totalsmiles:0,
       SPC:1,
@@ -119,7 +122,7 @@
       achievement_muffins:0, // Muffins from achievements only, recalculated every time an achievement is earned
       store:[1,0,0,0,0,0,0,0,0,0,0,0,0], // amount player has bought of each store item.
       ponyList:genPonyList(), // precalculated list of randomized ponies (so we can reconstruct them after a save/load)
-      version:2, // incremented every time this object format changes so we know to deal with it.
+      version:3, // incremented every time this object format changes so we know to deal with it.
       settings: {
         useCanvas:true,
         optimizeFocus:false,
@@ -128,7 +131,7 @@
     };
   }
   
-  var PonyList = ["pinkie.svg", "Adagio Dazzle.svg", "Aloe.svg", "Amethyst Star.svg", "Applebloom.svg", "Applejack.svg", "Aria Blaze.svg", "Babs Seed.svg", "Berry Punch.svg", "Big Macintosh.svg", "Braeburn.svg", "Carrot Top.svg", "Cheerilee.svg", "Cheese Sandwich.svg", "Chrysalis.svg", "Cloudchaser.svg", "Coco Pommel.svg", "Colgate.svg", "Daring Do.svg", "Diamond Tiara.svg", "Dinky Doo.svg", "Ditsy Doo.svg", "Dr Whooves.svg", "Fancy Pants.svg", "Flam.svg", "Fleur de Lis.svg", "Flim.svg", "Flitter.svg", "Fluttershy.svg", "Hoity Toity.svg", "King Sombra.svg", "Lightning Dust.svg", "Lotus.svg", "Lyra Heartstrings.svg", "Maud Pie.svg", "Mrs Harshwhinny.svg", "octavia.svg", "Prince Blueblood.svg", "Princess Cadance.svg", "Princess Celestia.svg", "Princess Luna.svg", "Rainbow Dash.svg", "Rarity.svg", "Scootaloo.svg", "Shining Armor.svg", "Silver Spoon.svg", "Sonata Dusk.svg", "Starlight Glimmer.svg", "Sunset Shimmer.svg", "Sweetie Belle.svg", "Thunderlane.svg", "Trenderhoof.svg", "Trixie.svg", "Trouble Shoes.svg", "Twilight Sparkle.svg", "Zecora.svg" ];
+  var PonyList = ["pinkie.svg", "Adagio Dazzle.svg", "Aloe.svg", "Amethyst Star.svg", "Applebloom.svg", "Applejack.svg", "Aria Blaze.svg", "Babs Seed.svg", "Berry Punch.svg", "Big Macintosh.svg", "Blossomforth.svg", "Braeburn.svg", "Carrot Top.svg", "Cheerilee.svg", "Cheese Sandwich.svg", "Chrysalis.svg", "Cloudchaser.svg", "Coco Pommel.svg", "Colgate.svg", "Daring Do.svg", "Diamond Tiara.svg", "Dinky Doo.svg", "Ditsy Doo.svg", "Dr Whooves.svg", "Fancy Pants.svg", "Flam.svg", "Fleur de Lis.svg", "Flim.svg", "Flitter.svg", "Fluttershy.svg", "Hoity Toity.svg", "King Sombra.svg", "Lightning Dust.svg", "Lotus.svg", "Lyra Heartstrings.svg", "Maud Pie.svg", "Mrs Harshwhinny.svg", "Night Glider.svg", "octavia.svg", "Prince Blueblood.svg", "Princess Cadance.svg", "Princess Celestia.svg", "Princess Luna.svg", "Rainbow Dash.svg", "Rarity.svg", "Scootaloo.svg", "Shining Armor.svg", "Silver Spoon.svg", "Sonata Dusk.svg", "Starlight Glimmer.svg", "Sunset Shimmer.svg", "Sweetie Belle.svg", "Thunderlane.svg", "Trenderhoof.svg", "Trixie.svg", "Trouble Shoes.svg", "Twilight Sparkle.svg", "Zecora.svg" ];
   function shuffle(o){
       for(var j, x, i = o.length; i; j = GetRandNum(0, i), x = o[--i], o[i] = o[j], o[j] = x);
       return o;
@@ -152,11 +155,12 @@
     stat_achievementmuffins.innerHTML = PrettyNum(Game.achievement_muffins);
   }
   function ResetGame() {
-    var muffins = Math.floor(inv_triangular(Game.totalsmiles/1000000000))-1;
+    var muffins = Math.floor(inv_triangular(Game.totalsmiles/100000000000))-1;
     Game.muffins += muffins;
     ShowNotice("Game reset", ((muffins==0)?null:"You get <b>" + Pluralize(muffins, " muffin") + "</b> for your <b>" + Pluralize(Game.totalsmiles, " smile") + "</b>"), null);
     Game.store = [1,0,0,0,0,0,0,0,0,0,0,0,0];
     Game.upgrades = [];
+    Game.upgradeHash = {};
     Game.smiles = 0;
     Game.totalsmiles = 0;
     Game.SPC = 1;
@@ -170,7 +174,7 @@
     var g = JSON.parse(src);
     switch(g.version)
     {
-      case 2:
+      case 3:
         Game = g;
         break;
       default:
@@ -189,7 +193,6 @@
     OrganizePonies();
     ApplySettings();
     UpdateNews();
-    UpdateMuffins();
     updateUpgradesAchievements();
   }
   function LoadGame() { 
@@ -211,24 +214,25 @@
   }
   
   LoadGame();
-  
+    
   var Store = [
-    {cost:0,count:1,pbonus:0,mbonus:1,name:"Pony", plural: "ponies", desc: "This is a pony. Ponies need friendships to generate smiles."}, 
-    {cost:0,count:0,pbonus:0,mbonus:1,name:"Friend", plural: "friends", desc: "A friendship between two ponies. You can't buy a friendship if everypony is friends with everypony else!", formula: "Each friendship generates 0.5 smiles per second"}, 
-    {cost:0,count:0,pbonus:0,mbonus:1,name:"Recital", plural: "recitals", desc: "A small recital for everypony you know.", formula: "Generates one smile per pony.<i>SPS = P</i>"}, // P
-    {cost:0,count:0,pbonus:0,mbonus:1,name:"Party", plural: "parties", desc: "Throw a party for all your friends!", formula: "Generates one smile per friendship.<i>SPS = F</i>"}, // F
-    {cost:0,count:0,pbonus:0,mbonus:1,name:"Parade", plural: "parades", desc: "Throw a big parade for everypony and all their friends!"}, // P+F
-    {cost:0,count:0,pbonus:0,mbonus:1,name:"Concert", plural: "concerts", desc: "Throw a concert for the whole town!"}, // P+F+B
-    {cost:0,count:0,pbonus:0,mbonus:1,name:"Festival", plural: "festivals", desc: "Celebrate a festival for a whole weekend!"}, // P*F
-    {cost:0,count:0,pbonus:0,mbonus:1,name:"Rave", plural: "raves", desc: "Throw a gigantic rave party in Canterlot!"}, // P*(F+B)
-    {cost:0,count:0,pbonus:0,mbonus:1,name:"Grand Galloping Gala", plural: "grand galloping galas", desc: "Celebrate the Grand Galloping Gala with ponies from all over Equestria!"}, //P*F*B
-    {cost:0,count:0,pbonus:0,mbonus:1,name:"Coronation", plural: "coronations", desc: "Make some random pony a princess so you have an excuse to party all night!"}, //2^P
-    {cost:0,count:0,pbonus:0,mbonus:1,name:"National Holiday", plural: "national holidays", desc: "Declare a national holiday so everypony in equestria can party with you instead of doing anything useful!"}, //2^P*F
-    {cost:0,count:0,pbonus:0,mbonus:1,name:"Elements Of Harmony", plural: "Elements of Harmony", desc: "Use a giant rainbow friendship beam to solve all your problems!"}, //2^P*(F+B)
-    {cost:0,count:1,name:"DEBUGMOUSE", plural:"DEBUGMOUSES", desc: "DEBUG DO NOT USE"}
+    {cost:0,count:1,name:"Pony", plural: "ponies", desc: "This is a pony. Ponies need friendships to generate smiles."}, 
+    {cost:0,count:0,name:"Friend", plural: "friends", desc: "A friendship between two ponies. You can't buy a friendship if everypony is friends with everypony else!", formula: "Each friendship generates 1 smile per second"}, 
+    {cost:0,count:0,name:"Recital", plural: "recitals", desc: "A small recital for everypony you know.", formula: "Generates one smile per pony.<i>SPS = P</i>"}, // P
+    {cost:0,count:0,name:"Party", plural: "parties", desc: "Throw a party for all your friends!", formula: "Generates one smile per friendship.<i>SPS = F</i>"}, // F
+    {cost:0,count:0,name:"Parade", plural: "parades", desc: "Throw a big parade for everypony and all their friends!", formula: "Generates two smiles for each friendship and each pony.<i>SPS = 2&times;(P&plus;F)</i>"}, // (P+F)*2.0
+    {cost:0,count:0,name:"Concert", plural: "concerts", desc: "Throw a concert for the whole town!", formula: "Generates one smile for every pony, friendship, and building you have.<i>SPS = P&plus;F&plus;B</i>"}, // P+F+B
+    {cost:0,count:0,name:"Festival", plural: "festivals", desc: "Celebrate a festival for a whole weekend!", formula: "Generates one smile for every pony you have, times the number of friends you have, times 1&frac12;.<i>SPS = P&times;F&times1.5</i>"}, // P*F*1.5
+    {cost:0,count:0,name:"Rave", plural: "raves", desc: "Throw a gigantic rave party in Canterlot!", formula: "Generates one smile for every pony you have, times the number of friendships and buildings you have.<i>SPS = P&times;(F&plus;B)</i>"}, // P*(F+B)
+    {cost:0,count:0,name:"Grand Galloping Gala", plural: "grand galloping galas", desc: "Celebrate the Grand Galloping Gala with ponies from all over Equestria!", formula: "Generates one smile for every pony you have, times the number of friendships you have, times the number of buildings you have.<i>SPS = P&times;F&times;B</i>"}, //P*F*(B+1)
+    {cost:0,count:0,name:"Coronation", plural: "coronations", desc: "Make some random pony a princess so you have an excuse to party all night!", formula: "Generates one smile per friendship, times two for every pony you have, plus the number of buildings you have.<i>SPS = 2<sup>P</sup>&times;F&plus;B</i>"}, //2^P*F+B
+    {cost:0,count:0,name:"National Holiday", plural: "national holidays", desc: "Declare a national holiday so everypony in equestria can party with you instead of being productive!", formula: "Generates one smile per friendship, times the number of buildings you have, times two for every pony you have.<i>2<sup>P</sup>&times;P&times;B</i>"}, //2^P*F*(B+1)
+    {cost:0,count:0,name:"Elements Of Harmony", plural: "Elements of Harmony", desc: "Use a giant rainbow friendship beam to solve all your problems!", formula: "Generates a bajillion smiles for every pony you have, plus one smile per friendship times the number of buildings you own.<i>P!&div;(P-5)! &plus; F&times;B</i>"}, //P!/(P-5)! + F*B
+    //{cost:0,count:1,name:"DEBUGMOUSE", plural:"DEBUGMOUSES", desc: "DEBUG DO NOT USE"}
   ];
   
   function factorial(n) { var r = n; while(--n > 1) { r = r*n; } return r; }
+  function factorial_limit(n,k) { var r = n; while(--n > k) { r = r*n; } return r; }
   function max_binomial(n) { var n2=Math.floor(n/2); var r = n; while(--n > n2) { r = r*n; } return Math.floor(r/factorial(n2)); }
   
   var number_names = [
@@ -343,43 +347,47 @@
   }
   function Pluralize(n, s) { return PrettyNum(n) + s + ((n==1)?'':'s'); }
   
-  function basic_upgrade(item, p, m) { Store[item].mbonus *= (1.0+m); Store[item].pbonus *= (1.0+m); Store[item].pbonus += p; }
-  function global_upgrade(p, m) { for(var i = 0; i < Store.length; ++i) basic_upgrade(i, p, m); }
-  function gen_upgradetype1(item, pSPS, mSPS) { return function() { var c = Game.store[item]; basic_upgrade(item, pSPS*c, mSPS*c); } }
-  function gen_upgradetype2(item, pSPS, mSPS) { return function() { Game.SPC+=(pSPS*Game.store[item]); Game.SPC*=(1+mSPS); } }
-  function gen_muffinupgrade(pSPS, mSPS) { return function() {  global_upgrade(pSPS, mSPS*Game.muffins); } }
+  function basic_upgrade(sps, item, p, m) { sps[item] = (sps[item]+p)*(m+1); return sps; }
+  function global_upgrade(sps, p, m) { for(var i = 0; i < sps.length; ++i) { sps[i] = (sps[i]+p)*(m+1); } return sps; }
+  function gen_upgradetype1(item, pSPS, mSPS) { return function(sps, store) { var c = store[item]; return basic_upgrade(sps, item, pSPS*c, mSPS*c); } }
+  function gen_upgradetype2(sps, count, pSPS, mSPS) { Game.SPC+=(pSPS*count); Game.SPC*=(1+mSPS); return sps; }
+  function gen_muffinupgrade(pSPS, mSPS) { return function(sps, store) { return global_upgrade(sps, pSPS, mSPS*Game.muffins); } }
+  function gen_totalsps(sps) {
+    var total = 0; for(var i = 0; i < sps.length; ++i) { total += sps[i]; } return total;
+    }
   
   var upgradeList = [ {cost:0, name:"UNDEFINED", desc:"ERROR", fn:null},
-    {cost:400, name:"Clicking Assistants", desc: "Clicking gets +1 SPS for every pony you have.", fn:function(){gen_upgradetype2(Game.store[0], 0)();} },
-    {cost:4000, name:"Friendship is Clicking", desc: "Clicking gets +1 SPS for every friendship you have.", fn:function(){gen_upgradetype2(Game.store[1], 0)();} },
-    {cost:40000, name:"Ticklish Cursors", desc: "Clicking gets 1% of your SPS.", fn:gen_upgradetype2(1, 0) },
-    {cost:400000, name:"Feathered Cursors", desc: "Clicking gets 2% of your SPS.", fn:gen_upgradetype2(1, 0) },
-    {cost:4000000, name:"Advanced Tickle-fu", desc: "Clicking gets 3% of your SPS.", fn:gen_upgradetype2(1, 0) },
-    {cost:40000000, name:"Happiness Injection", desc: "Clicking gets 4% of your SPS.", fn:gen_upgradetype2(1, 0) },
+    {cost:700, name:"Clicking Assistants", desc: "Clicking gets +1 SPS for every pony you have.", fn:function(sps,store){return gen_upgradetype2(sps, store[0], 1, 0);} },
+    {cost:7000, name:"Friendship is Clicking", desc: "Clicking gets +1 SPS for every friendship you have.", fn:function(sps,store){return gen_upgradetype2(sps, store[1], 1, 0);} },
+    {cost:70000, name:"Ticklish Cursors", desc: "Clicking gets 1% of your SPS.", fn:function(sps,store){return gen_upgradetype2(sps, gen_totalsps(sps), 0.01, 0); }},
+    {cost:700000, name:"Feathered Cursors", desc: "Clicking gets 2% of your SPS.", fn:function(sps,store){return gen_upgradetype2(sps, gen_totalsps(sps), 0.02, 0); }},
+    {cost:8000000, name:"Advanced Tickle-fu", desc: "Clicking gets 3% of your SPS.", fn:function(sps,store){return gen_upgradetype2(sps, gen_totalsps(sps), 0.03, 0); }},
+    {cost:90000000, name:"Happiness Injection", desc: "Clicking gets 4% of your SPS.", fn:function(sps,store){return gen_upgradetype2(sps, gen_totalsps(sps), 0.04, 0); }},
     
     {cost:10000, name:"Friendship Is Magic", desc: "Friendships generate +1 SPS for every other friendship.", fn:gen_upgradetype1(1, 1, 0) },
     {cost:1000000, name:"Friendship Is Spellcraft", desc: "Friendships generate +10 SPS for every other friendship.", fn:gen_upgradetype1(1, 10, 0) },
     {cost:100000000, name:"Friendship Is Sorcery", desc: "Friendships generate +100 SPS for every other friendship.", fn:gen_upgradetype1(1, 100, 0) },
     {cost:10000000000, name:"Friendship Is Witchcraft", desc: "Friendships generate +1000 SPS for every other friendship.", fn:gen_upgradetype1(1, 1000, 0) },
     {cost:1000000000000, name:"Friendship Is Benefits", desc: "Friendships generate +10000 SPS for every other friendship.", fn:gen_upgradetype1(1, 10000, 0) },
-    {cost:50000, name:"Upgrade 3", desc: "Parties generate +1 SPS for every other party.", fn:gen_upgradetype1(2, 1, 0) },
-    {cost:7777777, name:"I just don't know what went wrong!", desc: "You gain +1% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.01) },
-    {cost:777777777, name:"That one mailmare", desc: "You gain +2% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.02) },
-    {cost:77777777777, name:"Derpy Delivery Service", desc: "You gain +3% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.03) },
-    {cost:7777777777777, name:"Blueberry Muffins", desc: "You gain +4% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.04) },
-    {cost:777777777777777, name:"Chocolate-chip Muffins", desc: "You gain +5% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.05) },
-    {cost:77777777777777777, name:"Lemon Muffins", desc: "You gain +6% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.06) },
-    {cost:7777777777777777777, name:"Poppy seed Muffins", desc: "You gain +7% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.07) },
-    {cost:777777777777777777777, name:"Muffin Bakeries", desc: "You gain +8% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.08) },
-    {cost:77777777777777777777777, name:"Designer Muffins", desc: "You gain +9% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.09) },
-    {cost:7777777777777777777777777, name:"Muffin Factories", desc: "You gain +10% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.1) },
-    {cost:0, name:"DEBUGMOUSE", desc: "DEBUG ONLY", fn:function(){Game.SPC*=2;}}
+    {cost:7777777, name:"I just don't know what went wrong!", desc: "You gain +0.1% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.001) },
+    {cost:777777777, name:"That one mailmare", desc: "You gain +0.2% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.002) },
+    {cost:77777777777, name:"Derpy Delivery Service", desc: "You gain +0.3% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.003) },
+    {cost:7777777777777, name:"Blueberry Muffins", desc: "You gain +0.4% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.004) },
+    {cost:777777777777777, name:"Chocolate-chip Muffins", desc: "You gain +0.5% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.005) },
+    {cost:77777777777777777, name:"Lemon Muffins", desc: "You gain +0.6% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.006) },
+    {cost:7777777777777777777, name:"Poppy seed Muffins", desc: "You gain +0.7% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.007) },
+    {cost:777777777777777777777, name:"Muffin Bakeries", desc: "You gain +0.8% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.008) },
+    {cost:77777777777777777777777, name:"Designer Muffins", desc: "You gain +0.9% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.009) },
+    {cost:7777777777777777777777777, name:"Muffin Factories", desc: "You gain +1% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.01) },
+    {cost:50000, name:"Upgrade 3", desc: "Parties generate +1 SPS for every other party.", fn:gen_upgradetype1(2, 1, 0) }
   ];
   
   for(var i = 0; i < upgradeList.length; ++i) {
     upgradeList[i].id = i;
   }
   document.getElementById('upgrades_total').innerHTML = (upgradeList.length-1).toFixed(0); //-1 for the error one at 0
+  
+  curUpgradeList = [];
   
   var achievementList = {
     '1': { name:"Participation Award", desc: "You moved the mouse!", muffins:0},
@@ -437,9 +445,9 @@
   achievements_shop = achievements_shop.concat(genShopAchievements(4, ["Float Attendee", "Giant Floating Rainbow Dash", "Way Too Much Confetti", "Mane Attraction", "Mayor Mare"]));
   achievements_shop = achievements_shop.concat(genShopAchievements(5, ["Piano Solo", "String Quartet", "Chamber Choir", "70 Piece Orchestra", "Octavia"]));
   achievements_shop = achievements_shop.concat(genShopAchievements(6, ["Summer Sun Celebration", "Running Of The Leaves", "Winter Wrap Up", "Hearth's Warming Eve", "Rite Of Spring"]));
-  achievements_shop = achievements_shop.concat(genShopAchievements(7, ["Enthusiast", "Headbanger", "GLOWSTICKS FOR EVERYPONY!", "Bass Pumper", "DJ Pon3"]));
+  achievements_shop = achievements_shop.concat(genShopAchievements(7, ["Enthusiast", "Headbanger", "Glowsticks For Everypony!", "Bass Pumper", "DJ Pon3"]));
   achievements_shop = achievements_shop.concat(genShopAchievements(8, ["Best Night Ever", "Aristocracy", "Ballroom Dance", "YOU'RE GOING TO LOVE ME!", "Really Boring"]));
-  achievements_shop = achievements_shop.concat(genShopAchievements(9, ["Princess Twilight", "Prince Shining Armor", "Princess Big Mac", "Princess Derpy", "EVERYPONY'S A PRINCESS!"]));
+  achievements_shop = achievements_shop.concat(genShopAchievements(9, ["Princess Twilight", "Prince Shining Armor", "Princess Big Mac", "Princess Derpy", "Everypony's a Princess!"]));
   achievements_shop = achievements_shop.concat(genShopAchievements(10, ["Nightmare Night", "Mother's Day", "Farmer's Day", "Rainbow Dash Is Awesome Day", "National Butt Day"]));
   achievements_shop = achievements_shop.concat(genShopAchievements(11, ["Loyalty", "Honesty", "Laughter", "Generosity", "Kindness"]));
 
@@ -533,65 +541,69 @@
   function fn_ratio(init,curve) { return function(n) { return init*Math.pow(curve,n); }; }
   var fcurve = 1.3; // Friendship curve
   var fcurve_init = 20;
-  var rcurve = 1.1; // cost ratio curve
-  var rcurve_init = 30; // Initial cost ratio (for a party)
+  var rcurve = 1.13; // cost ratio curve
+  var rcurve_init = 32; // Initial cost ratio (for a party)
   var fn_rratio = fn_ratio(rcurve_init,rcurve); // gets the SPS ratio for a store of level n
   
   // The fundamental curve is the cost of friendships. This forms a simple recurrence relation f_n = a*f_n-1, which has a closed-form solution of f_n = f_0*a^n
   var fn_cost1 = fn_ratio(fcurve_init, fcurve);
+  Store[1].initcost = fcurve_init;
+  Store[1].costcurve = fcurve;
   
   // The cost of ponies is based on the cost of buying k+1 friendships, where k is the number of edges in a complete graph of n-nodes, which is just a triangular number. So, we take the current number of ponies, find the corresponding triangular number, add one and plug that into the friendship cost function.
   var fn_cost0 = function(n) { return (n<2)?15:fn_cost1(triangular(n)+1); };
   
   function default_cost(i, n) { return Store[i].initcost*Math.pow(Store[i].costcurve,n); };
-  function inv_cost(i, cost) { return Math.log(cost/Store[i].initcost)/Math.log(Store[i].costcurve); }
+  function inv_cost(i, cost) { return Math.floor(Math.log(cost/Store[i].initcost)/Math.log(Store[i].costcurve)); }
   
   Store[0].fn_SPS = function(P,F,B) { return 0; };
   Store[1].fn_SPS = function(P,F,B) { return 1.0; };
   Store[2].fn_SPS = function(P,F,B) { return P; };
   Store[3].fn_SPS = function(P,F,B) { return F; };
-  Store[4].fn_SPS = function(P,F,B) { return (P+F)*4.0; };
+  Store[4].fn_SPS = function(P,F,B) { return (P+F)*2.0; };
   Store[5].fn_SPS = function(P,F,B) { return (P+F+B); };
   Store[6].fn_SPS = function(P,F,B) { return (P*F)*1.5; };
   Store[7].fn_SPS = function(P,F,B) { return (P*(F+B)); };
   Store[8].fn_SPS = function(P,F,B) { return (P*F*(B+1)); };
-  Store[9].fn_SPS = function(P,F,B) { return Math.pow(2, P)*F*(B+1); };
-  Store[10].fn_SPS = function(P,F,B) { return max_binomial(P*2)*(F+B); };
-  Store[11].fn_SPS = function(P,F,B) { return factorial(P)*(F+B); };
-  Store[12].fn_SPS = function(P,F,B) { return 0; };
+  Store[9].fn_SPS = function(P,F,B) { return Math.pow(2, P)*F+B; };
+  Store[10].fn_SPS = function(P,F,B) { return Math.pow(2, P)*F*(B+1); };
+  Store[11].fn_SPS = function(P,F,B) { return factorial_limit(P,5)+(F*B); };
+  //Store[12].fn_SPS = function(P,F,B) { return 0; };
   
   // A store's initial cost is based on the number of friendships you (should) have already bought, or can currently afford, which is then used to calculate how many of everything else you have to generate a SPS and then apply the relevant SPS ratio to derive the appropriate cost
   
   function initSPS(f,r,b) { return Store[r].fn_SPS(Math.floor(inv_triangular(f)),f,b); }
   function initcost(f,r,b) { return initSPS(f,r,b)*fn_rratio(r-2); }
   
-  // You are expected to build n instances of a building before the cost of one SPS on the old building becomes equal to to the per SPS cost of the next building up. n itself is defined as a curve on the building level.
-  
-  var ncurve_init = 6;
-  var ncurve = 1.2;
-  var fn_nratio = fn_ratio(ncurve_init,ncurve);
-  
-  function fn_costcurve(f,r,b)
-  {  
-  // COST_3(F)/SPS_3(F) = COST_2(F)/SPS_2(F)
-  // initial cost over initial SPS is always fn_rratio
-  // fn_rratio(3-2) = (init*(curve^n))/initSPS(6,2,n)
-  // solve this for curve:
-  // curve = ((fn_rratio(3-2)*initSPS(6,2,n))/init)^(1/n)
-    var n = fn_nratio(r-2);
-    return Math.pow((fn_rratio(r-2)*initSPS(f,r,n+b))/Store[r].initcost,2.0/n); // modify 1.0/n to 2.0/n for balancing tweaking
-  }
-  
-  var Fvals = [4,6,10,16,32,42,68,80,90,104,140];
-  
-  for(var i = 2; i < 12; ++i) {
-    var cost = (i<3)?0:default_cost(i-1,fn_nratio(i-3));
+  function fn_estimatebuildings(cost, max) {
     var b = 0;
-    for(var j = 2; j < i-1; ++j) {
+    for(var j = 2; j < max; ++j) {
       b += inv_cost(j, cost);
     }
-    Store[i].initcost = initcost(Fvals[i-2],i,b+fn_nratio(i-3));
-    Store[i].costcurve = fn_costcurve(Fvals[i-1],i,b);
+    return b;
+  }
+  // Return a curve that results in a cost equal to the new SPS ratio after n buildings are bought.
+  /*function fn_costcurve(n,ratio,i,cost) {
+    // x is the new cost
+    // x = initSPS(inv_cost(1, x), i, fn_estimatebuildings(x, i))*ratio
+    // Instead of trying to solve that for x, we just estimate the building count increase. 
+    // x = initSPS(inv_cost(1, x), i, fn_estimatebuildings(cost, i)+n*i)*ratio
+    var b = fn_estimatebuildings(cost, i)+n*i;
+    // We can't solve for x because we'd have to solve for x for every single individual building, so we do an iterative solve using cost as an initial guess.
+    var x = cost;
+    for(var j = 0; j < 1; ++j) {
+      x = initSPS(inv_cost(1, x), i, b)*ratio;
+    }
+    return Math.pow(x/cost, 1.0/n);
+  }*/
+  
+  var Fvals = [4,12,30,35,45,45,45,51,51,100];
+  
+  for(var i = 2; i < 12; ++i) {
+    var cost = fn_cost1(Fvals[i-2]);
+    var b = fn_estimatebuildings(cost, i);
+    Store[i].initcost = initcost(Fvals[i-2],i,b);
+    Store[i].costcurve = 1.2 + (i*i*0.0045); //fn_costcurve(5, fn_rratio(i-2)*1.5, i, Store[i].initcost);
   }  
   
   Store[0].cost = fn_cost0;
@@ -606,24 +618,7 @@
   Store[9].cost = function(n) { return default_cost(9, n); }; 
   Store[10].cost = function(n) { return default_cost(10, n); }; 
   Store[11].cost = function(n) { return default_cost(11, n); };
-  Store[12].cost = function(n) { return 1; };
-  
-  // Effects of buying a store item
-  Store[0].effect = function(obj) { };
-  Store[1].effect = function(obj) { };
-  Store[2].effect = function(obj) { };
-  Store[3].effect = function(obj) { };
-  Store[4].effect = function(obj) { };
-  Store[5].effect = function(obj) { };
-  Store[6].effect = function(obj) { };
-  Store[7].effect = function(obj) { };
-  Store[8].effect = function(obj) { };
-  Store[9].effect = function(obj) { };
-  Store[10].effect = function(obj) { };
-  Store[11].effect = function(obj) { };
-  Store[12].effect = function(obj) {
-    Game.upgrades.push(upgradeList.length-1);
-  };
+  //Store[12].cost = function(n) { return 1; };
   
   function Earn(num) {
     if(num>0) { Game.totalsmiles += num; }
@@ -654,20 +649,8 @@
       }
     }
   }
-  function UpdateUpgrades() {
-    Game.SPC = 1;
-    for(var i = 0; i < Store.length; ++i) {
-      Store[i].pbonus = 0;
-      Store[i].mbonus = 1;
-    }
-    for(var i = 0; i < Game.upgrades.length; ++i) {
-      upgradeList[Game.upgrades[i]].fn();
-    }
-    stat_SPC.innerHTML = PrettyNum(Game.SPC);
-  }
   var lastUpgradeHTML = '';
   function UpdateStore() {
-    UpdateUpgrades();
     var ponycost = document.getElementById("ponycost");
     ponycost.innerHTML = "(NEEDS " + Math.ceil(inv_triangular(Game.store[1]+1)) + " PONIES)";
     ponycost.style.display = 'none';
@@ -686,8 +669,12 @@
     }
     
     var html = '';
-    for(var i = 0; i < upgradeList.length; ++i) {
-      html += '<div class="achievement"><div class="menutooltip" style="left: '+(-2-((i%6)*54))+'px;"><strong>'+dynFontSize(upgradeList[i].name)+'</strong><i>[upgrade]</i><hr/><p>'+upgradeList[i].desc+'</p></div></div>';
+    curUpgradeList = [];
+    for(var i = 1; i < upgradeList.length; ++i) { // start at one to skip UNDEFINED upgrade
+      if(upgradeList[i].cost < (Game.totalsmiles*0.8) && Game.upgradeHash[i] === undefined) {
+        curUpgradeList.push(i);
+        html += '<div class="achievement'+((upgradeList[i].cost>Game.smiles)?' hidden':'')+'" onclick="BuyUpgrade('+i+');"></div>';
+      }
     }
     if(lastUpgradeHTML != html) {
       document.getElementById('storeupgrades').innerHTML = html;
@@ -703,21 +690,36 @@
   }
   // Seperating this out lets us make predictions on what a purchase will do to your SPS
   function CalcSPS(store, docache) {
-    var P = store[0];
-    var F = store[1];
-    var B = CountBuildings(store);
+    var res = CalcSPSinit(store);
+    
+    Game.SPC = 1;
+    for(var i = 0; i < Game.upgrades.length; ++i) {
+      res = upgradeList[Game.upgrades[i]].fn(res, store);
+      if(!res || !res.length) {
+        alert("ILLEGAL UPGRADE: " + Game.upgrades[i]);
+      }
+    }
+    stat_SPC.innerHTML = PrettyNum(Game.SPC);
+    
     var SPS = 0;
-    var cache;
-    for(var i = 0; i < Store.length; ++i) {
-      cache = Store[i].fn_SPS(P,F,B);
-      if(docache) { Store[i].SPS_cache = cache; }
-      SPS += store[i]*cache;
+    for(var i = 0; i < res.length; ++i) {
+      if(docache) { Store[i].SPS_cache = res[i]*store[i]; }
+      SPS += res[i]*store[i];
     }
     return SPS;
   }
+  function CalcSPSinit(store) {
+    var P = store[0];
+    var F = store[1];
+    var B = CountBuildings(store);
+    var result = [];
+    for(var i = 0; i < Store.length; ++i) {
+      result.push(Store[i].fn_SPS(P,F,B));
+    }
+    return result;
+  }
   function UpdateSPS() {
     Game.SPS = CalcSPS(Game.store, true);
-  
     var s = document.getElementById("SPS");
     if(Game.SPS > 0) {
       s.style.display = "block";
@@ -748,12 +750,14 @@
   var lastTime;
   var startTime;
   var lastTick; // Ticks are used for things like updating the total playtime
+  var lastSave;
   function UpdateGame(timestamp) {
     if (!startTime) { 
       startTime = timestamp;
       lastNews = timestamp;
       lastTime = timestamp;
       lastTick = timestamp;
+      lastSave = timestamp;
     }
     Game.delta = timestamp - lastTime;
     var hasFocus = !Game.settings.optimizeFocus || document.hasFocus();
@@ -765,6 +769,10 @@
     if((timestamp - lastNews)>newswait) {
       UpdateNews();
       lastNews = timestamp;
+    }
+    if((timestamp - lastSave)>60000) {
+      SaveGame();
+      lastSave = timestamp;
     }
     if((timestamp - lastTick)>500) {
       Game.totalTime += 500;
@@ -811,7 +819,6 @@
     var x = Store[item];
     var xcount = Game.store[item];
     var xcost = x.cost(xcount);
-    overlay.style.display = 'block';
     var html = '<div class="title"><p>'+x.name+'</p><span>'+smilethumb+PrettyNum(xcost)+'</span>';
     if(xcount > 0) { html += '<div>['+PrettyNum(xcount)+' owned]</div>'; }
     html += '</div><hr/><p>'+x.desc+'</p><hr/><ol>';
@@ -825,6 +832,31 @@
     html += '<li>Buying one '+x.name.toLowerCase()+' will increase your SPS by <b>'+PrettyNum(nSPS - Game.SPS)+'</b><i>You pay <b>'+Pluralize(xcost/(nSPS - Game.SPS), ' smile') + '</b> per +1 SPS</li></ol>';
     
     overlay.innerHTML = html;
+    overlay.style.display = 'block';
+  }
+  function UpdateUpgradeOverlay(item, x, y) {
+    var overlay = document.getElementById("upgradeoverlay");
+    if(item != null && item >= curUpgradeList.length) { item = -1; }
+    
+    if(y != null && item >= 0) {
+      overlay.style.left = x-316 + 'px';
+      overlay.style.top = y-14 + 'px';
+    }
+    if(item == null) {
+      item = overlay.getAttribute('data-item', item);
+    } else if(item == overlay.getAttribute('data-item', item)) {
+      return;
+    }
+    overlay.setAttribute('data-item', item);
+    
+    if(item < 0) {
+      overlay.style.display = 'none';
+      return;
+    }
+    
+    var x = upgradeList[curUpgradeList[item]];
+    overlay.innerHTML = '<div class="title"><p>'+x.name+'</p><span>'+smilethumb+PrettyNum(x.cost)+'</span></div><hr/><p>'+x.desc+'</p>';
+    overlay.style.display = 'block';
   }
   function ProcessSPS(delta) {
     Earn(Game.SPS*(delta/1000.0));
@@ -841,7 +873,6 @@
         totalCost+=cost;
         Earn(-1 * cost);
         Game.store[id] += 1;
-        Store[id].effect(Store[id]);
       }
     }
     if(n>1) {
@@ -879,6 +910,19 @@
     UpdateOverlay(null, null);
     OrganizePonies();
     stat_buildings.innerHTML = CountBuildings(Game.store).toFixed(0);
+  }
+  function BuyUpgrade(id) {
+    var x = upgradeList[id];
+    if(Game.smiles > x.cost) {
+      Earn(-1 * x.cost);
+      Game.upgrades.push(id);
+      Game.upgradeHash[id] = id;
+    }
+    
+    UpdateSPS();
+    UpdateUpgradeOverlay(null, null, null);
+    updateUpgradesAchievements();
+    UpdateStore();
   }
   function distance(x1,y1,x2,y2) {
      return Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
@@ -993,10 +1037,19 @@
       item = Math.floor((event.clientY - root.offsetTop)/root.offsetHeight);
       if(item >= Store.length) { item = -1; }
     }
+    UpdateOverlay(item, event.clientY);
+    
+    item = -1;
+    var upgrades = document.getElementById('storeupgrades');
+    if((event.clientX>wrapper.offsetLeft) && (event.clientY>upgrades.offsetTop)) {
+      item = Math.floor((event.clientY - upgrades.offsetTop)/52)*6 + Math.floor((event.clientX - wrapper.offsetLeft)/52);
+      if(item >= Store.length) { item = -1; }
+    
+    }
+    UpdateUpgradeOverlay(item, event.clientX, event.clientY);
+    
     curMouseX=event.clientX;
     curMouseY=event.clientY;
-    
-    UpdateOverlay(item, event.clientY);
     EarnAchievement(1);
   };
 
@@ -1015,6 +1068,8 @@
     InitializeGame();
     ResizeCanvas();
     window.requestAnimationFrame(UpdateGame);
+    document.getElementById('loadscreen').style.opacity = 0;
+    window.setTimeout(function(){document.getElementById('loadscreen').style.display='none';}, 700);
   }
   </script>
 </body>
