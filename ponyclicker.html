@@ -700,6 +700,7 @@
   // Seperating this out lets us make predictions on what a purchase will do to your SPS
   function CalcSPS(store, docache) {
     var res = CalcSPSinit(store);
+    var SPC = Game.SPC;
     
     Game.SPC = 1;
     for(var i = 0; i < Game.upgrades.length; ++i) {
@@ -709,6 +710,8 @@
       }
     }
     stat_SPC.innerHTML = PrettyNum(Game.SPC);
+    
+    if(!docache) { Game.SPC = SPC; } // HACK to fix SPC exploit
     
     var SPS = 0;
     for(var i = 0; i < res.length; ++i) {
