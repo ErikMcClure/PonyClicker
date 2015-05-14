@@ -156,7 +156,7 @@
   }
   function ResetGame() {
     var muffins = Math.floor(inv_triangular(Game.totalsmiles/1000000000000))-1;
-    Game.muffins += muffins;
+    //Game.muffins += muffins;
     ShowNotice("Game reset", ((muffins==0)?null:"You get <b>" + Pluralize(muffins, " muffin") + "</b> for your <b>" + Pluralize(Game.totalsmiles, " smile") + "</b>"), null);
     Game.store = [1,0,0,0,0,0,0,0,0,0,0,0,0];
     Game.upgrades = [];
