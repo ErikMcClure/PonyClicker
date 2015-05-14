@@ -158,7 +158,7 @@ body {
   font: bold 14px "Open Sans";
   color: #909090;
   top:3px;
-  left: 80px;
+  left: 120px;
 }
 
 .store li .cost img {
@@ -523,6 +523,9 @@ a:hover {
   box-shadow:         inset 0 0 20px #b0b0b0 !important;
   border: 1px #bbb solid !important;
   margin: 1px !important;
+}
+#achievements .hidden {
+  background: #000 !important;
 }
 #achievements .hidden::after {
   position:absolute;

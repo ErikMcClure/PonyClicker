@@ -155,7 +155,7 @@
     stat_achievementmuffins.innerHTML = PrettyNum(Game.achievement_muffins);
   }
   function ResetGame() {
-    var muffins = Math.floor(inv_triangular(Game.totalsmiles/100000000000))-1;
+    var muffins = Math.floor(inv_triangular(Game.totalsmiles/1000000000000))-1;
     Game.muffins += muffins;
     ShowNotice("Game reset", ((muffins==0)?null:"You get <b>" + Pluralize(muffins, " muffin") + "</b> for your <b>" + Pluralize(Game.totalsmiles, " smile") + "</b>"), null);
     Game.store = [1,0,0,0,0,0,0,0,0,0,0,0,0];
@@ -278,11 +278,17 @@
     } else if(Game.totalsmiles < 1000) {
       news.push("Ponyville citizens wonder what this strange new sensation is! Scientists call it 'smiling', conspiracy theorists denounce it as a ploy to take over the world.",
         "Morose ponies increasingly out of place in chipper Ponyville!",
-        "Small foals spotted playing in the streets! Parents unsure if so called 'fun' should be allowed.");
+        "Small foals spotted playing in the streets! Parents unsure if so called 'fun' should be allowed.",
+        "Chef proposes selling 'baked goods' instead of 'baked okays'. Customers wary of new marketing scam.");
     } else if(Game.totalsmiles < 1000000) {
-      news.push("Ponies greeting each other with a smile! Cranky old ponies decry new development!");
+      news.push("Ponies greeting each other with a smile! Cranky old ponies decry new development!",
+        "Iron Will now teaching assertiveness instead of methods of coping with depression!",
+        "Several young colts spotted hoofbumping! Parents concerned over new trend!",
+        "Therapist upset about recent mood upswing, says it's bad for business.");
     } else if(Game.totalsmiles < 1000000000) {
-      news.push("Songs now spontaneously erupting across Ponyville!");
+      news.push("Songs now spontaneously erupting across Ponyville!",
+      "Ponyville voted happiest town in equestria!",
+      "Ponies from all over Equestria come to visit Ponyville!");
     } else if(Game.totalsmiles < 1000000000000) {
       news.push(
         "Princess Twilight found overdosed on friendship, taken to rehab center!",
@@ -316,11 +322,13 @@
         news.push(
           'When asked how she saved the bakery from certain disaster, Derpy Hooves claims there was "Muffin to it!"',
           "Try new smile-powered Muffins today!",
-          'Mayor held hostage by crazed Doctor, who demanded that a muffin factory be built "for the sake of all ponykind!"'
+          'Mayor held hostage by crazed Doctor, who demands that a muffin factory be built "for the sake of all ponykind!"',
+          'Derpy and Troubleshoes get married! Ponyville does not survive the wedding.',
+          'Scientists investigate whether excessive muffin consumption can lead to long, overbearing plots.'
         );
       }
       if(Game.muffins > 100) {
-        
+        news.push('Derpy crashes into giant muffin. Irony is not amused.');
       }
     }
     
@@ -492,15 +500,15 @@
     var count = 0;
     for (var prop in achievementList) {
         if (achievementList.hasOwnProperty(prop)) {
-          html += '<div class="achievement '+(Game.achievements[prop]===undefined?'hidden':'')+'"><div class="menutooltip" style="left: '+(-2-((count%5)*54))+'px;"><strong>'+dynFontSize(achievementList[prop].name)+'</strong><i>[achievement]</i><hr/><p>'+achievementList[prop].desc+'</p></div></div>';
+          html += '<div class="achievement '+(Game.achievements[prop]===undefined?'hidden':'')+'" style="background: #000 url(\'./achievements.png\');"><div class="menutooltip" style="left: '+(-2-((count%5)*54))+'px;"><strong>'+dynFontSize(achievementList[prop].name)+'</strong><i>[achievement]</i><hr/><p>'+achievementList[prop].desc+'</p></div></div>';
         }
         count++;
     }    
     document.getElementById('achievements').innerHTML = html;
     
     html = '';
-    for(var i = 0; i < Game.upgrades.length; ++i) {
-      html += '<div class="achievement"><div class="menutooltip" style="left: '+(-2-((i%5)*54))+'px;"><strong>'+dynFontSize(upgradeList[Game.upgrades[i]].name)+'</strong><i>[upgrade]</i><hr/><p>'+upgradeList[Game.upgrades[i]].desc+'</p></div></div>';
+    for(var i = 0; i < Game.upgrades.length; ++i) { // TODO: Make unique upgrade images
+      html += '<div class="achievement" style="background: #000 url(\'./upgrades.png\');"><div class="menutooltip" style="left: '+(-2-((i%5)*54))+'px;"><strong>'+dynFontSize(upgradeList[Game.upgrades[i]].name)+'</strong><i>[upgrade]</i><hr/><p>'+upgradeList[Game.upgrades[i]].desc+'</p></div></div>';
     }
     
     document.getElementById('upgradelist').innerHTML = html;
@@ -674,7 +682,7 @@
     for(var i = 1; i < upgradeList.length; ++i) { // start at one to skip UNDEFINED upgrade
       if(upgradeList[i].cost < (Game.totalsmiles*0.8) && Game.upgradeHash[i] === undefined) {
         curUpgradeList.push(i);
-        html += '<div class="achievement'+((upgradeList[i].cost>Game.smiles)?' hidden':'')+'" onclick="BuyUpgrade('+i+');"></div>';
+        html += '<div class="achievement'+((upgradeList[i].cost>Game.smiles)?' hidden':'')+'" onclick="BuyUpgrade('+i+');" style="background: #000 url(\'./upgrades.png\');"></div>';
       }
     }
     if(lastUpgradeHTML != html) {
