@@ -89,10 +89,10 @@ body {
   right:0;
   width:350px;
   height:100%;
-  background: #000;
+  background: #2a180c;
   margin:0;
-  padding:0 4px;
   overflow-y: auto;
+  border-left: 4px solid #000;
 }
 .store ol {
   display: block;
@@ -119,9 +119,6 @@ body {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-}
-.store li:not(:last-child){
-  margin-bottom: 2px;
 }
 .store li:hover {
   background: #694329;
@@ -180,7 +177,6 @@ body {
   text-align:center;
   padding: 8px;
   text-shadow: 1px 1px #000;
-  background: #2a180c;
 }
 .container {
   position:absolute;
@@ -354,6 +350,7 @@ button:active {
   color: #dfdfdf;
   overflow:auto;
   padding: 4px;
+  box-sizing: border-box;
 }
 #menu > section {
   display: block;
