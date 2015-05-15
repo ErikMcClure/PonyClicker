@@ -1119,6 +1119,5 @@ $(function(){
     ResizeCanvas();
     window.requestAnimationFrame(UpdateGame);
     $loadscreen.css('opacity',0).delay(700).hide();
-    Earn(3000);
   });
 });
