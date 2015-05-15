@@ -645,7 +645,17 @@ $(function(){
   function NeedsMorePonies() {
     return Game.store[1] >= triangular(Game.store[0]);
   }
-  var lastUpgradeHTML = '';
+  var lastUpgrade = [];
+  // http://stackoverflow.com/a/16436975/1344955
+  function arraysEqual(a, b) {
+    if (a === b) return true;
+    if (a == null || b == null) return false;
+    if (a.length != b.length) return false;
+    for (var i = 0; i < a.length; ++i) {
+      if (a[i] !== b[i]) return false;
+    }
+    return true;
+  }
   function UpdateStore() {
     $ponycost.html("(NEEDS " + Math.ceil(inv_triangular(Game.store[1]+1)) + " PONIES)").hide();
     for(var i = 0; i < Store.length; ++i) {
@@ -663,18 +673,23 @@ $(function(){
       $("#count" + i).html(count);
     }
 
-    var html='';
     curUpgradeList = [];
+    var achs = [];
     for(var i = 1; i < upgradeList.length; ++i) { // start at one to skip UNDEFINED upgrade
-      if(upgradeList[i].cost < (Game.totalsmiles*0.8) && Game.upgradeHash[i] === undefined) {
+      if(upgradeList[i].cost < (Game.totalsmiles*0.8) && Game.upgradeHash[i] == null) {
         curUpgradeList.push(i);
-        html += '<div class="achievement'+((upgradeList[i].cost>Game.smiles)?' hidden':'')+'" onclick="BuyUpgrade('+i+');" style="background: #000 url(\'./upgrades.png\');"></div>';
+        var $ach = $(document.createElement('div'))
+          .addClass('achievement'+(upgradeList[i].cost>Game.smiles?' hidden':''))
+          .css('background-image','url(upgrades.png)');
+
+        (function($el,index){ $el.on('click',function(){ BuyUpgrade(index) }); })($ach,i);
+
+        achs.push($ach);
       }
     }
-    if(lastUpgradeHTML != html) {
-      // TODO Rewrite using DOM manipulation
-      $storeupgrades.html(html);
-      lastUpgradeHTML = html;
+    if(!arraysEqual(lastUpgrade,curUpgradeList)) {
+      $storeupgrades.empty().append(achs);
+      lastUpgrade = curUpgradeList;
     }
     $stat_buildings.html(CountBuildings(Game.store).toFixed(0));
   }
@@ -1105,5 +1120,6 @@ $(function(){
     ResizeCanvas();
     window.requestAnimationFrame(UpdateGame);
     $loadscreen.css('opacity',0).delay(700).hide();
+    Earn(3000);
   });
 });

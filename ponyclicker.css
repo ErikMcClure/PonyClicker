@@ -215,7 +215,6 @@ body {
 }
 #overlay {
   width:350px;
-  margin-right: 4px;
   border-right: 0;
 }
 .tooltip .title p {
@@ -343,7 +342,7 @@ button:active {
 #menu {
   display:none;
   position:absolute;
-  width:298px;
+  width:302px;
   border-right: 4px #000 solid;
   height:100%;
   background:#222;
