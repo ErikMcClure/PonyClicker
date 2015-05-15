@@ -1,6 +1,9 @@
 # Pony Clicker Change Log
 This is the change log for Pony Clicker. Some minor changes may not be reflected in this log.
 
+## v0.86
+- Fix timer so it uses the delta properly when tab isn't visible.
+
 ## v0.85
 - It turns out a centillion isn't what i thought it was. Removed from large number list.
 - Fixed bug where shift-clicking let you buy more friendships than physically possible.
