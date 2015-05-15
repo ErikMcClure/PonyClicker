@@ -1,6 +1,15 @@
 # Pony Clicker Change Log
 This is the change log for Pony Clicker. Some minor changes may not be reflected in this log.
 
+## v0.85
+- It turns out a centillion isn't what i thought it was. Removed from large number list.
+- Fixed bug where shift-clicking let you buy more friendships than physically possible.
+- Fixed #2 regression, where getting a muffin from an achievement wouldn't update your SPS
+- Fixed bug where multiple rows of upgrades would not display an overlay properly
+- Fixed bug where buying an upgrade didn't update the overlay correctly
+- The game now checks the entire achievement list on load to support adding achievements later
+- Fixed bug with upgrade list that wouldn't show any tooltip past index 11
+
 ## v0.84
 - Rapidly changing numbers now have a fixed number of decimal places (MaxLaumeister)
 - Use Open Sans everywhere and fix font CSS (ngyikp)

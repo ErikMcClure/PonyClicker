@@ -4,7 +4,7 @@
   <title>Pony Clicker</title>
   <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
   <meta charset="utf-8" />
-  <meta name="description" content="Pony Clicker v0.1 by Cloud Hop" />
+  <meta name="description" content="Pony Clicker by Cloud Hop" />
   <meta name="copyright" content="Copyright (c)2015 Cloud Hop" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" type="text/css" href="ponyclicker.css" media="screen"/>
@@ -80,7 +80,7 @@
   </div>
   <div id="credits" class="modal" style="width: 450px;display:none;margin-top:-200px;">
     <div class="button" style="position:absolute; right:0; top:0" onclick="document.getElementById('credits').style.display='none';">[x]</div>
-    <b>Pony Clicker v0.84 <i>by</i> Cloud Hop</b>
+    <b>Pony Clicker v0.85 <i>by</i> Cloud Hop</b>
     <hr/>
     <div>
       <a href="https://www.fimfiction.net/user/Cloud+Hop" target="_blank"><img style="float:left;" src="Cloudhop_goggles.png" alt="Cloud Hop Avatar" title="If you aren't careful, he might cute you to death." onclick="EarnAchievement(203);"/></a>
@@ -202,6 +202,7 @@
     ParseGame(src);
     InitializeGame();
     EarnAchievement(202);
+    CheckAchievements(Object.keys(achievementList));
   }
   function InitializeGame() {
     UpdateOverlay(-1,0);
@@ -212,6 +213,7 @@
     UpdateNews();
     updateUpgradesAchievements();
     stat_clicks.innerHTML = PrettyNum(Game.clicks);
+    CheckAchievements(Object.keys(achievementList));
   }
   function LoadGame() { 
     if(localStorage.getItem('game')!==null) { ParseGame(localStorage.getItem('game')); } 
@@ -273,8 +275,7 @@
   "septendecillion",
   "octodecillion",
   "novendecillion",
-  "vigintillion",
-  "centillion"];
+  "vigintillion"];
   
   function GetRandNum(min, max) { // Random number in the range [low, high) 
     return Math.floor(Math.random()*(max-min))+min;
@@ -666,6 +667,8 @@
       Game.muffins += achievementList[id].muffins;
       Game.achievement_muffins += achievementList[id].muffins;
       updateUpgradesAchievements();
+      UpdateSPS();
+      UpdateOverlay(null, null);
       if(Game.achievementcount >= (achievementCount-1)) {
         EarnAchievement(255);
       }
@@ -673,7 +676,7 @@
   }
   function CheckAchievements(list) {
     for(var i = 0; i < list.length; ++i) {
-      if(achievementList[list[i]].cond()) {
+      if(achievementList[list[i]].cond !== undefined && achievementList[list[i]].cond()) {
         EarnAchievement(list[i]);
       }
     }
@@ -872,11 +875,13 @@
   }
   function UpdateUpgradeOverlay(item, x, y) {
     var overlay = document.getElementById("upgradeoverlay");
+    var storeupgrades = document.getElementById('storeupgrades');
     if(item != null && item >= curUpgradeList.length) { item = -1; }
     
     if(y != null && item >= 0) {
       overlay.style.left = x-316 + 'px';
       overlay.style.top = Math.max(y-14,0) + 'px';
+      if(y > (storeupgrades.offsetHeight + storeupgrades.offsetTop)) { item = -1; }
     }
     if(item == null) {
       item = overlay.getAttribute('data-item', item);
@@ -904,7 +909,7 @@
     var totalCost=0;
     for(var i = 0; i < n; ++i) {
       var cost = Store[id].cost(Game.store[id]);
-      if(Game.smiles >= cost) {
+      if(Game.smiles >= cost && (id != 1 || !NeedsMorePonies())) {
         numPurchase++;
         totalCost+=cost;
         Earn(-1 * cost);
@@ -955,9 +960,9 @@
     }
     
     UpdateSPS();
-    UpdateUpgradeOverlay(null, null, null);
     updateUpgradesAchievements();
     UpdateStore();
+    UpdateUpgradeOverlay(null, null, null);
   }
   function distance(x1,y1,x2,y2) {
      return Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
@@ -1079,9 +1084,7 @@
     var upgrades = document.getElementById('storeupgrades');
     actualTop = upgrades.offsetTop-wrapper.scrollTop;
     if((event.clientX>wrapper.offsetLeft) && (event.clientY>actualTop)) {
-      item = Math.floor((event.clientY - actualTop)/52)*6 + Math.floor((event.clientX - wrapper.offsetLeft)/52);
-      if(item >= Store.length) { item = -1; }
-    
+      item = Math.floor((event.clientY - actualTop)/52)*6 + Math.floor((event.clientX - wrapper.offsetLeft)/52);  
     }
     UpdateUpgradeOverlay(item, event.clientX, event.clientY);
     
