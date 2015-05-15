@@ -1,6 +1,13 @@
 # Pony Clicker Change Log
 This is the change log for Pony Clicker. Some minor changes may not be reflected in this log.
 
+## v0.84
+- Rapidly changing numbers now have a fixed number of decimal places (MaxLaumeister)
+- Use Open Sans everywhere and fix font CSS (ngyikp)
+- Fixed #19: Scrolling past game area
+- Fixed #9: Grand Galloping Gala and Coronation prices inverted
+- Nerfed the hell out of impossible store achievements (See #16: Literally unreachable achievements)
+
 ## v0.83
 - Fixed #13: Pony clicks and buildings owned won't update on loading saved data
 - Fixed regression in how menu SPC was being updated

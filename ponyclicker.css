@@ -98,7 +98,7 @@ body {
   margin:0;
   padding:0;
   border-left:4px #000 solid;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 .store ol {
   list-style-type: none;
@@ -202,6 +202,7 @@ body {
   position:relative;
   padding-right:350px;
   height:100%;
+  overflow:hidden;
 }
 .tooltip {
   position:absolute;
@@ -212,7 +213,7 @@ body {
   border-left: 2px #795339 solid; 
   border-bottom: 3px #3a281c solid; 
   border-right: 2px #3a281c solid; 
-  padding: 4px;
+  padding: 2px 4px 4px 4px;
   color: #bbb;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -226,23 +227,24 @@ body {
   width:350px;
 }
 .tooltip .title p {
-  margin: 1px 0 -3px 0;
+  margin: 0 80px 0 0;
   font-variant: small-caps;
   font-weight: bold;
   font-size: 18px;
   color:#fff;
 }
 .tooltip .title span {
-  font-size: 16px;
+  font-size: 14px;
+  font-variant: small-caps;
   position:absolute;
-  top:-3px;
+  top:-6px;
   right:5px;
   height:5px;
   color:#fff;
 }
 .tooltip .title span img {
   position:relative;
-  top:5px;
+  top:7px;
   right:2px;
 }
 .tooltip .title div {
@@ -268,7 +270,7 @@ body {
 }
 .tooltip ol li i {
   display: block;
-  font-weight: normal;
+  font-style: normal;
   font-size: 10px;
   margin-left: 25px;
 }
@@ -341,13 +343,15 @@ body {
 .menu {
   display:none;
   position:absolute;
-  width:290px;
+  width:298px;
   border-right: 4px #000 solid;
   height:100%;
   background:#222;
   color: #dfdfdf;
-  padding: 4px;
   overflow:auto;
+}
+.menu .padding {
+  padding: 4px;
 }
 .menu .fade {
   position: relative;
@@ -494,7 +498,7 @@ a:hover {
   position:absolute;
   top:6px;
   right:10px;
-  font-weight: normal;
+  font-style: normal;
   font-size: 12px;
   color:#aaa;
 }
@@ -601,7 +605,7 @@ a:hover {
   position:absolute;
   top:6px;
   right:10px;
-  font-weight: normal;
+  font-style: normal;
   font-size: 12px;
   color:#aaa;
 }
