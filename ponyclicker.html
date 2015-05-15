@@ -369,7 +369,7 @@
     x = Math.floor(x/Math.pow(10,d-(d%3)-3));
     var n = Math.floor((d-3)/3) - 1;
     if(n >= number_names.length) return "Infinity";
-    return (x/1000) + " " + number_names[n];
+    return (x/1000).toFixed(3) + " " + number_names[n];
   }
   function Pluralize(n, s) { return PrettyNum(n) + s + ((n==1)?'':'s'); }
   
