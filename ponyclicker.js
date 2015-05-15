@@ -792,22 +792,21 @@ $(function(){
       lastTick = timestamp;
     }
     if(Game.settings.useCanvas && (hasFocus || Game.delta>framelength)) {
-      var canvas = {w:$canvas.width(), h:$canvas.height()},
-          grd = ctx.createLinearGradient(0,0,0,canvas.h);
+      var grd = ctx.createLinearGradient(0,0,0,canvas.height);
       grd.addColorStop(0,"#d8f6ff");
       grd.addColorStop(1,"#1288e2");
       ctx.fillStyle = grd;
-      ctx.fillRect(0,0,canvas.w,canvas.h);
+      ctx.fillRect(0,0,canvas.width,canvas.height);
 
       $img_rays.css({width:2470,height:2460});
       $img_ground.css({width:2501,height:560});
       ctx.save();
 
       var calc = function(k, $el){
-        return canvas[k[0]]/(k === 'width'?2:1) - $el[k]()/2;
+        return canvas[k]/(k === 'width'?2:1) - $el[k]()/2;
       };
       drawImage($img_rays, calc('width',$img_rays), calc('height',$img_rays), ((timestamp - startTime)/3000)%(2*Math.PI));
-      drawImage($img_ground, calc('width',$img_ground), calc('height',$img_ground), 0);
+      drawImage($img_ground, calc('width',$img_ground)*.64, calc('height',$img_ground), 0);
     }
     window.requestAnimationFrame(UpdateGame);
   }
