@@ -80,10 +80,10 @@
   </div>
   <div id="credits" class="modal" style="width: 450px;display:none;margin-top:-200px;">
     <div class="button" style="position:absolute; right:0; top:0" onclick="document.getElementById('credits').style.display='none';">[x]</div>
-    <b>Pony Clicker v0.85 <i>by</i> Cloud Hop</b>
+    <b>Pony Clicker v0.86 <i>by</i> Cloud Hop</b>
     <hr/>
     <div>
-      <a href="https://www.fimfiction.net/user/Cloud+Hop" target="_blank"><img style="float:left;" src="Cloudhop_goggles.png" alt="Cloud Hop Avatar" title="If you aren't careful, he might cute you to death." onclick="EarnAchievement(203);"/></a>
+      <a href="http://blackhole12.deviantart.com/art/Goggles-Cloud-Hop-526840667" target="_blank"><img style="float:left;" src="Cloudhop_goggles.png" alt="Cloud Hop Avatar" title="If you aren't careful, he might cute you to death." onclick="EarnAchievement(203);"/></a>
       Cloud Hop is a pegasus who works at the weather factory. He's also an <a href="http://blackhole12.blogspot.com/" target="_blank">applied mathematician</a> who makes <a href="https://github.com/blackhole12" target="_blank">games</a> and <a href="https://erikmcclure.bandcamp.com/album/aurora-theory" target="_blank">music</a>. Sometimes he puts them on the internet, corrupting it with the magic of friendship.
       <ul>
         <li><a href="https://www.fimfiction.net/user/Cloud+Hop" target="_blank">Fimfiction</a></li>
@@ -424,7 +424,7 @@
     '205': { name:"You Monster", desc: "Sell a friendship.", muffins:1},
     '255': { name:"Completionist", desc: "Get all the achievements.", muffins:100}
   };
-  
+  var extraAchievements = Object.keys(achievementList).length-2;
   function genAchievements(names, amounts, descgen, condgen) {
     var ids = [];
     
@@ -479,7 +479,7 @@
     function(n) { return "Buy <b>"+Pluralize(n, "</b> " + Store[11].name.toLowerCase()) + "."; },
     genShopCond(11)));
     
-  achievementCount += 7; // for our special ones at the end
+  achievementCount += extraAchievements; // for our special ones at the end
   document.getElementById('achievements_total').innerHTML = achievementCount.toFixed(0);
   
   var score = document.getElementById("scorenum");
