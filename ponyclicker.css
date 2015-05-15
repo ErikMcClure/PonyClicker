@@ -572,6 +572,7 @@ a:hover {
   border-right: 2px #3a281c solid; 
   padding: 2px 4px 4px 4px;
   color: #bbb;
+  line-height: 1.3;
   pointer-events: none;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
