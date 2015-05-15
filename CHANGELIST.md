@@ -1,6 +1,11 @@
 # Pony Clicker Change Log
 This is the change log for Pony Clicker. Some minor changes may not be reflected in this log.
 
+## v0.83
+- Fixed #13: Pony clicks and buildings owned won't update on loading saved data
+- Fixed regression in how menu SPC was being updated
+- Added analytics
+
 ## v0.82
 - Added changelist
 - Fixed #2: Tooltip displays wrong value
