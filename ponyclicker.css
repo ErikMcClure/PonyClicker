@@ -10,6 +10,8 @@ body {
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d8f6ff', endColorstr='#1288e2',GradientType=0 ); /* IE6-9 */
   color:#000;
   overflow: hidden;
+  font-size: 12px;
+  font-family: "Open Sans", sans-serif;
 }
 .ponies {
   position:relative;
@@ -55,7 +57,8 @@ body {
   position:absolute;
   width:100%;
   margin:0;
-  font: bold 16px "Open Sans";
+  font-weight: bold;
+  font-size: 16px;
   color:#000;
   text-align: center;
 }
@@ -70,7 +73,9 @@ body {
 
 #score {
   position:relative;
-  font: bold 40px/100% "Open Sans";
+  font-weight: bold;
+  font-size: 40px;
+  line-height: 100%;
   letter-spacing: 1px;
   text-align:center;
   top:100px;
@@ -93,7 +98,7 @@ body {
   margin:0;
   padding:0;
   border-left:4px #000 solid;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 .store ol {
   list-style-type: none;
@@ -106,7 +111,9 @@ body {
   background: #593319;
   color:#fcfcfc;
   padding: 0px 5px 13px 6px;
-  font: small-caps bold 24px "Open Sans";
+  font-variant: small-caps;
+  font-weight: bold;
+  font-size: 24px;
   line-height:20px;
   border-top: 2px #bb967d solid;
   border-left: 2px #bb967d solid;
@@ -146,7 +153,8 @@ body {
   position:relative;
   top:0;
   left:5px;
-  font: bold 14px "Open Sans";
+  font-weight: bold;
+  font-size: 14px;
 }
 .store li .cost span {
   position:relative;
@@ -155,7 +163,8 @@ body {
 }
 .store li #ponycost {
   position:absolute;
-  font: bold 14px "Open Sans";
+  font-weight: bold;
+  font-size: 14px;
   color: #909090;
   top:3px;
   left: 120px;
@@ -172,7 +181,9 @@ body {
   color: rgba(0,0,0,0.4);
 }
 .store .title {
-  font: bold 24px/100% "Open Sans";
+  font-weight: bold;
+  font-size: 24px;
+  line-height: 100%;
   letter-spacing: 1px;
   border-bottom: 4px #000 solid;
   color: #fff;
@@ -191,6 +202,7 @@ body {
   position:relative;
   padding-right:350px;
   height:100%;
+  overflow:hidden;
 }
 .tooltip {
   position:absolute;
@@ -201,7 +213,7 @@ body {
   border-left: 2px #795339 solid; 
   border-bottom: 3px #3a281c solid; 
   border-right: 2px #3a281c solid; 
-  padding: 4px;
+  padding: 2px 4px 4px 4px;
   color: #bbb;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -215,25 +227,28 @@ body {
   width:350px;
 }
 .tooltip .title p {
-  margin: 1px 0 -3px 0;
-  font: small-caps bold 18px "sans-serif";
+  margin: 0 80px 0 0;
+  font-variant: small-caps;
+  font-weight: bold;
+  font-size: 18px;
   color:#fff;
 }
 .tooltip .title span {
-  font: 16px "sans-serif";
+  font-size: 14px;
+  font-variant: small-caps;
   position:absolute;
-  top:-3px;
+  top:-6px;
   right:5px;
   height:5px;
   color:#fff;
 }
 .tooltip .title span img {
   position:relative;
-  top:5px;
+  top:7px;
   right:2px;
 }
 .tooltip .title div {
-  font: 14px "sans-serif";
+  font-size: 14px;
 }
 .tooltip .title {
   display:inline;
@@ -248,7 +263,6 @@ body {
 }
 .tooltip ol li {
   font-size: 80%;
-  line-height: 120%;
 }
 .tooltip ol li b {
   color: #fff;
@@ -256,12 +270,15 @@ body {
 }
 .tooltip ol li i {
   display: block;
-  font: normal 10px "sans-serif";
+  font-style: normal;
+  font-size: 10px;
   margin-left: 25px;
 }
 
 .tooltip ol li:before {
-  font: 900 14px/0px "sans-serif";
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 0;
   content:"· "
 }
 .tooltip hr {
@@ -289,7 +306,8 @@ body {
   border-bottom: 1px #333 solid; 
   border-right: 1px #333 solid; 
   padding: 3px;
-  font: bold 16px "Open Sans";
+  font-weight: bold;
+  font-size: 16px;
   cursor: pointer;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -325,13 +343,15 @@ body {
 .menu {
   display:none;
   position:absolute;
-  width:290px;
+  width:298px;
   border-right: 4px #000 solid;
   height:100%;
   background:#222;
   color: #dfdfdf;
-  padding: 4px;
   overflow:auto;
+}
+.menu .padding {
+  padding: 4px;
 }
 .menu .fade {
   position: relative;
@@ -357,7 +377,9 @@ body {
 .modal b {
   display:block;
   text-align: center;
-  font: bold small-caps 22px "Open Sans";
+  font-weight: bold;
+  font-variant: small-caps;
+  font-size: 22px;
   letter-spacing: 1px; 
   color: #dfdfdf;
 }
@@ -398,7 +420,8 @@ a:hover {
   
 .mousetext {
   position:absolute;
-  font: bold 18px "Open Sans";
+  font-weight: bold;
+  font-size: 18px;
   color:#fff;
   text-shadow: 0 0 1px #000; 
   background: none !important;
@@ -467,13 +490,16 @@ a:hover {
 }
 #notices div strong {
   display:block;
-  font: small-caps bold 18px "Open Sans";
+  font-variant: small-caps;
+  font-weight: bold;
+  font-size: 18px;
 }
 #notices div i {
   position:absolute;
   top:6px;
   right:10px;
-  font: normal 12px "Open Sans";
+  font-style: normal;
+  font-size: 12px;
   color:#aaa;
 }
 #notices div b {
@@ -487,7 +513,8 @@ a:hover {
 #notices div p {
   margin: 0.25em 0 0 0;
   color:#ccc;  
-  font: normal 14px "sans-serif";
+  font-weight: normal;
+  font-size: 14px;
 }
 
 #canvas {
@@ -530,7 +557,9 @@ a:hover {
 #achievements .hidden::after {
   position:absolute;
   content: "?";
-  font: bold 40px/50px "sans-serif";
+  font-weight: bold;
+  font-size: 40px;
+  line-height: 50px;
   color:#aaa;
   left:15px;
 }
@@ -547,6 +576,7 @@ a:hover {
   border-right: 2px #3a281c solid; 
   padding: 2px 4px 4px 4px;
   color: #bbb;
+  line-height: 1.3;
   pointer-events: none;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -566,14 +596,17 @@ a:hover {
 .achievement .menutooltip strong {
   display:block;
   max-width: 10em;
-  font: small-caps bold 18px "Open Sans";
+  font-variant: small-caps;
+  font-weight: bold;
+  font-size: 18px;
   color: #f0f0f0;
 }
 .achievement .menutooltip i {
   position:absolute;
   top:6px;
   right:10px;
-  font: normal 12px "Open Sans";
+  font-style: normal;
+  font-size: 12px;
   color:#aaa;
 }
 .achievement .menutooltip b {
@@ -587,7 +620,8 @@ a:hover {
 .achievement .menutooltip p {
   margin: 0.25em 0 0 0;
   color:#ccc;  
-  font: normal 14px "sans-serif";
+  font-weight: normal;
+  font-size: 14px;
 }
 .store .upgrades {
   max-height:55px;
