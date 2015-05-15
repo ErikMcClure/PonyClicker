@@ -112,7 +112,8 @@
       <br/><strong>Playtesters:</strong> Fyrestorm, Karzafal, #fimfiction IRC
     </p>
     <hr/>
-    <div class="footer"><a href="https://github.com/blackhole12/PonyClicker" target="_blank">Fork this project on Github</a></div>
+    <div class="footer"><a href="https://github.com/blackhole12/PonyClicker" target="_blank">Fork this project on Github</a>
+    <br/> <a href="https://github.com/blackhole12/PonyClicker/blob/gh-pages/CHANGELIST.md" target="_blank">View Changelog</a></div>
   </div>
   <div id="upgradeoverlay" class="tooltip" data-item="-1"></div>
   <div id="mousetexts"></div>
@@ -243,7 +244,7 @@
     {cost:0,count:0,name:"Grand Galloping Gala", plural: "grand galloping galas", desc: "Celebrate the Grand Galloping Gala with ponies from all over Equestria!", formula: "Generates one smile for every pony you have, times the number of friendships you have, times the number of buildings you have.<i>SPS = P&times;F&times;B</i>"}, //P*F*(B+1)
     {cost:0,count:0,name:"Coronation", plural: "coronations", desc: "Make some random pony a princess so you have an excuse to party all night!", formula: "Generates one smile per friendship, times two for every pony you have, plus the number of buildings you have.<i>SPS = 2<sup>P</sup>&times;F&plus;B</i>"}, //2^P*F+B
     {cost:0,count:0,name:"National Holiday", plural: "national holidays", desc: "Declare a national holiday so everypony in equestria can party with you instead of being productive!", formula: "Generates one smile per friendship, times the number of buildings you have, times two for every pony you have.<i>2<sup>P</sup>&times;F&times;B</i>"}, //2^P*F*(B+1)
-    {cost:0,count:0,name:"Elements Of Harmony", plural: "Elements of Harmony", desc: "Use a giant rainbow friendship beam to solve all your problems!", formula: "Generates a bajillion smiles for every pony you have, plus one smile per friendship times the number of buildings you own.<i>P!&div;(P-5)! &plus; F&times;B</i>"}, //P!/(P-5)! + F*B
+    {cost:0,count:0,name:"Elements Of Harmony", plural: "Elements of Harmony", desc: "Use a giant rainbow friendship beam to solve all your problems!", formula: "Generates a bajillion smiles for every pony you have, plus one smile per friendship times the number of buildings you own.<i>P!&div;5! &plus; F&times;B</i>"}, //P!/(P-5)! + F*B
     //{cost:0,count:1,name:"DEBUGMOUSE", plural:"DEBUGMOUSES", desc: "DEBUG DO NOT USE"}
   ];
   
@@ -443,7 +444,7 @@
   achievements_clicks.push(2);
     
   var achievements_smiles = genAchievements(
-    ["Laughter", "Joy", "Bliss", "Nirvana", "Ecstasy", "Pursuit of Happyness", "You Can Stop Now", "This Is Ridiculous", "Go Read A Book", "How?!"],
+    ["Joy", "Glee", "Bliss", "Nirvana", "Ecstasy", "Pursuit of Happyness", "You Can Stop Now", "This Is Ridiculous", "Go Read A Book", "How?!"],
     [100,10000,1000000,100000000,10000000000,1000000000000,100000000000000,10000000000000000,1000000000000000000,100000000000000000000],
     function(n) { return "Get <b>"+PrettyNum(n)+"</b> smiles."; },
     function(n) { return function() { return Game.totalsmiles >= n; }; });
@@ -830,7 +831,7 @@
     }
     window.requestAnimationFrame(UpdateGame);
   }
-  Earn(99999);
+  
   function UpdateOverlay(item, y) {
     var overlay = document.getElementById("overlay");
     if(y != null && item >= 0) {
