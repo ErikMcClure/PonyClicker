@@ -50,7 +50,7 @@
       <br/>Muffins: <span id="stat_muffins">0</span> <span class="fade" style="display:none;">(<span id="stat_achievementmuffins">0</span> from achievements)</span>
       <hr/>
       <div class="button" onclick="var x = window.prompt('Paste your exported game data here to import it. WARNING: This will overwrite your current game, even if the data is corrupt! Be sure you export your current game if you don\'t want to lose anything!',''); if(x!==null) { ImportGame(x); }">Import</div>
-      <div class="button" onclick="if(window.confirm('This will destroy all your cookies, buildings, and upgrades, but you\'ll keep you\'re achievements and your muffins. Are you sure you want to do this?')) { ResetGame(); }" style="color:#c00">Reset</div>
+      <!--<div class="button" onclick="if(window.confirm('This will destroy all your cookies, buildings, and upgrades, but you\'ll keep you\'re achievements and your muffins. Are you sure you want to do this?')) { ResetGame(); }" style="color:#c00">Reset</div>-->
       <div class="button" onclick="if(window.confirm('This will irreversibly wipe ALL your data, including all settings and all achievements! Are you certain you want to do this?')) { WipeAllData(); }" style="color:#c00">Wipe All Data</div>
       <hr/>
       Upgrades Owned: <span id="upgrades_owned"></span>/<span id="upgrades_total"></span>
@@ -68,7 +68,6 @@
     <ol id="store"></ol>
   </div>
   
-  <div id="overlay" class="tooltip" data-item="2"></div>
   <div id="exportwindow" class="modal" style="width: 350px;display:none;margin-top:-150px;">
     <b>Export Save</b>
     <hr/>
@@ -81,7 +80,7 @@
   </div>
   <div id="credits" class="modal" style="width: 450px;display:none;margin-top:-200px;">
     <div class="button" style="position:absolute; right:0; top:0" onclick="document.getElementById('credits').style.display='none';">[x]</div>
-    <b>Pony Clicker v0.8 <i>by</i> Cloud Hop</b>
+    <b>Pony Clicker v0.82 <i>by</i> Cloud Hop</b>
     <hr/>
     <div>
       <a href="https://www.fimfiction.net/user/Cloud+Hop" target="_blank"><img style="float:left;" src="Cloudhop_goggles.png" alt="Cloud Hop Avatar" title="If you aren't careful, he might cute you to death." onclick="EarnAchievement(203);"/></a>
@@ -118,6 +117,7 @@
   <div id="upgradeoverlay" class="tooltip" data-item="-1"></div>
   <div id="mousetexts"></div>
   <div id="notices"></div>
+  <div id="overlay" class="tooltip" data-item="2"></div>
   <div id="loadscreen"><div class="spinner"></div><div class="spinner2"></div><div class="spinner3"></div></div>
   <script type="text/javascript">
   function CreateGame() {
@@ -233,7 +233,7 @@
     
   var Store = [
     {cost:0,count:1,name:"Pony", plural: "ponies", desc: "This is a pony. Ponies need friendships to generate smiles."}, 
-    {cost:0,count:0,name:"Friendship", plural: "friendships", desc: "A friendship between two ponies. You can't buy a friendship if everypony is friends with everypony else!", formula: "Each friendship generates 1 smile per second"}, 
+    {cost:0,count:0,name:"Friendship", plural: "friendships", desc: "A friendship between two ponies. You can't buy a friendship if everypony is friends with everypony else!" }, 
     {cost:0,count:0,name:"Recital", plural: "recitals", desc: "A small recital for everypony you know.", formula: "Generates one smile per pony.<i>SPS = P</i>"}, // P
     {cost:0,count:0,name:"Party", plural: "parties", desc: "Throw a party for all your friends!", formula: "Generates one smile per friendship.<i>SPS = F</i>"}, // F
     {cost:0,count:0,name:"Parade", plural: "parades", desc: "Throw a big parade for everypony and all their friends!", formula: "Generates two smiles for each friendship and each pony.<i>SPS = 2&times;(P&plus;F)</i>"}, // (P+F)*2.0
@@ -540,7 +540,9 @@
   var storehtml = '';
   for(var i = 0; i < Store.length; ++i) {
     var ponyreq = (i!=1)?'':'<span id="ponycost">(2 PONIES)</span>';
-    storehtml += '<li class="disable" id="buy' + i + '" onclick="if(this.className != \'disable\') { Buy(' + i + ') } else { ShowMouseText(\'Too expensive!\',0,-40); }" oncontextmenu="Sell(' + i + '); return false;">' + Store[i].name.toLowerCase() + '<br/><span class="cost">'+smilethumb+'<span id="cost' + i + '">0</span></span>' + ponyreq + '<span class="count" id="count' + i + '">0</span></li>';
+    var expensive = (i!=1)?"\'Too expensive!\'":"(NeedsMorePonies()?\'Not enough ponies!\':\'Too expensive!\')";
+    
+    storehtml += '<li class="disable" id="buy' + i + '" onclick="if(this.className != \'disable\') { Buy(' + i + ') } else { ShowMouseText('+expensive+',0,-40); }" oncontextmenu="Sell(' + i + '); return false;">' + Store[i].name.toLowerCase() + '<br/><span class="cost">'+smilethumb+'<span id="cost' + i + '">0</span></span>' + ponyreq + '<span class="count" id="count' + i + '">0</span></li>';
   }
   store.innerHTML += storehtml;
   
@@ -675,6 +677,9 @@
     }
   }
   var lastUpgradeHTML = '';
+  function NeedsMorePonies() {
+    return Game.store[1] >= triangular(Game.store[0]);
+  }
   function UpdateStore() {
     var ponycost = document.getElementById("ponycost");
     ponycost.innerHTML = "(NEEDS " + Math.ceil(inv_triangular(Game.store[1]+1)) + " PONIES)";
@@ -683,7 +688,7 @@
       var item = Store[i];
       var count = Game.store[i];
       var cost = item.cost(count);
-      if(i == 1 && count >= triangular(Game.store[0])) {
+      if(i == 1 && NeedsMorePonies()) {
         document.getElementById("buy" + i).className = "disable";
         ponycost.style.display = 'inline';
       } else {
@@ -725,13 +730,11 @@
         alert("ILLEGAL UPGRADE: " + Game.upgrades[i]);
       }
     }
-    stat_SPC.innerHTML = PrettyNum(Game.SPC);
-    
-    if(!docache) { Game.SPC = SPC; } // HACK to fix SPC exploit
+    if(!docache) { Game.SPC = SPC; stat_SPC.innerHTML = PrettyNum(Game.SPC); } // HACK to fix SPC exploit
     
     var SPS = 0;
     for(var i = 0; i < res.length; ++i) {
-      if(docache) { Store[i].SPS_cache = res[i]*store[i]; }
+      if(docache) { Store[i].SPS_cache = res[i]; }
       SPS += res[i]*store[i];
     }
     return SPS;
@@ -827,6 +830,7 @@
     }
     window.requestAnimationFrame(UpdateGame);
   }
+  Earn(99999);
   function UpdateOverlay(item, y) {
     var overlay = document.getElementById("overlay");
     if(y != null && item >= 0) {
@@ -851,7 +855,7 @@
     if(xcount > 0) { html += '<div>['+PrettyNum(xcount)+' owned]</div>'; }
     html += '</div><hr/><p>'+x.desc+'</p><hr/><ol>';
     if(x.formula) { html += '<li>'+x.formula+'</li>'; }
-    if(x.SPS_cache > 0) { html += '<li>Each '+x.name.toLowerCase()+' generates <b>'+Pluralize(x.SPS_cache, ' smile')+'</b> per second</li>'; }
+    if(x.SPS_cache > 0 || item==1) { html += '<li>Each '+x.name.toLowerCase()+' generates <b>'+Pluralize(x.SPS_cache, ' smile')+'</b> per second</li>'; }
     if(xcount > 0 && x.SPS_cache > 0) { html += '<li><b>'+PrettyNum(xcount)+'</b> '+x.plural.toLowerCase()+' generating <b>'+Pluralize(xcount*x.SPS_cache, ' smile')+'</b> per second</li>'; }
     var nstore = Game.store.slice();
     nstore[item]+=1;
