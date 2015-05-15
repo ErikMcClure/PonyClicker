@@ -27,7 +27,7 @@
     </div>
   </div>
   <div class="button" id="menubutton" onclick="ShowMenu(true);">Menu &raquo;</div>
-  <div id="menu" class="menu">
+  <div id="menu" class="menu"><div class="padding">
   <div class="button" onclick="ShowMenu(false);">Menu &laquo;</div>
   <div class="button" onclick="EarnAchievement(200); SaveGame()" title="Manually save the game (the game auto-saves every 60 seconds).">Save</div>
   <div class="button" onclick="EarnAchievement(201); document.getElementById('exportarea').innerHTML = ExportGame(); document.getElementById('exportwindow').style.display='inline-block';">Export</div>
@@ -61,7 +61,7 @@
       <hr/>
       <span style="display:block;font-size:70%;height:40px;"><a href="https://www.youtube.com/watch?v=otAFRGL4yX4" onclick="EarnAchievement(204);" target="_blank">The smile song is mandatory while playing this.</a></span>
     <div id="menuoverlay" class="tooltip">TEST</div>
-  </div>
+  </div></div>
   <div class="store" id="storewrapper">
     <div class="title">Sugarcube Corner</div>
     <div class="upgrades" id="storeupgrades"></div>
@@ -80,7 +80,7 @@
   </div>
   <div id="credits" class="modal" style="width: 450px;display:none;margin-top:-200px;">
     <div class="button" style="position:absolute; right:0; top:0" onclick="document.getElementById('credits').style.display='none';">[x]</div>
-    <b>Pony Clicker v0.83 <i>by</i> Cloud Hop</b>
+    <b>Pony Clicker v0.84 <i>by</i> Cloud Hop</b>
     <hr/>
     <div>
       <a href="https://www.fimfiction.net/user/Cloud+Hop" target="_blank"><img style="float:left;" src="Cloudhop_goggles.png" alt="Cloud Hop Avatar" title="If you aren't careful, he might cute you to death." onclick="EarnAchievement(203);"/></a>
@@ -439,7 +439,7 @@
   var achievementCount = 3;
   var achievements_clicks = genAchievements(
     ["That tickles!", "Tickle War", "Tickle War II: The Retickling", "This Can't Be Healthy", "Carpal Tunnel Syndrome", "Wrist In Pieces", "Clickception"],
-    [10,100,1000,10000,100000,1000000,10000000],
+    [10,100,1000,10000,50000,100000,200000],
     function(n) { return "Click a pony <b>"+PrettyNum(n)+"</b> times."; },
     function(n) { return function() { return Game.clicks >= n; }; });
   achievements_clicks.push(2);
@@ -458,7 +458,7 @@
   function genShopAchievements(item, names) {
     return genAchievements(
     names,
-    [1, 50, 100, 200, 300],
+    [1, 50, 100, 150, 200],
     function(n) { return "Buy <b>"+Pluralize(n, "</b> " + Store[item].name.toLowerCase()) + "."; },
     genShopCond(item));
   }
@@ -474,7 +474,7 @@
   achievements_shop = achievements_shop.concat(genShopAchievements(10, ["Nightmare Night", "Mother's Day", "Farmer's Day", "Rainbow Dash Is Awesome Day", "National Butt Day"]));
   achievements_shop = achievements_shop.concat(genAchievements(
     ["Loyalty", "By Your Powers Combined", "Honesty", "Laughter", "Generosity", "Kindness"],
-    [1, 6, 50, 100, 200, 300],
+    [1, 6, 20, 40, 80, 160],
     function(n) { return "Buy <b>"+Pluralize(n, "</b> " + Store[11].name.toLowerCase()) + "."; },
     genShopCond(11)));
     
@@ -626,13 +626,13 @@
     return Math.pow(x/cost, 1.0/n);
   }*/
   
-  var Fvals = [4,12,30,35,45,45,45,51,51,100];
+  var Fvals = [4,12,30,35,45,45,45,70,51,100];
   
   for(var i = 2; i < 12; ++i) {
     var cost = fn_cost1(Fvals[i-2]);
     var b = fn_estimatebuildings(cost, i);
     Store[i].initcost = initcost(Fvals[i-2],i,b);
-    Store[i].costcurve = 1.2 + (i*i*0.0045); //fn_costcurve(5, fn_rratio(i-2)*1.5, i, Store[i].initcost);
+    Store[i].costcurve = 1.2 + (i*i*0.0048); //fn_costcurve(5, fn_rratio(i-2)*1.5, i, Store[i].initcost);
   }  
   
   Store[0].cost = fn_cost0;
