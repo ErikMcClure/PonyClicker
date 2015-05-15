@@ -363,15 +363,15 @@
     document.getElementById('news' + n2).className = 'inactive';
     document.getElementById('news' + n1).innerHTML = "News: " + GetNews();
   }
-  function PrettyNum(x) {
+  function PrettyNum(x, fixed) {
     var d = Math.floor(Math.log10(x));
     if(d<6) return x.toFixed(0);
     x = Math.floor(x/Math.pow(10,d-(d%3)-3));
     var n = Math.floor((d-3)/3) - 1;
     if(n >= number_names.length) return "Infinity";
-    return (x/1000).toFixed(3) + " " + number_names[n];
+    return (fixed?(x/1000).toFixed(3):(x/1000)) + " " + number_names[n];
   }
-  function Pluralize(n, s) { return PrettyNum(n) + s + ((n==1)?'':'s'); }
+  function Pluralize(n, s, fixed) { return PrettyNum(n, fixed) + s + ((n==1)?'':'s'); }
   
   function basic_upgrade(sps, item, p, m) { sps[item] = (sps[item]+p)*(m+1); return sps; }
   function global_upgrade(sps, p, m) { for(var i = 0; i < sps.length; ++i) { sps[i] = (sps[i]+p)*(m+1); } return sps; }
@@ -652,9 +652,9 @@
   function Earn(num) {
     if(num>0) { Game.totalsmiles += num; }
     Game.smiles += num;
-    score.innerHTML = Pluralize(Game.smiles, " smile");
-    stat_cursmiles.innerHTML = PrettyNum(Game.smiles);
-    stat_totalsmiles.innerHTML = PrettyNum(Game.totalsmiles);
+    score.innerHTML = Pluralize(Game.smiles, " smile", true);
+    stat_cursmiles.innerHTML = PrettyNum(Game.smiles, true);
+    stat_totalsmiles.innerHTML = PrettyNum(Game.totalsmiles, true);
     UpdateStore();
     CheckAchievements(achievements_smiles);
   }
