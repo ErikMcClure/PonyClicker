@@ -771,7 +771,7 @@ $(function(){
       lastSave = timestamp;
     }
     if((timestamp - lastTick)>500) {
-      Game.totalTime += 500;
+      Game.totalTime += timestamp - lastTick;
       $stat_time.html(displayTime(Game.totalTime));
       UpdateOverlay(null, null);
       lastTick = timestamp;
@@ -1046,17 +1046,6 @@ $(function(){
     EarnAchievement(1);
   };
 
-  $doc
-    .on('mousemove',setMouseMove)
-    .on('keydown', setShiftDown)
-    .on('keyup', setShiftUp);
-  window.onbeforeunload = function (e) {
-      if(!Game.settings.closingWarn) { return null; }
-      e = e || window.event;
-      var text = "You are about to leave Pony Clicker!";
-      if(e) { e.returnValue = text; }
-      return text;
-  };
   var $showmenu = $('#showmenu').on('click',function(){ ShowMenu(true) }),
       $hidemenu = $('#hidemenu').on('click',function(){ ShowMenu(false) }),
       $exportWindow = $('#exportwindow'),
@@ -1098,10 +1087,23 @@ $(function(){
     EarnAchievement(204);
   });
 
-  InitializeGame();
-  ResizeCanvas();
-  window.requestAnimationFrame(UpdateGame);
+  // doOnLoad equivalent
   $w.on('load',function(){
+    $doc
+      .on('mousemove',setMouseMove)
+      .on('keydown', setShiftDown)
+      .on('keyup', setShiftUp);
+    window.onbeforeunload = function (e) {
+        if(!Game.settings.closingWarn) return null;
+        e = e || window.event;
+        var text = "You are about to leave Pony Clicker!";
+        if (e) e.returnValue = text;
+        return text;
+    };
+
+    InitializeGame();
+    ResizeCanvas();
+    window.requestAnimationFrame(UpdateGame);
     $loadscreen.css('opacity',0).delay(700).hide();
   });
 });
