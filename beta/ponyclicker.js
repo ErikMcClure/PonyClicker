@@ -11,8 +11,9 @@ $(function(){
       $EnableE = $('#EnableEffects'),
       $EnableF = $('#EnableFocus'),
       $EnableW = $('#EnableWarn'),
-      $upgrades_total = $('#upgrades_total');
-  
+      $upgrades_total = $('#upgrades_total'),
+      $ponyversion = {major:0,minor:86,revision:0};
+      
   function CreateGame() {
     return {
       upgrades:[], // list of upgrade IDs that are owned
@@ -324,6 +325,7 @@ $(function(){
     '203': { name:"Narcissism!", desc: "Click the image of Cloud Hop on the credits page.", muffins:1},
     '204': { name:"Music Makes Everything Better", desc: "Listen to the smile song.", muffins:1},
     '205': { name:"You Monster", desc: "Sell a friendship.", muffins:1},
+    '206': { name:"No Booping Allowed", desc: "Get <b>"+PrettyNum(1000000000000)+"</b> smiles with only 35 pony clicks.", muffins:1, cond:function() { return Game.clicks <= 35 && Game.totalsmiles >= 1000000000000; } },
     '255': { name:"Completionist", desc: "Get all the achievements.", muffins:100}
   };
 
@@ -339,6 +341,7 @@ $(function(){
     return ids;
   }
 
+  var extraAchievements = Object.keys(achievementList).length-3; // minus three because the array starts at 1 instead of 0
   var achievementCount = 3;
   var achievements_clicks = genAchievements(
     ["That tickles!", "Tickle War", "Tickle War II: The Retickling", "This Can't Be Healthy", "Carpal Tunnel Syndrome", "Wrist In Pieces", "Clickception"],
@@ -352,6 +355,7 @@ $(function(){
     [100,10000,1000000,100000000,10000000000,1000000000000,100000000000000,10000000000000000,1000000000000000000,100000000000000000000],
     function(n) { return "Get <b>"+PrettyNum(n)+"</b> smiles."; },
     function(n) { return function() { return Game.totalsmiles >= n; }; });
+  achievements_smiles.push(206); // Add "No Booping Allowed".
 
   function genShopCond(item) {
     return function(n) { return function() { return Game.store[item]>=n; }; };
@@ -381,7 +385,7 @@ $(function(){
     function(n) { return "Buy <b>"+Pluralize(n, "</b> " + Store[11].name.toLowerCase()) + "."; },
     genShopCond(11)));
 
-  achievementCount += 7; // for our special ones at the end
+  achievementCount += extraAchievements; // for our special ones at the end
   $achievements_total.html(achievementCount.toFixed(0));
 
   var $menu = $('#menu'),
@@ -842,11 +846,12 @@ $(function(){
           .append('<p>'+x.name+'</p><span>'+smilethumb+PrettyNum(xcost)+'</span>');
 
     if(xcount > 0) $title.append('<div>['+PrettyNum(xcount)+' owned]</div>');
-    $overlay.empty().append($title, '<hr><p>'+x.desc+'</p>');//<ol>
-    var $ol = $(document.createElement('ol'));
-    if(x.formula) $ol.append('<li>'+x.formula+'</li>');
-    if(x.SPS_cache > 0 || item==1) $ol.append('<li>Each '+x.name.toLowerCase()+' generates <b>'+Pluralize(x.SPS_cache, ' smile')+'</b> per second</li>');
-    if(xcount > 0 && x.SPS_cache > 0) $ol.append('<li><b>'+PrettyNum(xcount)+'</b> '+x.plural.toLowerCase()+' generating <b>'+Pluralize(xcount*x.SPS_cache, ' smile')+'</b> per second</li>');
+    $overlay.empty().append($title, '<hr><p>'+x.desc+'</p>');//<ul>
+    var $ul = $(document.createElement('ul'));
+
+    if(x.formula) $ul.append('<li>'+x.formula+'</li>');
+    if(x.SPS_cache > 0 || item==1) $ul.append('<li>Each '+x.name.toLowerCase()+' generates <b>'+Pluralize(x.SPS_cache, ' smile')+'</b> per second</li>');
+    if(xcount > 0 && x.SPS_cache > 0) $ul.append('<li><b>'+PrettyNum(xcount)+'</b> '+x.plural.toLowerCase()+' generating <b>'+Pluralize(xcount*x.SPS_cache, ' smile')+'</b> per second</li>');
 
     var nstore = Game.store.slice();
     nstore[item]+=1;
@@ -854,10 +859,14 @@ $(function(){
         sps_increase = nSPS - Game.SPS,
         payPerSmile = xcost/(nSPS - Game.SPS);
 
-    $ol.append('<li>Buying one '+x.name.toLowerCase()+' will increase your SPS by <b>'+PrettyNum(sps_increase)+'</b>'+(isFinite(payPerSmile)?'<i>You pay <b>'+Pluralize(payPerSmile, ' smile') + '</b> per +1 SPS</i>':'') + '</li></ol>');
+    $ul.append('<li>Buying one '+x.name.toLowerCase()+' will increase your SPS by <b>'+PrettyNum(sps_increase)+'</b>'+(isFinite(payPerSmile)?'<i>You pay <b>'+Pluralize(payPerSmile, ' smile') + '</b> per +1 SPS</i>':'') + '</li>');
 
-    if ($ol.children().length > 0) $overlay.append('<hr>',$ol);
-    $overlay.show();
+    // Display buy/sell information
+    var helpStr = '<li><kbd>Shift + Click</kbd> to buy 10';
+    if (xcount > 0) helpStr += ', <kbd>Right click</kbd> to sell 1';
+    $ul.append(helpStr+'</li>');
+    
+    $overlay.append('<hr>',$ul).show();
   }
   function UpdateUpgradeOverlay(item, x, y) {
     if(item != null && item >= curUpgradeList.length) item = -1;
@@ -885,15 +894,15 @@ $(function(){
   }
 
   function Buy(id) {
-    var n = Game.shiftDown?10:1;
-    var numPurchase=0;
-    var totalCost=0;
+    var n = Game.shiftDown ? 10 : 1,
+        numPurchase = 0,
+        totalCost = 0;
     for(var i = 0; i < n; ++i) {
       var cost = Store[id].cost(Game.store[id]);
       if(Game.smiles >= cost && (id != 1 || !NeedsMorePonies())) {
         numPurchase++;
         totalCost+=cost;
-        Earn(-1 * cost);
+        Earn(-cost);
         Game.store[id] += 1;
       }
     }
@@ -908,11 +917,10 @@ $(function(){
   }
   function Sell(id) {
     if(!id) return; // you can't sell ponies you heartless monster
-    if(id == 1) { EarnAchievement(205); }
 
-    var n = Game.shiftDown?10:1;
-    var numSell=0;
-    var totalCost=0;
+    var n = Game.shiftDown ? 10 : 1,
+        numSell = 0,
+        totalCost = 0;
     for(var i = 0; i < n; ++i) {
       if(Game.store[id]>0) {
         Game.store[id] -= 1;
@@ -922,9 +930,10 @@ $(function(){
         totalCost+=cost;
       }
     }
-    if(n>1) {
+    if(n>1)
       ShowNotice(Store[id].name, "Sold <b>" + numSell + " " + Store[id].plural + "</b> for <b>" + Pluralize(totalCost, " smile") + "</b>");
-    }
+    if(numSell>0 && id==1)
+      EarnAchievement(205);
     UpdateStore();
     UpdateSPS();
     UpdateOverlay(null, null);
@@ -1053,15 +1062,12 @@ $(function(){
   
   function CheckForUpdates() {
     $.ajax({
-      url:'./CHANGELIST.md',
-      dataType:'text',
-      beforeSend: function( xhr ) { xhr.overrideMimeType( "text/plain" ); }, // Firefox REQUIRES this, contentType is not sufficient. ¯\(°_o)/¯
-      contentType: 'text/plain',
+      url:'./version.json',
+      cache:'false', // jQuery bypasses cache by appending a timestamp to the request
+      dataType:'json',
+      beforeSend: function(xhr) { xhr.overrideMimeType( "application/json" ); }, // Firefox REQUIRES this, dataType is not sufficient. ¯\(°_o)/¯
       success: function(data,status,r) {
-        var ind = data.substring(2).indexOf('#')+2;
-        var end = data.substring(ind).indexOf('\n')+ind;
-        // This does NOT attempt any greater than comparison because doing this properly on version numbers is nontrivial. Example: v1.10 > v1.1
-        if(data.substring(ind+2,end).trim() != $('#ponyversion').html()) { 
+        if(data.major > $ponyversion.major || (data.major == $ponyversion.major && data.minor > $ponyversion.minor)) {
           $('#pagealert').addClass('pagealertactive');
         }        
       }
@@ -1152,6 +1158,7 @@ $(function(){
         if (e) e.returnValue = text;
         return text;
     };
+    $('#ponyversion').html($ponyversion.major + '.' + $ponyversion.minor);
     
     InitializeGame();
     ResizeCanvas();
