@@ -863,7 +863,7 @@ $(function(){
 
     // Display buy/sell information
     var helpStr = '<li><kbd>Shift + Click</kbd> to buy 10';
-    if (xcount > 0) helpStr += ', <kbd>Right click</kbd> to sell 1';
+    if (xcount > 0 && item>0) helpStr += ', <kbd>Right click</kbd> to sell 1'; // you can't sell ponies
     $ul.append(helpStr+'</li>');
     
     $overlay.append('<hr>',$ul).show();
