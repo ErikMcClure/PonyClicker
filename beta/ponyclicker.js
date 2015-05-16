@@ -1,4 +1,10 @@
 $(function(){
+  // Polyfill for old browsers and IE
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/log10
+  Math.log10 = Math.log10 || function(x) {
+    return Math.log(x) / Math.LN10;
+  };
+
   var $doc = $(document),
       $w = $(window),
       $loadscreen = $('#loadscreen'),
@@ -469,18 +475,19 @@ $(function(){
   function appendStoreClick($el,index){
     $el.on('click contextmenu',function(e){
       e.preventDefault();
-
-      if (!$(this).hasClass('disable')){
-        if (e.type === 'contextmenu') Sell(index);
-        else Buy(index);
+      if (e.type === 'contextmenu') { // you can ALWAYS try to sell something even if the button is disabled
+        Sell(index);
+      } else if (!$(this).hasClass('disable')){
+        Buy(index);
       }
-      else if (e.type === 'click') ShowMouseText(
-        (index!=1)?'Too expensive!'
-        :(
-          NeedsMorePonies()
-          ?'Not enough ponies!'
-          :'Too expensive!'
-        ),0,-40);
+      else if (e.type === 'click') { ShowMouseText(
+        (index!=1)?
+        'Too expensive!':
+          (NeedsMorePonies()?
+          'Not enough ponies!':
+          'Too expensive!')
+        ,0,-40);
+      }
     });
   }
     
@@ -705,7 +712,7 @@ $(function(){
     var SPC = Game.SPC;
 
     Game.SPC = 1;
-    for(var i = 0; i < Game.upgrades.length; ++i) {
+    for(var i = Game.upgrades.length-1; i >= 0; i-=1) {
       res = upgradeList[Game.upgrades[i]].fn(res, store);
       if(!res || !res.length) {
         alert("ILLEGAL UPGRADE: " + Game.upgrades[i]);
@@ -841,7 +848,7 @@ $(function(){
         sps_increase = nSPS - Game.SPS,
         payPerSmile = xcost/(nSPS - Game.SPS);
 
-    if (sps_increase > 0 && isFinite(payPerSmile)) $ol.append('<li>Buying one '+x.name.toLowerCase()+' will increase your SPS by <b>'+PrettyNum(sps_increase)+'</b><i>You pay <b>'+Pluralize(payPerSmile, ' smile') + '</b> per +1 SPS</li></ol>');
+    $ol.append('<li>Buying one '+x.name.toLowerCase()+' will increase your SPS by <b>'+PrettyNum(sps_increase)+'</b>'+(isFinite(payPerSmile)?'<i>You pay <b>'+Pluralize(payPerSmile, ' smile') + '</b> per +1 SPS</i>':'') + '</li></ol>');
 
     if ($ol.children().length > 0) $overlay.append('<hr>',$ol);
     $overlay.show();
@@ -1036,6 +1043,23 @@ $(function(){
     $board.css('padding-left',b?'259px':0);
     ResizeCanvas();
   }
+  
+  function CheckForUpdates() {
+    $.ajax({
+      url:'./CHANGELIST.md',
+      dataType:'text',
+      success: function(data,status,r) {
+        var ind = data.substring(2).indexOf('#')+2;
+        var end = data.substring(ind).indexOf('\n')+ind;
+        // This does NOT attempt any greater than comparison because doing this properly on version numbers is nontrivial. Example: v1.10 > v1.1
+        if(data.substring(ind+2,end).trim() != $('#ponyversion').html()) { 
+          $('#pagealert').addClass('pagealertactive');
+        }        
+      }
+    });
+    window.setTimeout(CheckForUpdates, 60000); //check every minute
+  }
+    
   // You would not believe the horrific sequence of events that led to the creation of this function.
   var setMouseMove = function(event){
     var root = $('#buy0')[0],
@@ -1101,7 +1125,11 @@ $(function(){
   $('#mandatory-fun').on('click',function(){
     EarnAchievement(204);
   });
-
+  
+  $('#pagealert').on('click',function(){
+    SaveGame(); Game.settings.closingWarn=false; location.reload(true);
+  });
+  
   // doOnLoad equivalent
   $w.on('load',function(){
     $doc
@@ -1115,10 +1143,11 @@ $(function(){
         if (e) e.returnValue = text;
         return text;
     };
-
+    
     InitializeGame();
     ResizeCanvas();
     window.requestAnimationFrame(UpdateGame);
     $loadscreen.css('opacity',0).delay(700).hide();
+    CheckForUpdates();
   });
 });
