@@ -1,6 +1,9 @@
 # Pony Clicker Change Log
 This is the change log for Pony Clicker. Some minor changes may not be reflected in this log.
 
+## v0.87
+- FAKE CHANGE
+
 ## v0.86
 - Fix timer so it uses the delta properly when tab isn't visible.
 - Rewrite everything in jQuery (DJDavid98)
