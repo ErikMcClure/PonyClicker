@@ -94,7 +94,7 @@ body {
   overflow-y: auto;
   border-left: 4px solid #000;
 }
-.store ol {
+.store ul {
   display: block;
   list-style-type: none;
   margin:0;
@@ -259,31 +259,24 @@ body {
 .tooltip p {
   margin: 0;
 }
-.tooltip ol {
+.tooltip ul {
   margin: 0;
-  padding: 0 0 0 5px;
-  list-style-type: none;
+  padding: 0 0 0 20px;
 }
-.tooltip ol li {
+.tooltip ul li {
   font-size: 80%;
 }
-.tooltip ol li b {
+.tooltip ul li b {
   color: #fff;
   font-weight:500;
 }
-.tooltip ol li i {
+.tooltip ul li i {
   display: block;
   font-style: normal;
   font-size: 10px;
   margin-left: 25px;
 }
 
-.tooltip ol li:before {
-  font-weight: bold;
-  font-size: 14px;
-  line-height: 0;
-  content:"· "
-}
 .tooltip hr {
   border-bottom:0;
   border-top: 1px #555 solid;
