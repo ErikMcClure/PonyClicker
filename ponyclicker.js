@@ -853,7 +853,7 @@ $(function(){
     if (xcount > 0) helpStr += '<br><kbd>Right click</kbd> to sell 1, <kbd>Shift + Right click</kbd> to sell 10';
     $ul.append(helpStr+'</li>');
 
-    if(x.formula) $ul.append('<li>'+x.formula+'</li>');
+    if(x.formula) $ul.append('<li class="formula">'+x.formula+'</li>');
     if(x.SPS_cache > 0 || item==1) $ul.append('<li>Each '+x.name.toLowerCase()+' generates <b>'+Pluralize(x.SPS_cache, ' smile')+'</b> per second</li>');
     if(xcount > 0 && x.SPS_cache > 0) $ul.append('<li><b>'+PrettyNum(xcount)+'</b> '+x.plural.toLowerCase()+' generating <b>'+Pluralize(xcount*x.SPS_cache, ' smile')+'</b> per second</li>');
 
@@ -861,9 +861,11 @@ $(function(){
     nstore[item]+=1;
     var nSPS = CalcSPS(nstore, false),
         sps_increase = nSPS - Game.SPS,
-        payPerSmile = xcost/(nSPS - Game.SPS);
+        payPerSmile = xcost/(nSPS - Game.SPS),
+        increaseText = sps_increase > 0 ? 'will increase your SPS by <b>'+PrettyNum(sps_increase)+'</b>' : "<b>won't</b> increase your SPS",
+        payPerSmileText = isFinite(payPerSmile) ? '<i>You pay <b>'+Pluralize(payPerSmile, ' smile') + '</b> per +1 SPS</i>' : '';
 
-    $ul.append('<li>Buying one '+x.name.toLowerCase()+' will increase your SPS by <b>'+PrettyNum(sps_increase)+'</b>'+(isFinite(payPerSmile)?'<i>You pay <b>'+Pluralize(payPerSmile, ' smile') + '</b> per +1 SPS</i>':'') + '</li>');
+    $ul.append('<li>Buying one '+x.name.toLowerCase()+' '+increaseText+payPerSmileText+'</li>');
 
     $overlay.append('<hr>',$ul).show();
   }
