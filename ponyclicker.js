@@ -409,8 +409,8 @@ $(function(){
       canvaslines = document.getElementById('canvaslines'),
       $canvaslines = $(canvaslines),
       ctxlines = canvaslines.getContext("2d"),
-      $img_rays = $(new Image()).attr('src','rays.svg'),
-      $img_ground = $(new Image()).attr('src','ground.svg'),
+      $img_rays = $(new Image()).attr('src','rays.svg').on('load', function(){ $img_rays.doneLoading = true; }), // the onload check is done for firefox, which gets overeager
+      $img_ground = $(new Image()).attr('src','ground.svg').on('load', function(){ $img_ground.doneLoading = true; }),
       $overlay = $('#overlay'),
       $upgradeoverlay = $('#upgradeoverlay'),
       $storeupgrades = $('#storeupgrades'),
@@ -663,6 +663,7 @@ $(function(){
     }
     return true;
   }
+  
   function UpdateStore() {
     $ponycost.html("(NEEDS " + Math.ceil(inv_triangular(Game.store[1]+1)) + " PONIES)").hide();
     for(var i = 0; i < Store.length; ++i) {
@@ -679,14 +680,17 @@ $(function(){
       $("#cost" + i).html(PrettyNum(cost));
       $("#count" + i).html(count);
     }
-
+    
     curUpgradeList = [];
+    var scopeUpgradeList = []; // we mark whether or not something is disabled by negating it's ID, but we can't put negatives in curUpgradeList.
     var achs = [];
     for(var i = 1; i < upgradeList.length; ++i) { // start at one to skip UNDEFINED upgrade
       if(upgradeList[i].cost < (Game.totalsmiles*0.8) && Game.upgradeHash[i] == null) {
+        var hide = upgradeList[i].cost>Game.smiles;
         curUpgradeList.push(i);
+        scopeUpgradeList.push(hide?-i:i);
         var $ach = $(document.createElement('div'))
-          .addClass('achievement'+(upgradeList[i].cost>Game.smiles?' hidden':''))
+          .addClass('achievement'+(hide?' hidden':''))
           .css('background-image','url(upgrades.png)');
 
         (function($el,index){ $el.on('click',function(){ BuyUpgrade(index) }); })($ach,i);
@@ -694,9 +698,9 @@ $(function(){
         achs.push($ach);
       }
     }
-    if(!arraysEqual(lastUpgrade,curUpgradeList)) {
+    if(!arraysEqual(lastUpgrade,scopeUpgradeList)) {
       $storeupgrades.empty().append(achs);
-      lastUpgrade = curUpgradeList;
+      lastUpgrade = scopeUpgradeList;
     }
     $stat_buildings.html(CountBuildings(Game.store).toFixed(0));
   }
@@ -756,13 +760,15 @@ $(function(){
     var img = $img[0],
         w = $img.width(),
         h = $img.height();
-    if(r != 0) {
-      ctx.translate(w/2, h/2);
-      ctx.translate(x, y);
-      ctx.rotate(r);
-      ctx.drawImage(img,-w/2,-h/2);
-    } else {
-      ctx.drawImage(img, x, y);
+    if($img.doneLoading) {
+      if(r != 0) {
+        ctx.translate(w/2, h/2);
+        ctx.translate(x, y);
+        ctx.rotate(r);
+        ctx.drawImage(img,-w/2,-h/2);
+      } else {
+        ctx.drawImage(img, x, y);
+      }
     }
     ctx.restore();
   }
@@ -866,10 +872,11 @@ $(function(){
     if(item == null)
       item = $upgradeoverlay.attr('data-item');
     else if(item == $upgradeoverlay.attr('data-item')) return;
+    if(item >= curUpgradeList.length) item = -1; // This edge case happens when you buy all the upgrades
     $upgradeoverlay.attr('data-item', item);
-
+    
     if(item < 0) return $upgradeoverlay.hide();
-
+    
     var x = upgradeList[curUpgradeList[item]];
     $upgradeoverlay.empty().html('<div class="title"><p>'+x.name+'</p><span>'+smilethumb+PrettyNum(x.cost)+'</span></div><hr><p>'+x.desc+'</p>').show();
   }
@@ -1043,6 +1050,25 @@ $(function(){
     $board.css('padding-left',b?'259px':0);
     ResizeCanvas();
   }
+  
+  function CheckForUpdates() {
+    $.ajax({
+      url:'./CHANGELIST.md',
+      dataType:'text',
+      beforeSend: function( xhr ) { xhr.overrideMimeType( "text/plain" ); }, // Firefox REQUIRES this, contentType is not sufficient. ¯\(°_o)/¯
+      contentType: 'text/plain',
+      success: function(data,status,r) {
+        var ind = data.substring(2).indexOf('#')+2;
+        var end = data.substring(ind).indexOf('\n')+ind;
+        // This does NOT attempt any greater than comparison because doing this properly on version numbers is nontrivial. Example: v1.10 > v1.1
+        if(data.substring(ind+2,end).trim() != $('#ponyversion').html()) { 
+          $('#pagealert').addClass('pagealertactive');
+        }        
+      }
+    });
+    window.setTimeout(CheckForUpdates, 60000); //check every minute
+  }
+    
   // You would not believe the horrific sequence of events that led to the creation of this function.
   var setMouseMove = function(event){
     var root = $('#buy0')[0],
@@ -1108,7 +1134,11 @@ $(function(){
   $('#mandatory-fun').on('click',function(){
     EarnAchievement(204);
   });
-
+  
+  $('#pagealert').on('click',function(){
+    SaveGame(); Game.settings.closingWarn=false; location.reload(true);
+  });
+  
   // doOnLoad equivalent
   $w.on('load',function(){
     $doc
@@ -1122,10 +1152,11 @@ $(function(){
         if (e) e.returnValue = text;
         return text;
     };
-
+    
     InitializeGame();
     ResizeCanvas();
     window.requestAnimationFrame(UpdateGame);
     $loadscreen.css('opacity',0).delay(700).hide();
+    CheckForUpdates();
   });
 });

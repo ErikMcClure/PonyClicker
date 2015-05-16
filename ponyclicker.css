@@ -686,7 +686,29 @@ a:hover {
   pointer-events: none;
 }
 
+#pagealert {
+  background: #ffffaa;
+  text-align:center;
+  z-index:9999;
+  cursor: pointer;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  height:0;
+  display:none;
+}
+#pagealert:hover {
+  color:#6666ff; 
+}
 
+.pagealertactive {
+  display:block !important;
+  height:1.5em !important;
+  padding:0.25em 0 !important;
+}
 
 /* SPINNERS!!!! */
 
