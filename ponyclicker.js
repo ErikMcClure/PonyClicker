@@ -1,4 +1,10 @@
 $(function(){
+  // Polyfill for old browsers and IE
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/log10
+  Math.log10 = Math.log10 || function(x) {
+    return Math.log(x) / Math.LN10;
+  };
+
   var $doc = $(document),
       $w = $(window),
       $loadscreen = $('#loadscreen'),
