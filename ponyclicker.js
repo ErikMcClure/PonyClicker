@@ -844,8 +844,10 @@ $(function(){
           .append('<p>'+x.name+'</p><span>'+smilethumb+PrettyNum(xcost)+'</span>');
 
     if(xcount > 0) $title.append('<div>['+PrettyNum(xcount)+' owned]</div>');
-    $overlay.empty().append($title, '<hr><p>'+x.desc+'</p>');//<ol>
-    var $ol = $(document.createElement('ol'));
+    $overlay.empty().append($title, '<hr><p>'+x.desc+'</p>');//<ul>
+    var $ol = $(document.createElement('ul'));
+
+    if (xcount > 0) $ol.append('<li><kbd>Right click</kbd> to sell 1, <kbd>Shift + Right click</kbd> to sell 10</li>');
     if(x.formula) $ol.append('<li>'+x.formula+'</li>');
     if(x.SPS_cache > 0 || item==1) $ol.append('<li>Each '+x.name.toLowerCase()+' generates <b>'+Pluralize(x.SPS_cache, ' smile')+'</b> per second</li>');
     if(xcount > 0 && x.SPS_cache > 0) $ol.append('<li><b>'+PrettyNum(xcount)+'</b> '+x.plural.toLowerCase()+' generating <b>'+Pluralize(xcount*x.SPS_cache, ' smile')+'</b> per second</li>');
@@ -856,7 +858,7 @@ $(function(){
         sps_increase = nSPS - Game.SPS,
         payPerSmile = xcost/(nSPS - Game.SPS);
 
-    $ol.append('<li>Buying one '+x.name.toLowerCase()+' will increase your SPS by <b>'+PrettyNum(sps_increase)+'</b>'+(isFinite(payPerSmile)?'<i>You pay <b>'+Pluralize(payPerSmile, ' smile') + '</b> per +1 SPS</i>':'') + '</li></ol>');
+    $ol.append('<li>Buying one '+x.name.toLowerCase()+' will increase your SPS by <b>'+PrettyNum(sps_increase)+'</b>'+(isFinite(payPerSmile)?'<i>You pay <b>'+Pluralize(payPerSmile, ' smile') + '</b> per +1 SPS</i>':'') + '</li>');
 
     if ($ol.children().length > 0) $overlay.append('<hr>',$ol);
     $overlay.show();
@@ -910,11 +912,10 @@ $(function(){
   }
   function Sell(id) {
     if(!id) return; // you can't sell ponies you heartless monster
-    if(id == 1) { EarnAchievement(205); }
 
-    var n = Game.shiftDown?10:1;
-    var numSell=0;
-    var totalCost=0;
+    var n = Game.shiftDown ? 10 : 1,
+        numSell = 0,
+        totalCost = 0;
     for(var i = 0; i < n; ++i) {
       if(Game.store[id]>0) {
         Game.store[id] -= 1;
@@ -924,9 +925,10 @@ $(function(){
         totalCost+=cost;
       }
     }
-    if(n>1) {
+    if(n>1)
       ShowNotice(Store[id].name, "Sold <b>" + numSell + " " + Store[id].plural + "</b> for <b>" + Pluralize(totalCost, " smile") + "</b>");
-    }
+    if(numSell>0 && id==1)
+      EarnAchievement(205);
     UpdateStore();
     UpdateSPS();
     UpdateOverlay(null, null);
