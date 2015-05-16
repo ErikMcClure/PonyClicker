@@ -34,8 +34,8 @@ body {
   -ms-user-select: none;
   user-select: none;
   cursor:pointer;
-  top:0px;
-  left:0px;
+  top:0;
+  left:0;
 }
 .ponies .pony:hover {
     -ms-transform: scale(1.1,1.1); /* IE 9 */
@@ -62,13 +62,8 @@ body {
   color:#000;
   text-align: center;
 }
-.newsactive p span {
-  opacity:1;
-  -webkit-transition: opacity 0.5s ease-in;
-  transition: opacity 0.5s ease-in;
-}
-.newsactive .inactive {
-  opacity:0;
+.newsactive p:before {
+  content: "News: ";
 }
 
 #score {
@@ -87,38 +82,39 @@ body {
 #score #SPS {
   font-size:40%;
   letter-spacing:0;
-  display:none;
 }
 .store {
+  display: block;
   position:absolute;
   right:0;
   width:350px;
   height:100%;
   background: #2a180c;
   margin:0;
-  padding:0;
-  border-left:4px #000 solid;
   overflow-y: auto;
+  border-left: 4px solid #000;
 }
 .store ol {
+  display: block;
   list-style-type: none;
   margin:0;
   padding:0;
 }
 .store li {
+  display: block;
   position:relative;
   margin:0;
   background: #593319;
   color:#fcfcfc;
-  padding: 0px 5px 13px 6px;
+  padding: 0 5px 13px 6px;
   font-variant: small-caps;
   font-weight: bold;
   font-size: 24px;
   line-height:20px;
-  border-top: 2px #bb967d solid;
-  border-left: 2px #bb967d solid;
-  border-bottom: 2px #351e0f solid;
-  border-right: 2px #351e0f solid;
+  border-top: 2px outset #bb967d;
+  border-left: 2px outset #bb967d;
+  border-bottom: 2px outset #454033;
+  border-right: 2px outset #454033;
   cursor: pointer;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -132,21 +128,16 @@ body {
   color:#fff;
 }
 .store li:active {
-  border-top: 2px #351e0f solid;
-  border-left: 2px #351e0f solid;
-  border-bottom: 2px #bb967d solid;
-  border-right: 2px #bb967d solid;
+  border-style: inset;
   background: #503019;
   padding: 2px 3px 11px 8px;
 }
 .disable {
+  border-style: outset !important;
   color:#aaa !important;
   background: #352e1f !important;
-  border-top: 2px #454033 solid !important;
-  border-left: 2px #454033 solid !important;
-  border-bottom: 2px #251e0f solid !important;
-  border-right: 2px #251e0f solid !important;
-  padding: 0px 5px 13px 6px !important;
+  border-color: #454033 !important;
+  padding: 0 5px 13px 6px !important;
 }
 .store li .cost {
   display:inline-block;
@@ -204,15 +195,18 @@ body {
   height:100%;
   overflow:hidden;
 }
+#canvaslines {
+  position:relative;
+  background:transparent;
+  left:-260px;
+  top:-260px;
+}
 .tooltip {
   position:absolute;
   right:354px;
   top:200px;
   background: #1a1111;
-  border-top: 2px #795339 solid; 
-  border-left: 2px #795339 solid; 
-  border-bottom: 3px #3a281c solid; 
-  border-right: 2px #3a281c solid; 
+  border: 2px outset #795339;
   padding: 2px 4px 4px 4px;
   color: #bbb;
   -webkit-touch-callout: none;
@@ -225,6 +219,7 @@ body {
 }
 #overlay {
   width:350px;
+  border-right: 0;
 }
 .tooltip .title p {
   margin: 0 80px 0 0;
@@ -297,17 +292,15 @@ body {
   -ms-user-select: none;
   user-select: none;
 }
-.button {
+button {
   display:inline-block;
   color:#f7f7f7;
   background:#444;
-  border-top: 1px #999 solid; 
-  border-left: 1px #999 solid; 
-  border-bottom: 1px #333 solid; 
-  border-right: 1px #333 solid; 
+  border: 1px outset #999;
   padding: 3px;
   font-weight: bold;
   font-size: 16px;
+  font-family: inherit;
   cursor: pointer;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -316,49 +309,78 @@ body {
   -ms-user-select: none;
   user-select: none;
 }
-.button:hover {
+button:hover {
   color:#fff;
   background:#555;
-  border-top: 1px #aaa solid; 
-  border-left: 1px #aaa solid; 
+  border-color: #aaa;
 }
-.button:active {
+button:active {
   color:#fff;
   background:#555;
-  border-bottom: 1px #aaa solid; 
-  border-right: 1px #aaa solid; 
-  border-top: 1px #333 solid; 
-  border-left: 1px #333 solid; 
+  border-color: #bbb;
   padding: 3px 2px 3px 4px;
 }
 
-#menubutton {
+#showmenu {
   position:absolute;
   left:-1px;
+  padding: 5px;
   opacity:0.5;
+  border-bottom-right-radius: 4px;
 }
-#menubutton:hover {
+#showmenu:hover {
   opacity:1; 
 }
-.menu {
+#credits > button {
+  position:absolute;
+  right:0;
+  top:0;
+}
+#credits .cloudhop {
+  float:left;
+  margin: 0 7px 7px 0;
+}
+#credits ul {
+  list-style-position: inside;
+}
+#menu {
   display:none;
   position:absolute;
-  width:298px;
+  width:302px;
   border-right: 4px #000 solid;
   height:100%;
   background:#222;
   color: #dfdfdf;
   overflow:auto;
-}
-.menu .padding {
   padding: 4px;
+  box-sizing: border-box;
 }
-.menu .fade {
+#menu > section {
+  display: block;
+}
+#menu > section:not(:last-of-type){
+  border-bottom: 1px solid #555;
+  padding-bottom: 5px;
+  margin-bottom: 5px;
+}
+#menu > section p { margin: 0 }
+#menu .options label {
+  display: block;
+}
+#menu .options label > * {
+  vertical-align: middle;
+}
+#menu .fade {
   position: relative;
   color:#999;
   left: 0.5em;
   font-size:80%;
   bottom:2px;
+}
+#menu #mandatory-fun {
+  display:block;
+  font-size:80%;
+  margin-bottom: 25px;
 }
 .modal {
 	position: absolute;
@@ -367,12 +389,18 @@ body {
 	right: 0;
 	margin: 0 auto;
   background: #1a1111;
-  border-top: 2px #795339 solid; 
-  border-left: 2px #795339 solid; 
-  border-bottom: 3px #3a281c solid; 
-  border-right: 2px #3a281c solid; 
+  border: 2px outset #795339;
   color: #ccc;
   padding:5px;
+  display:none;
+}
+#exportwindow {
+  width: 350px;
+  margin-top:-150px;
+}
+#exportwindow > button {
+  display: block;
+  margin: 0 auto;
 }
 .modal b {
   display:block;
@@ -397,7 +425,7 @@ a:link {
 a:visited {
   color:#8f8faf;
 }
- a:active {
+a:active {
   color:#ccc;
 }
 a:hover {
@@ -406,15 +434,18 @@ a:hover {
 .modal .footer {
   text-align:center;
 }
+.modal .footer > * {
+  display: block;
+}
 
 @-webkit-keyframes mousefloat {
-    from {opacity: 1; margin-top: 0px;}
+    from {opacity: 1; margin-top: 0;}
     to {opacity: 0; margin-top: -140px;}
 }
 
 /* Standard syntax */
 @keyframes mousefloat {
-    from {opacity: 1; margin-top: 0px;}
+    from {opacity: 1; margin-top: 0;}
     to {opacity: 0; margin-top: -140px;}
 }
   
@@ -426,12 +457,8 @@ a:hover {
   text-shadow: 0 0 1px #000; 
   background: none !important;
   pointer-events: none;
-  -webkit-animation-name: mousefloat; /* Chrome, Safari, Opera */
-  -webkit-animation-duration: 1s; /* Chrome, Safari, Opera */
-  -webkit-animation-timing-function: ease-in;
-  animation-name: mousefloat;
-  animation-duration: 1s;
-  animation-timing-function: ease-in;
+  -webkit-animation: mousefloat 1s ease-in; /* Chrome, Safari, Opera */
+  animation: mousefloat 1s ease-in;
   opacity: 0;
   margin-top: -140px;
 }
@@ -440,6 +467,7 @@ a:hover {
   left:-50%; 
   background: none !important;
   pointer-events: none;
+  white-space: nowrap;
 }
 #notices {
   position:absolute;
@@ -465,17 +493,10 @@ a:hover {
   position:relative;
   margin: 2px 0 4px 0;
   background: #1f1d1d;
-  border-top: 2px #795339 solid; 
-  border-left: 2px #795339 solid; 
-  border-bottom: 3px #3a281c solid; 
-  border-right: 2px #3a281c solid;
-  -webkit-animation-name: noticefade; /* Chrome, Safari, Opera */
-  -webkit-animation-duration: 2s; /* Chrome, Safari, Opera */
-  -webkit-animation-timing-function: ease-in;
+  border: 2px outset #795339;
+  -webkit-animation: noticefade 2s ease-in; /* Chrome, Safari, Opera */
   -webkit-animation-delay: 7s;
-  animation-name: noticefade;
-  animation-duration: 2s;
-  animation-timing-function: ease-in;
+  animation: noticefade 2s ease-in;
   animation-delay: 7s;
   color:#fff; 
   padding: 2px 6px 6px 6px;
@@ -530,7 +551,7 @@ a:hover {
   display:inline-block;
   width:50px;
   height:50px;
-  background: #000;
+  background-color: #000;
   border: 1px #fff solid;
   margin: 1px;
   -moz-box-shadow:    inset 0 0 20px #f0f0f0;
@@ -552,7 +573,7 @@ a:hover {
   margin: 1px !important;
 }
 #achievements .hidden {
-  background: #000 !important;
+  background-image: none !important;
 }
 #achievements .hidden::after {
   position:absolute;
@@ -570,10 +591,7 @@ a:hover {
   width:258px;
   display: none;
   background: #1a1111;
-  border-top: 2px #795339 solid; 
-  border-left: 2px #795339 solid; 
-  border-bottom: 3px #3a281c solid; 
-  border-right: 2px #3a281c solid; 
+  border: 2px outset #795339;
   padding: 2px 4px 4px 4px;
   color: #bbb;
   line-height: 1.3;
@@ -667,53 +685,29 @@ a:hover {
     to { transform: rotate(360deg); }
 }
 
-@-webkit-keyframes spinning2 {
-    from { -webkit-transform: rotate(-30deg); }
-    to { -webkit-transform: rotate(330deg); }
-}
-
-/* Standard syntax */
-@keyframes spinning2 {
-    from { transform: rotate(-30deg); }
-    to { transform: rotate(330deg); }
-}
-
-@-webkit-keyframes spinning3 {
-    from { -webkit-transform: rotate(-60deg); }
-    to { -webkit-transform: rotate(300deg); }
-}
-
-/* Standard syntax */
-@keyframes spinning3 {
-    from { transform: rotate(-60deg); }
-    to { transform: rotate(300deg); }
-}
-
-#loadscreen .spinner, #loadscreen .spinner2, #loadscreen .spinner3  {
+#loadscreen > * {
   display: block;
   position:absolute;
   left:50%;
   top:50%;
   margin: -12px 0 0 -50px;
-  -webkit-animation-name: spinning; /* Chrome, Safari, Opera */
-  -webkit-animation-duration: 1s; /* Chrome, Safari, Opera */
-  -webkit-animation-iteration-count: infinite;
-  -webkit-animation-timing-function: linear;
-  animation-name: spinning;
-  animation-duration: 2s;
-  animation-iteration-count: infinite;
-  animation-timing-function: linear;
-  background:rgba(255,255,255,0.75);
+  -webkit-animation: spinning 1s infinite linear; /* Chrome, Safari, Opera */
+  animation: spinning 2s infinite linear;
   width:100px;
   height:25px; 
 }
+#loadscreen .spinner {
+  background:rgba(255,255,255,0.75);
+}
 #loadscreen .spinner2 {
   background:rgba(255,255,255,0.5);
-  -webkit-animation-name: spinning2;
-  animation-name: spinning2;
+  -webkit-animation-delay: 85ms;
+  animation-delay: 85ms;
 }
 #loadscreen .spinner3 {
   background:rgba(255,255,255,0.25);
-  -webkit-animation-name: spinning3;
-  animation-name: spinning3;
+  -webkit-animation-delay: 170ms;
+  animation-delay: 170ms;
 }
+
+#wipeall { color: #f77 }
