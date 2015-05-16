@@ -324,6 +324,7 @@ $(function(){
     '203': { name:"Narcissism!", desc: "Click the image of Cloud Hop on the credits page.", muffins:1},
     '204': { name:"Music Makes Everything Better", desc: "Listen to the smile song.", muffins:1},
     '205': { name:"You Monster", desc: "Sell a friendship.", muffins:1},
+    '206': { name:"No Booping Allowed", desc: "Get <b>"+PrettyNum(1000000000000)+"</b> smiles with only 35 pony clicks.", muffins:1, cond:function() { return Game.clicks <= 35 && Game.totalsmiles >= 1000000000000; } },
     '255': { name:"Completionist", desc: "Get all the achievements.", muffins:100}
   };
 
@@ -352,6 +353,7 @@ $(function(){
     [100,10000,1000000,100000000,10000000000,1000000000000,100000000000000,10000000000000000,1000000000000000000,100000000000000000000],
     function(n) { return "Get <b>"+PrettyNum(n)+"</b> smiles."; },
     function(n) { return function() { return Game.totalsmiles >= n; }; });
+  achievements_smiles.push(206); // Add "No Booping Allowed".
 
   function genShopCond(item) {
     return function(n) { return function() { return Game.store[item]>=n; }; };
