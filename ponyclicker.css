@@ -38,14 +38,14 @@ body {
   left:0;
 }
 .ponies .pony:hover {
-    -ms-transform: scale(1.1,1.1); /* IE 9 */
-    -webkit-transform: scale(1.1,1.1); /* Safari */
-    transform: scale(1.05,1.05);
+  -ms-transform: scale(1.1,1.1); /* IE 9 */
+  -webkit-transform: scale(1.1,1.1); /* Safari */
+  transform: scale(1.05,1.05);
 }
 .ponies .pony:active {
-    -ms-transform: scale(0.9,0.9); /* IE 9 */
-    -webkit-transform: scale(0.9,0.9); /* Safari */
-    transform: scale(0.98,0.98);
+  -ms-transform: scale(0.9,0.9); /* IE 9 */
+  -webkit-transform: scale(0.9,0.9); /* Safari */
+  transform: scale(0.98,0.98);
 }
 .newsactive {
   display:block;
@@ -383,11 +383,11 @@ button:active {
   margin-bottom: 25px;
 }
 .modal {
-	position: absolute;
+  position: absolute;
   top: 50%;
-	left: 0;
-	right: 0;
-	margin: 0 auto;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
   background: #1a1111;
   border: 2px outset #795339;
   color: #ccc;
@@ -439,14 +439,14 @@ a:hover {
 }
 
 @-webkit-keyframes mousefloat {
-    from {opacity: 1; margin-top: 0;}
-    to {opacity: 0; margin-top: -140px;}
+  from {opacity: 1; margin-top: 0;}
+  to {opacity: 0; margin-top: -140px;}
 }
 
 /* Standard syntax */
 @keyframes mousefloat {
-    from {opacity: 1; margin-top: 0;}
-    to {opacity: 0; margin-top: -140px;}
+  from {opacity: 1; margin-top: 0;}
+  to {opacity: 0; margin-top: -140px;}
 }
   
 .mousetext {
@@ -479,14 +479,14 @@ a:hover {
 }
 
 @-webkit-keyframes noticefade {
-    from {opacity: 1; max-height: 7em; }
-    to {opacity: 0; max-height: 0; margin-top:0; margin-bottom:0; padding-top:0; padding-bottom:0; }
+  from {opacity: 1; max-height: 7em; }
+  to {opacity: 0; max-height: 0; margin-top:0; margin-bottom:0; padding-top:0; padding-bottom:0; }
 }
 
 /* Standard syntax */
 @keyframes noticefade {
-    from {opacity: 1; max-height: 7em; }
-    to {opacity: 0; max-height: 0; margin-top:0; margin-bottom:0; padding-top:0; padding-bottom:0; }
+  from {opacity: 1; max-height: 7em; }
+  to {opacity: 0; max-height: 0; margin-top:0; margin-bottom:0; padding-top:0; padding-bottom:0; }
 }
 
 #notices div {
@@ -675,14 +675,14 @@ a:hover {
 /* SPINNERS!!!! */
 
 @-webkit-keyframes spinning {
-    from { -webkit-transform: rotate(0deg); }
-    to { -webkit-transform: rotate(360deg); }
+  from { -webkit-transform: rotate(0deg); }
+  to { -webkit-transform: rotate(360deg); }
 }
 
 /* Standard syntax */
 @keyframes spinning {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 #loadscreen > * {
