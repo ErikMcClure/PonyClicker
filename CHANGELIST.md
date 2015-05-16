@@ -7,6 +7,7 @@ This is the change log for Pony Clicker. Some minor changes may not be reflected
 - Implement automatic version check (Resolve #31)
 - Fix a gajillion subtle bugs
 - Fixed store overlay information list
+- Fixed #23: Incorrect Achievements count
 
 ## v0.85
 - It turns out a centillion isn't what i thought it was. Removed from large number list.
