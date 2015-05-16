@@ -846,6 +846,8 @@ $(function(){
     if(xcount > 0) $title.append('<div>['+PrettyNum(xcount)+' owned]</div>');
     $overlay.empty().append($title, '<hr><p>'+x.desc+'</p>');//<ul>
     var $ol = $(document.createElement('ul'));
+
+    if (xcount > 0) $ol.append('<li><kbd>Right click</kbd> to sell 1, <kbd>Shift + Right click</kbd> to sell 10</li>');
     if(x.formula) $ol.append('<li>'+x.formula+'</li>');
     if(x.SPS_cache > 0 || item==1) $ol.append('<li>Each '+x.name.toLowerCase()+' generates <b>'+Pluralize(x.SPS_cache, ' smile')+'</b> per second</li>');
     if(xcount > 0 && x.SPS_cache > 0) $ol.append('<li><b>'+PrettyNum(xcount)+'</b> '+x.plural.toLowerCase()+' generating <b>'+Pluralize(xcount*x.SPS_cache, ' smile')+'</b> per second</li>');

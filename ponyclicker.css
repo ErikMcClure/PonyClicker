@@ -259,6 +259,9 @@ body {
 .tooltip p {
   margin: 0;
 }
+.tooltip kbd {
+  font-weight: bold;
+}
 .tooltip ul {
   margin: 0;
   padding: 0 0 0 20px;
