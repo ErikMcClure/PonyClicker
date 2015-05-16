@@ -845,12 +845,17 @@ $(function(){
 
     if(xcount > 0) $title.append('<div>['+PrettyNum(xcount)+' owned]</div>');
     $overlay.empty().append($title, '<hr><p>'+x.desc+'</p>');//<ul>
-    var $ol = $(document.createElement('ul'));
+    var $ul = $(document.createElement('ul'));
 
-    if (xcount > 0) $ol.append('<li><kbd>Right click</kbd> to sell 1, <kbd>Shift + Right click</kbd> to sell 10</li>');
-    if(x.formula) $ol.append('<li>'+x.formula+'</li>');
-    if(x.SPS_cache > 0 || item==1) $ol.append('<li>Each '+x.name.toLowerCase()+' generates <b>'+Pluralize(x.SPS_cache, ' smile')+'</b> per second</li>');
-    if(xcount > 0 && x.SPS_cache > 0) $ol.append('<li><b>'+PrettyNum(xcount)+'</b> '+x.plural.toLowerCase()+' generating <b>'+Pluralize(xcount*x.SPS_cache, ' smile')+'</b> per second</li>');
+    // Display buy/sell information
+    // Probably can be condensed or reworded to make it shorter
+    var helpStr = '<li><kbd>Left click</kbd> to buy 1, <kbd>Shift + Left click</kbd> to buy 10';
+    if (xcount > 0) helpStr += '<br><kbd>Right click</kbd> to sell 1, <kbd>Shift + Right click</kbd> to sell 10';
+    $ul.append(helpStr+'</li>');
+
+    if(x.formula) $ul.append('<li>'+x.formula+'</li>');
+    if(x.SPS_cache > 0 || item==1) $ul.append('<li>Each '+x.name.toLowerCase()+' generates <b>'+Pluralize(x.SPS_cache, ' smile')+'</b> per second</li>');
+    if(xcount > 0 && x.SPS_cache > 0) $ul.append('<li><b>'+PrettyNum(xcount)+'</b> '+x.plural.toLowerCase()+' generating <b>'+Pluralize(xcount*x.SPS_cache, ' smile')+'</b> per second</li>');
 
     var nstore = Game.store.slice();
     nstore[item]+=1;
@@ -858,9 +863,9 @@ $(function(){
         sps_increase = nSPS - Game.SPS,
         payPerSmile = xcost/(nSPS - Game.SPS);
 
-    $ol.append('<li>Buying one '+x.name.toLowerCase()+' will increase your SPS by <b>'+PrettyNum(sps_increase)+'</b>'+(isFinite(payPerSmile)?'<i>You pay <b>'+Pluralize(payPerSmile, ' smile') + '</b> per +1 SPS</i>':'') + '</li>');
+    $ul.append('<li>Buying one '+x.name.toLowerCase()+' will increase your SPS by <b>'+PrettyNum(sps_increase)+'</b>'+(isFinite(payPerSmile)?'<i>You pay <b>'+Pluralize(payPerSmile, ' smile') + '</b> per +1 SPS</i>':'') + '</li>');
 
-    if ($ol.children().length > 0) $overlay.append('<hr>',$ol);
+    if ($ul.children().length > 0) $overlay.append('<hr>',$ul);
     $overlay.show();
   }
   function UpdateUpgradeOverlay(item, x, y) {
@@ -889,15 +894,15 @@ $(function(){
   }
 
   function Buy(id) {
-    var n = Game.shiftDown?10:1;
-    var numPurchase=0;
-    var totalCost=0;
+    var n = Game.shiftDown ? 10 : 1,
+        numPurchase = 0,
+        totalCost = 0;
     for(var i = 0; i < n; ++i) {
       var cost = Store[id].cost(Game.store[id]);
       if(Game.smiles >= cost && (id != 1 || !NeedsMorePonies())) {
         numPurchase++;
         totalCost+=cost;
-        Earn(-1 * cost);
+        Earn(-cost);
         Game.store[id] += 1;
       }
     }
