@@ -340,6 +340,7 @@ $(function(){
     return ids;
   }
 
+  var extraAchievements = Object.keys(achievementList).length-3; // minus three because the array starts at 1 instead of 0
   var achievementCount = 3;
   var achievements_clicks = genAchievements(
     ["That tickles!", "Tickle War", "Tickle War II: The Retickling", "This Can't Be Healthy", "Carpal Tunnel Syndrome", "Wrist In Pieces", "Clickception"],
@@ -383,7 +384,7 @@ $(function(){
     function(n) { return "Buy <b>"+Pluralize(n, "</b> " + Store[11].name.toLowerCase()) + "."; },
     genShopCond(11)));
 
-  achievementCount += 7; // for our special ones at the end
+  achievementCount += extraAchievements; // for our special ones at the end
   $achievements_total.html(achievementCount.toFixed(0));
 
   var $menu = $('#menu'),
@@ -847,12 +848,6 @@ $(function(){
     $overlay.empty().append($title, '<hr><p>'+x.desc+'</p>');//<ul>
     var $ul = $(document.createElement('ul'));
 
-    // Display buy/sell information
-    // Probably can be condensed or reworded to make it shorter
-    var helpStr = '<li><kbd>Left click</kbd> to buy 1, <kbd>Shift + Left click</kbd> to buy 10';
-    if (xcount > 0) helpStr += '<br><kbd>Right click</kbd> to sell 1, <kbd>Shift + Right click</kbd> to sell 10';
-    $ul.append(helpStr+'</li>');
-
     if(x.formula) $ul.append('<li>'+x.formula+'</li>');
     if(x.SPS_cache > 0 || item==1) $ul.append('<li>Each '+x.name.toLowerCase()+' generates <b>'+Pluralize(x.SPS_cache, ' smile')+'</b> per second</li>');
     if(xcount > 0 && x.SPS_cache > 0) $ul.append('<li><b>'+PrettyNum(xcount)+'</b> '+x.plural.toLowerCase()+' generating <b>'+Pluralize(xcount*x.SPS_cache, ' smile')+'</b> per second</li>');
@@ -865,6 +860,11 @@ $(function(){
 
     $ul.append('<li>Buying one '+x.name.toLowerCase()+' will increase your SPS by <b>'+PrettyNum(sps_increase)+'</b>'+(isFinite(payPerSmile)?'<i>You pay <b>'+Pluralize(payPerSmile, ' smile') + '</b> per +1 SPS</i>':'') + '</li>');
 
+    // Display buy/sell information
+    var helpStr = '<li><kbd>Shift + Click</kbd> to buy 10';
+    if (xcount > 0) helpStr += ', <kbd>Right click</kbd> to sell 1';
+    $ul.append(helpStr+'</li>');
+    
     $overlay.append('<hr>',$ul).show();
   }
   function UpdateUpgradeOverlay(item, x, y) {
