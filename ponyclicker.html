@@ -14,6 +14,7 @@
 <body>
   <div class="container">
     <div id="ponyboard">
+    <div id="pagealert">A new version of Pony clicker is now available! Click here to automatically save and refresh the page!</div>
       <canvas id="canvas" width="100" height="100"></canvas>
       <div id="ponybg" class="bg"></div>
       <div class="ponies">
@@ -22,8 +23,8 @@
       </div>
       <div id="score"><span id="scorenum">0 Smiles</span><div id="SPS">+0.1 per second</div></div>
       <div class="newsactive">
-        <p>stuff</p>
-        <p>other stuff</p>
+        <p style="opacity:0;"></p>
+        <p></p>
       </div>
     </div>
   </div>
@@ -93,14 +94,14 @@
 
     <!--<div class="button" style="position:absolute; right:0; top:0" onclick="document.getElementById('credits').style.display='none';">[x]</div>-->
     <button>[x]</button>
-    <b>Pony Clicker v0.86 <i>by</i> Cloud Hop</b>
+    <b>Pony Clicker <span id="ponyversion">v0.86</span> <i>by</i> Cloud Hop</b>
     <hr>
     <div>
-      <a href="http://blackhole12.deviantart.com/art/Goggles-Cloud-Hop-526840667" target="_blank" class="cloudhop"><img src="Cloudhop_goggles.png" alt="Cloud Hop Avatar" title="If you aren't careful, he might cute you to death." /></a>
+      <a href="https://blackhole12.deviantart.com/art/Goggles-Cloud-Hop-526840667" target="_blank" class="cloudhop"><img src="Cloudhop_goggles.png" alt="Cloud Hop Avatar" title="If you aren't careful, he might cute you to death." /></a>
       Cloud Hop is a pegasus who works at the weather factory. He's also an <a href="http://blackhole12.blogspot.com/" target="_blank">applied mathematician</a> who makes <a href="https://github.com/blackhole12" target="_blank">games</a> and <a href="https://erikmcclure.bandcamp.com/album/aurora-theory" target="_blank">music</a>. Sometimes he puts them on the internet, corrupting it with the magic of friendship.
       <ul>
         <li><a href="https://www.fimfiction.net/user/Cloud+Hop" target="_blank">Fimfiction</a></li>
-        <li><a href="http://blackhole12.newgrounds.com/" target="_blank">Newgrounds</a></li>
+        <li><a href="https://blackhole12.newgrounds.com/" target="_blank">Newgrounds</a></li>
         <li><a href="https://soundcloud.com/blackhole12" target="_blank">Soundcloud</a></li>
         <li><a href="http://blackhole12.blogspot.com/" target="_blank">Blogger</a></li>
         <li><a href="https://www.youtube.com/channel/UCWC8FC5JryUP7I1oN1twBeQ" target="_blank">Youtube</a></li>
@@ -122,7 +123,7 @@
       <a href="https://takua770.deviantart.com/art/Pinkie-Pie-PARTY-TIME-274526114" target="_blank">Takua770</a>,
       <a href="https://zutheskunk.deviantart.com/art/MLP-Resource-Dinky-Hooves-01-212564935" target="_blank">ZuTheSkunk</a>
       <br>Pinkie Pie face taken from Fimfiction emoticons.
-      <br><strong>Playtesters:</strong> Fyrestorm, Karzafal, #fimfiction IRC
+      <br><strong>Contributors:</strong> <a href="https://github.com/Jesin" target="_blank">Jesin</a>, <a href="https://github.com/DJDavid98" target="_blank">DJDavid98</a>, <a href="https://github.com/TricksterWolf" target="_blank">TricksterWolf</a>, <a href="https://github.com/baxil" target="_blank">baxil</a>, <a href="https://github.com/ngyikp" target="_blank">ngyikp</a>
     </p>
     <hr>
     <div class="footer">
@@ -140,12 +141,12 @@
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
     m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','http://www.google-analytics.com/analytics.js','ga');
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
     ga('create', 'UA-63026815-1', 'auto');
     ga('send', 'pageview');
   </script>
-	<script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+  <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
   <script src="ponyclicker.js"></script>
 </body>
 </html>

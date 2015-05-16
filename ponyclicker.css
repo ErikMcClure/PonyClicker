@@ -38,14 +38,14 @@ body {
   left:0;
 }
 .ponies .pony:hover {
-    -ms-transform: scale(1.1,1.1); /* IE 9 */
-    -webkit-transform: scale(1.1,1.1); /* Safari */
-    transform: scale(1.05,1.05);
+  -ms-transform: scale(1.1,1.1); /* IE 9 */
+  -webkit-transform: scale(1.1,1.1); /* Safari */
+  transform: scale(1.05,1.05);
 }
 .ponies .pony:active {
-    -ms-transform: scale(0.9,0.9); /* IE 9 */
-    -webkit-transform: scale(0.9,0.9); /* Safari */
-    transform: scale(0.98,0.98);
+  -ms-transform: scale(0.9,0.9); /* IE 9 */
+  -webkit-transform: scale(0.9,0.9); /* Safari */
+  transform: scale(0.98,0.98);
 }
 .newsactive {
   display:block;
@@ -111,10 +111,10 @@ body {
   font-weight: bold;
   font-size: 24px;
   line-height:20px;
-  border-top: 2px outset #bb967d;
-  border-left: 2px outset #bb967d;
-  border-bottom: 2px outset #454033;
-  border-right: 2px outset #454033;
+  border-top: 2px #bb967d solid;
+  border-left: 2px #bb967d solid;
+  border-bottom: 2px #351e0f solid;
+  border-right: 2px #351e0f solid;
   cursor: pointer;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -128,15 +128,20 @@ body {
   color:#fff;
 }
 .store li:active {
-  border-style: inset;
+  border-top: 2px #351e0f solid;
+  border-left: 2px #351e0f solid;
+  border-bottom: 2px #bb967d solid;
+  border-right: 2px #bb967d solid;
   background: #503019;
   padding: 2px 3px 11px 8px;
 }
 .disable {
-  border-style: outset !important;
   color:#aaa !important;
   background: #352e1f !important;
-  border-color: #454033 !important;
+  border-top: 2px #454033 solid !important;
+  border-left: 2px #454033 solid !important;
+  border-bottom: 2px #251e0f solid !important;
+  border-right: 2px #251e0f solid !important;
   padding: 0 5px 13px 6px !important;
 }
 .store li .cost {
@@ -206,7 +211,10 @@ body {
   right:354px;
   top:200px;
   background: #1a1111;
-  border: 2px outset #795339;
+  border-top: 2px #795339 solid; 
+  border-left: 2px #795339 solid; 
+  border-bottom: 3px #3a281c solid; 
+  border-right: 2px #3a281c solid; 
   padding: 2px 4px 4px 4px;
   color: #bbb;
   -webkit-touch-callout: none;
@@ -296,7 +304,10 @@ button {
   display:inline-block;
   color:#f7f7f7;
   background:#444;
-  border: 1px outset #999;
+  border-top: 1px #999 solid; 
+  border-left: 1px #999 solid; 
+  border-bottom: 1px #333 solid; 
+  border-right: 1px #333 solid; 
   padding: 3px;
   font-weight: bold;
   font-size: 16px;
@@ -312,14 +323,19 @@ button {
 button:hover {
   color:#fff;
   background:#555;
-  border-color: #aaa;
+  border-top: 1px #aaa solid; 
+  border-left: 1px #aaa solid; 
 }
 button:active {
   color:#fff;
   background:#555;
-  border-color: #bbb;
+  border-bottom: 1px #aaa solid; 
+  border-right: 1px #aaa solid; 
+  border-top: 1px #333 solid; 
+  border-left: 1px #333 solid; 
   padding: 3px 2px 3px 4px;
 }
+button:focus {outline:0;} /* removes blue border in chrome */
 
 #showmenu {
   position:absolute;
@@ -383,11 +399,11 @@ button:active {
   margin-bottom: 25px;
 }
 .modal {
-	position: absolute;
+  position: absolute;
   top: 50%;
-	left: 0;
-	right: 0;
-	margin: 0 auto;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
   background: #1a1111;
   border: 2px outset #795339;
   color: #ccc;
@@ -439,14 +455,14 @@ a:hover {
 }
 
 @-webkit-keyframes mousefloat {
-    from {opacity: 1; margin-top: 0;}
-    to {opacity: 0; margin-top: -140px;}
+  from {opacity: 1; margin-top: 0;}
+  to {opacity: 0; margin-top: -140px;}
 }
 
 /* Standard syntax */
 @keyframes mousefloat {
-    from {opacity: 1; margin-top: 0;}
-    to {opacity: 0; margin-top: -140px;}
+  from {opacity: 1; margin-top: 0;}
+  to {opacity: 0; margin-top: -140px;}
 }
   
 .mousetext {
@@ -479,14 +495,14 @@ a:hover {
 }
 
 @-webkit-keyframes noticefade {
-    from {opacity: 1; max-height: 7em; }
-    to {opacity: 0; max-height: 0; margin-top:0; margin-bottom:0; padding-top:0; padding-bottom:0; }
+  from {opacity: 1; max-height: 7em; }
+  to {opacity: 0; max-height: 0; margin-top:0; margin-bottom:0; padding-top:0; padding-bottom:0; }
 }
 
 /* Standard syntax */
 @keyframes noticefade {
-    from {opacity: 1; max-height: 7em; }
-    to {opacity: 0; max-height: 0; margin-top:0; margin-bottom:0; padding-top:0; padding-bottom:0; }
+  from {opacity: 1; max-height: 7em; }
+  to {opacity: 0; max-height: 0; margin-top:0; margin-bottom:0; padding-top:0; padding-bottom:0; }
 }
 
 #notices div {
@@ -670,19 +686,41 @@ a:hover {
   pointer-events: none;
 }
 
+#pagealert {
+  background: #ffffaa;
+  text-align:center;
+  z-index:9999;
+  cursor: pointer;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  height:0;
+  display:none;
+}
+#pagealert:hover {
+  color:#6666ff; 
+}
 
+.pagealertactive {
+  display:block !important;
+  height:1.5em !important;
+  padding:0.25em 0 !important;
+}
 
 /* SPINNERS!!!! */
 
 @-webkit-keyframes spinning {
-    from { -webkit-transform: rotate(0deg); }
-    to { -webkit-transform: rotate(360deg); }
+  from { -webkit-transform: rotate(0deg); }
+  to { -webkit-transform: rotate(360deg); }
 }
 
 /* Standard syntax */
 @keyframes spinning {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 #loadscreen > * {
@@ -692,7 +730,7 @@ a:hover {
   top:50%;
   margin: -12px 0 0 -50px;
   -webkit-animation: spinning 1s infinite linear; /* Chrome, Safari, Opera */
-  animation: spinning 2s infinite linear;
+  animation: spinning 1s infinite linear;
   width:100px;
   height:25px; 
 }
