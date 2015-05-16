@@ -12,7 +12,7 @@ $(function(){
       $EnableF = $('#EnableFocus'),
       $EnableW = $('#EnableWarn'),
       $upgrades_total = $('#upgrades_total'),
-      $ponyversion = {major:0,minor:86,revision:0};
+      $ponyversion = {major:0,minor:87,revision:0};
       
   function CreateGame() {
     return {
