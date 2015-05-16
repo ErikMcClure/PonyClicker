@@ -442,7 +442,7 @@ $(function(){
           )
           .appendTo($ach);
 
-        if (Game.achievements[prop]==null) $ach.addClass('hidden');
+        if (Game.achievements[prop]==null && !upgrade) $ach.addClass('hidden');
 
         return $ach;
     };
