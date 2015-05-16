@@ -705,7 +705,7 @@ $(function(){
     var SPC = Game.SPC;
 
     Game.SPC = 1;
-    for(var i = 0; i < Game.upgrades.length; ++i) {
+    for(var i = Game.upgrades.length; i >= 0; i-=1) {
       res = upgradeList[Game.upgrades[i]].fn(res, store);
       if(!res || !res.length) {
         alert("ILLEGAL UPGRADE: " + Game.upgrades[i]);
