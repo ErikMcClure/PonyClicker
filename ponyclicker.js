@@ -1,4 +1,10 @@
 $(function(){
+  // Polyfill for old browsers and IE
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/log10
+  Math.log10 = Math.log10 || function(x) {
+    return Math.log(x) / Math.LN10;
+  };
+
   var $doc = $(document),
       $w = $(window),
       $loadscreen = $('#loadscreen'),
@@ -34,7 +40,7 @@ $(function(){
   }
 
   var PonyList = ["Pinkie Pie", "Adagio Dazzle", "Aloe", "Amethyst Star", "Applebloom", "Applejack", "Aria Blaze", "Babs Seed", "Berry Punch", "Big Macintosh", "Blossomforth", "Braeburn", "Carrot Top", "Cheerilee", "Cheese Sandwich", "Chrysalis", "Cloudchaser", "Coco Pommel", "Colgate", "Daring Do", "Diamond Tiara", "Dinky Doo", "Ditsy Doo", "Dr Whooves", "Fancy Pants", "Flam", "Fleur de Lis", "Flim", "Flitter", "Fluttershy", "Hoity Toity", "King Sombra", "Lightning Dust", "Lotus", "Lyra Heartstrings", "Maud Pie", "Mrs Harshwhinny", "Night Glider", "Octavia Melody", "Prince Blueblood", "Princess Cadance", "Princess Celestia", "Princess Luna", "Rainbow Dash", "Rarity", "Scootaloo", "Shining Armor", "Silver Spoon", "Sonata Dusk", "Starlight Glimmer", "Sunset Shimmer", "Sweetie Belle", "Thunderlane", "Trenderhoof", "Trixie", "Trouble Shoes", "Twilight Sparkle", "Zecora" ];
-  // http://stackoverflow.com/a/2450976/1344955
+  // https://stackoverflow.com/a/2450976/1344955
   function shuffle(array) {
     var currentIndex = array.length, temporaryValue, randomIndex;
     while (0 !== currentIndex) {
@@ -403,8 +409,8 @@ $(function(){
       canvaslines = document.getElementById('canvaslines'),
       $canvaslines = $(canvaslines),
       ctxlines = canvaslines.getContext("2d"),
-      $img_rays = $(new Image()).attr('src','rays.svg'),
-      $img_ground = $(new Image()).attr('src','ground.svg'),
+      $img_rays = $(new Image()).attr('src','rays.svg').on('load', function(){ $img_rays.doneLoading = true; }), // the onload check is done for firefox, which gets overeager
+      $img_ground = $(new Image()).attr('src','ground.svg').on('load', function(){ $img_ground.doneLoading = true; }),
       $overlay = $('#overlay'),
       $upgradeoverlay = $('#upgradeoverlay'),
       $storeupgrades = $('#storeupgrades'),
@@ -436,7 +442,7 @@ $(function(){
           )
           .appendTo($ach);
 
-        if (Game.achievements[prop]==null) $ach.addClass('hidden');
+        if (Game.achievements[prop]==null && !upgrade) $ach.addClass('hidden');
 
         return $ach;
     };
@@ -469,18 +475,19 @@ $(function(){
   function appendStoreClick($el,index){
     $el.on('click contextmenu',function(e){
       e.preventDefault();
-
-      if (!$(this).hasClass('disable')){
-        if (e.type === 'contextmenu') Sell(index);
-        else Buy(index);
+      if (e.type === 'contextmenu') { // you can ALWAYS try to sell something even if the button is disabled
+        Sell(index);
+      } else if (!$(this).hasClass('disable')){
+        Buy(index);
       }
-      else if (e.type === 'click') ShowMouseText(
-        (index!=1)?'Too expensive!'
-        :(
-          NeedsMorePonies()
-          ?'Not enough ponies!'
-          :'Too expensive!'
-        ),0,-40);
+      else if (e.type === 'click') { ShowMouseText(
+        (index!=1)?
+        'Too expensive!':
+          (NeedsMorePonies()?
+          'Not enough ponies!':
+          'Too expensive!')
+        ,0,-40);
+      }
     });
   }
     
@@ -646,7 +653,7 @@ $(function(){
     return Game.store[1] >= triangular(Game.store[0]);
   }
   var lastUpgrade = [];
-  // http://stackoverflow.com/a/16436975/1344955
+  // https://stackoverflow.com/a/16436975/1344955
   function arraysEqual(a, b) {
     if (a === b) return true;
     if (a == null || b == null) return false;
@@ -656,6 +663,7 @@ $(function(){
     }
     return true;
   }
+  
   function UpdateStore() {
     $ponycost.html("(NEEDS " + Math.ceil(inv_triangular(Game.store[1]+1)) + " PONIES)").hide();
     for(var i = 0; i < Store.length; ++i) {
@@ -672,14 +680,17 @@ $(function(){
       $("#cost" + i).html(PrettyNum(cost));
       $("#count" + i).html(count);
     }
-
+    
     curUpgradeList = [];
+    var scopeUpgradeList = []; // we mark whether or not something is disabled by negating it's ID, but we can't put negatives in curUpgradeList.
     var achs = [];
     for(var i = 1; i < upgradeList.length; ++i) { // start at one to skip UNDEFINED upgrade
       if(upgradeList[i].cost < (Game.totalsmiles*0.8) && Game.upgradeHash[i] == null) {
+        var hide = upgradeList[i].cost>Game.smiles;
         curUpgradeList.push(i);
+        scopeUpgradeList.push(hide?-i:i);
         var $ach = $(document.createElement('div'))
-          .addClass('achievement'+(upgradeList[i].cost>Game.smiles?' hidden':''))
+          .addClass('achievement'+(hide?' hidden':''))
           .css('background-image','url(upgrades.png)');
 
         (function($el,index){ $el.on('click',function(){ BuyUpgrade(index) }); })($ach,i);
@@ -687,9 +698,9 @@ $(function(){
         achs.push($ach);
       }
     }
-    if(!arraysEqual(lastUpgrade,curUpgradeList)) {
+    if(!arraysEqual(lastUpgrade,scopeUpgradeList)) {
       $storeupgrades.empty().append(achs);
-      lastUpgrade = curUpgradeList;
+      lastUpgrade = scopeUpgradeList;
     }
     $stat_buildings.html(CountBuildings(Game.store).toFixed(0));
   }
@@ -705,7 +716,7 @@ $(function(){
     var SPC = Game.SPC;
 
     Game.SPC = 1;
-    for(var i = 0; i < Game.upgrades.length; ++i) {
+    for(var i = Game.upgrades.length-1; i >= 0; i-=1) {
       res = upgradeList[Game.upgrades[i]].fn(res, store);
       if(!res || !res.length) {
         alert("ILLEGAL UPGRADE: " + Game.upgrades[i]);
@@ -749,13 +760,15 @@ $(function(){
     var img = $img[0],
         w = $img.width(),
         h = $img.height();
-    if(r != 0) {
-      ctx.translate(w/2, h/2);
-      ctx.translate(x, y);
-      ctx.rotate(r);
-      ctx.drawImage(img,-w/2,-h/2);
-    } else {
-      ctx.drawImage(img, x, y);
+    if($img.doneLoading) {
+      if(r != 0) {
+        ctx.translate(w/2, h/2);
+        ctx.translate(x, y);
+        ctx.rotate(r);
+        ctx.drawImage(img,-w/2,-h/2);
+      } else {
+        ctx.drawImage(img, x, y);
+      }
     }
     ctx.restore();
   }
@@ -841,7 +854,7 @@ $(function(){
         sps_increase = nSPS - Game.SPS,
         payPerSmile = xcost/(nSPS - Game.SPS);
 
-    if (sps_increase > 0 && isFinite(payPerSmile)) $ol.append('<li>Buying one '+x.name.toLowerCase()+' will increase your SPS by <b>'+PrettyNum(sps_increase)+'</b><i>You pay <b>'+Pluralize(payPerSmile, ' smile') + '</b> per +1 SPS</li></ol>');
+    $ol.append('<li>Buying one '+x.name.toLowerCase()+' will increase your SPS by <b>'+PrettyNum(sps_increase)+'</b>'+(isFinite(payPerSmile)?'<i>You pay <b>'+Pluralize(payPerSmile, ' smile') + '</b> per +1 SPS</i>':'') + '</li></ol>');
 
     if ($ol.children().length > 0) $overlay.append('<hr>',$ol);
     $overlay.show();
@@ -859,10 +872,11 @@ $(function(){
     if(item == null)
       item = $upgradeoverlay.attr('data-item');
     else if(item == $upgradeoverlay.attr('data-item')) return;
+    if(item >= curUpgradeList.length) item = -1; // This edge case happens when you buy all the upgrades
     $upgradeoverlay.attr('data-item', item);
-
+    
     if(item < 0) return $upgradeoverlay.hide();
-
+    
     var x = upgradeList[curUpgradeList[item]];
     $upgradeoverlay.empty().html('<div class="title"><p>'+x.name+'</p><span>'+smilethumb+PrettyNum(x.cost)+'</span></div><hr><p>'+x.desc+'</p>').show();
   }
@@ -1036,6 +1050,25 @@ $(function(){
     $board.css('padding-left',b?'259px':0);
     ResizeCanvas();
   }
+  
+  function CheckForUpdates() {
+    $.ajax({
+      url:'./CHANGELIST.md',
+      dataType:'text',
+      beforeSend: function( xhr ) { xhr.overrideMimeType( "text/plain" ); }, // Firefox REQUIRES this, contentType is not sufficient. ¯\(°_o)/¯
+      contentType: 'text/plain',
+      success: function(data,status,r) {
+        var ind = data.substring(2).indexOf('#')+2;
+        var end = data.substring(ind).indexOf('\n')+ind;
+        // This does NOT attempt any greater than comparison because doing this properly on version numbers is nontrivial. Example: v1.10 > v1.1
+        if(data.substring(ind+2,end).trim() != $('#ponyversion').html()) { 
+          $('#pagealert').addClass('pagealertactive');
+        }        
+      }
+    });
+    window.setTimeout(CheckForUpdates, 60000); //check every minute
+  }
+    
   // You would not believe the horrific sequence of events that led to the creation of this function.
   var setMouseMove = function(event){
     var root = $('#buy0')[0],
@@ -1101,7 +1134,11 @@ $(function(){
   $('#mandatory-fun').on('click',function(){
     EarnAchievement(204);
   });
-
+  
+  $('#pagealert').on('click',function(){
+    SaveGame(); Game.settings.closingWarn=false; location.reload(true);
+  });
+  
   // doOnLoad equivalent
   $w.on('load',function(){
     $doc
@@ -1115,10 +1152,11 @@ $(function(){
         if (e) e.returnValue = text;
         return text;
     };
-
+    
     InitializeGame();
     ResizeCanvas();
     window.requestAnimationFrame(UpdateGame);
     $loadscreen.css('opacity',0).delay(700).hide();
+    CheckForUpdates();
   });
 });
