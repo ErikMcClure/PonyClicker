@@ -865,8 +865,7 @@ $(function(){
 
     $ul.append('<li>Buying one '+x.name.toLowerCase()+' will increase your SPS by <b>'+PrettyNum(sps_increase)+'</b>'+(isFinite(payPerSmile)?'<i>You pay <b>'+Pluralize(payPerSmile, ' smile') + '</b> per +1 SPS</i>':'') + '</li>');
 
-    if ($ul.children().length > 0) $overlay.append('<hr>',$ul);
-    $overlay.show();
+    $overlay.append('<hr>',$ul).show();
   }
   function UpdateUpgradeOverlay(item, x, y) {
     if(item != null && item >= curUpgradeList.length) item = -1;
