@@ -34,7 +34,7 @@ $(function(){
   }
 
   var PonyList = ["Pinkie Pie", "Adagio Dazzle", "Aloe", "Amethyst Star", "Applebloom", "Applejack", "Aria Blaze", "Babs Seed", "Berry Punch", "Big Macintosh", "Blossomforth", "Braeburn", "Carrot Top", "Cheerilee", "Cheese Sandwich", "Chrysalis", "Cloudchaser", "Coco Pommel", "Colgate", "Daring Do", "Diamond Tiara", "Dinky Doo", "Ditsy Doo", "Dr Whooves", "Fancy Pants", "Flam", "Fleur de Lis", "Flim", "Flitter", "Fluttershy", "Hoity Toity", "King Sombra", "Lightning Dust", "Lotus", "Lyra Heartstrings", "Maud Pie", "Mrs Harshwhinny", "Night Glider", "Octavia Melody", "Prince Blueblood", "Princess Cadance", "Princess Celestia", "Princess Luna", "Rainbow Dash", "Rarity", "Scootaloo", "Shining Armor", "Silver Spoon", "Sonata Dusk", "Starlight Glimmer", "Sunset Shimmer", "Sweetie Belle", "Thunderlane", "Trenderhoof", "Trixie", "Trouble Shoes", "Twilight Sparkle", "Zecora" ];
-  // http://stackoverflow.com/a/2450976/1344955
+  // https://stackoverflow.com/a/2450976/1344955
   function shuffle(array) {
     var currentIndex = array.length, temporaryValue, randomIndex;
     while (0 !== currentIndex) {
@@ -646,7 +646,7 @@ $(function(){
     return Game.store[1] >= triangular(Game.store[0]);
   }
   var lastUpgrade = [];
-  // http://stackoverflow.com/a/16436975/1344955
+  // https://stackoverflow.com/a/16436975/1344955
   function arraysEqual(a, b) {
     if (a === b) return true;
     if (a == null || b == null) return false;
