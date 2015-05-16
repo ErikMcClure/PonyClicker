@@ -1072,7 +1072,7 @@ $(function(){
         }        
       }
     });
-    window.setTimeout(CheckForUpdates, 6000); //check every minute
+    window.setTimeout(CheckForUpdates, 60000); //check every minute
   }
     
   // You would not believe the horrific sequence of events that led to the creation of this function.
