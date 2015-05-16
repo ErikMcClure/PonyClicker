@@ -469,18 +469,19 @@ $(function(){
   function appendStoreClick($el,index){
     $el.on('click contextmenu',function(e){
       e.preventDefault();
-
-      if (!$(this).hasClass('disable')){
-        if (e.type === 'contextmenu') Sell(index);
-        else Buy(index);
+      if (e.type === 'contextmenu') { // you can ALWAYS try to sell something even if the button is disabled
+        Sell(index);
+      } else if (!$(this).hasClass('disable')){
+        Buy(index);
       }
-      else if (e.type === 'click') ShowMouseText(
-        (index!=1)?'Too expensive!'
-        :(
-          NeedsMorePonies()
-          ?'Not enough ponies!'
-          :'Too expensive!'
-        ),0,-40);
+      else if (e.type === 'click') { ShowMouseText(
+        (index!=1)?
+        'Too expensive!':
+          (NeedsMorePonies()?
+          'Not enough ponies!':
+          'Too expensive!')
+        ,0,-40);
+      }
     });
   }
     
@@ -841,7 +842,7 @@ $(function(){
         sps_increase = nSPS - Game.SPS,
         payPerSmile = xcost/(nSPS - Game.SPS);
 
-    if (sps_increase > 0 && isFinite(payPerSmile)) $ol.append('<li>Buying one '+x.name.toLowerCase()+' will increase your SPS by <b>'+PrettyNum(sps_increase)+'</b><i>You pay <b>'+Pluralize(payPerSmile, ' smile') + '</b> per +1 SPS</li></ol>');
+    $ol.append('<li>Buying one '+x.name.toLowerCase()+' will increase your SPS by <b>'+PrettyNum(sps_increase)+'</b>'+(isFinite(payPerSmile)?'<i>You pay <b>'+Pluralize(payPerSmile, ' smile') + '</b> per +1 SPS</i>':'') + '</li></ol>');
 
     if ($ol.children().length > 0) $overlay.append('<hr>',$ol);
     $overlay.show();
