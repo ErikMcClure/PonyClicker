@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Pony Clicker</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+  <meta charset="utf-8" />
+  <meta name="description" content="Pony Clicker by Cloud Hop" />
+  <meta name="copyright" content="Copyright (c)2015 Cloud Hop" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="ponyclicker.css" media="screen" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:700,400" />
+  <link rel="shortcut icon" href="favicon.ico" />
+</head>
+<body>
+  <div class="container">
+    <div id="ponyboard">
+      <canvas id="canvas" width="100" height="100"></canvas>
+      <div id="ponybg" class="bg"></div>
+      <div class="ponies">
+        <canvas id="canvaslines" width="520" height="520"></canvas>
+        <div id="ponywrapper"></div>
+      </div>
+      <div id="score"><span id="scorenum">0 Smiles</span><div id="SPS">+0.1 per second</div></div>
+      <div class="newsactive">
+        <p>stuff</p>
+        <p>other stuff</p>
+      </div>
+    </div>
+  </div>
+  <button id="showmenu">Menu &raquo;</button>
+  <div id="menu">
+    <section>
+      <button id="hidemenu">Menu &laquo;</button>
+      <button id="manualsave" title="Manually save the game (the game auto-saves every 60 seconds).">Save</button>
+      <button id="exportbtn">Export</button>
+      <button id="showecredits">Credits</button>
+    </section>
+    <section class="options">
+      <label title="Enables animated canvas effects in the background.">
+        <input type="checkbox" id="EnableEffects" /> <span>Enable canvas effects</span>
+      </label>
+      <label title="Reduces the update frequency of the game when it isn't focused so it uses fewer resources.'">
+        <input type="checkbox" id="EnableFocus" /> <span>Lower FPS when not focused</span>
+      </label>
+      <label title="Put up a warning message before you close the window.">
+        <input type="checkbox" id="EnableWarn" /> <span>Warn when closing window</span>
+      </label>
+    </section>
+    <section class="stats">
+      <p>Smiles Available: <span class="cursmiles" id="stat_cursmiles">0</span></p>
+      <p>Total Smiles: <span class="totalsmiles">0</span></p>
+      <p>Smiles Per Second: <span class="SPS">0</span></p>
+      <p>Pony Clicks: <span class="clicks">0</span></p>
+      <p>Smiles Per Click: <span class="SPC">0</span></p>
+      <p>Buildings Owned: <span class="buildings">0</span></p>
+      <p>Time Played: <span class="time">0</span></p>
+      <p>Muffins: <span class="muffins">0</span> <span class="fade" style="display:none;">(<span class="achievementmuffins">0</span> from achievements)</span></p>
+    </section>
+    <section>
+      <button id="importbtn">Import</button>
+      <!--<div class="button" onclick="if(window.confirm('This will destroy all your cookies, buildings, and upgrades, but you\'ll keep you\'re achievements and your muffins. Are you sure you want to do this?')) { ResetGame(); }" style="color:#c00">Reset</div>-->
+      <button id="wipeall">Wipe All Data</button>
+    </section>
+    <section>
+      <p>Upgrades Owned: <span id="upgrades_owned"></span>/<span id="upgrades_total"></span></p>
+      <div id="upgradelist"></div>
+    </section>
+    <section>
+      <p>Achievements: <span id="achievements_owned"></span>/<span id="achievements_total"></span></p>
+      <div id="achievements"></div>
+    </section>
+    <section>
+      <a href="https://www.youtube.com/watch?v=otAFRGL4yX4" id="mandatory-fun" target="_blank">The smile song is mandatory while playing this.</a>
+    </section>
+    <div id="menuoverlay" class="tooltip">TEST</div>
+  </div>
+  <div class="store" id="storewrapper">
+    <div class="title">Sugarcube Corner</div>
+    <div class="upgrades" id="storeupgrades"></div>
+    <ol id="store"></ol>
+  </div>
+  
+  <div id="exportwindow" class="modal">
+    <b>Export Save</b>
+    <hr>
+    Copy and paste this somewhere safe. To restore your game, click the import button and paste this into the dialog box.
+    <br>
+    <br><textarea id="exportarea" style="width:345px;height:150px;" readonly></textarea>
+    <hr>
+    <button>Done!</button>
+  </div>
+  <div id="credits" class="modal" style="width: 450px;display:none;margin-top:-200px;">
+
+    <!--<div class="button" style="position:absolute; right:0; top:0" onclick="document.getElementById('credits').style.display='none';">[x]</div>-->
+    <button>[x]</button>
+    <b>Pony Clicker v0.86 <i>by</i> Cloud Hop</b>
+    <hr>
+    <div>
+      <a href="http://blackhole12.deviantart.com/art/Goggles-Cloud-Hop-526840667" target="_blank" class="cloudhop"><img src="Cloudhop_goggles.png" alt="Cloud Hop Avatar" title="If you aren't careful, he might cute you to death." /></a>
+      Cloud Hop is a pegasus who works at the weather factory. He's also an <a href="http://blackhole12.blogspot.com/" target="_blank">applied mathematician</a> who makes <a href="https://github.com/blackhole12" target="_blank">games</a> and <a href="https://erikmcclure.bandcamp.com/album/aurora-theory" target="_blank">music</a>. Sometimes he puts them on the internet, corrupting it with the magic of friendship.
+      <ul>
+        <li><a href="https://www.fimfiction.net/user/Cloud+Hop" target="_blank">Fimfiction</a></li>
+        <li><a href="http://blackhole12.newgrounds.com/" target="_blank">Newgrounds</a></li>
+        <li><a href="https://soundcloud.com/blackhole12" target="_blank">Soundcloud</a></li>
+        <li><a href="http://blackhole12.blogspot.com/" target="_blank">Blogger</a></li>
+        <li><a href="https://www.youtube.com/channel/UCWC8FC5JryUP7I1oN1twBeQ" target="_blank">Youtube</a></li>
+        <li><a href="https://twitter.com/blackhole0173" target="_blank">Twitter</a></li>
+      </ul>
+    </div>
+    <p>
+      Pony vectors by:
+      <a href="https://90sigma.deviantart.com/art/Vector-All-the-Ponies-SVG-Files-302442314" target="_blank">90Sigma</a>,
+      <a href="https://90sigma.deviantart.com/art/Princess-Cadance-Resources-302065204" target="_blank">90Sigma (again)</a>,
+      <a href="https://ambassad0r.deviantart.com/art/Night-Glider-518678939" target="_blank">Ambassad0r</a>,
+      <a href="https://destroyer735.deviantart.com/art/Octavia-375057218" target="_blank">destroyer735</a>,
+      <a href="https://inuhoshi-to-darkpen.deviantart.com/art/Blossomforth-327154088" target="_blank">InuHoshi-to-DarkPen</a>,
+      <a href="https://lman225.deviantart.com/art/Applebloom-490330115" target="_blank">LMan225</a>,
+      <a href="https://nethear.deviantart.com/art/Rainbow-Dash-244004139" target="_blank">Nethear</a>,
+      <a href="https://qazwsx302.deviantart.com/art/Sweetie-Belle-316776921" target="_blank">qazwsx302</a>,
+      <a href="https://racefox.deviantart.com/art/Rarity-405280335" target="_blank">Racefox</a>,
+      <a href="https://sakatagintoki117.deviantart.com/art/Shining-Armor-339746794" target="_blank">sakatagintoki117</a>,
+      <a href="https://takua770.deviantart.com/art/Pinkie-Pie-PARTY-TIME-274526114" target="_blank">Takua770</a>,
+      <a href="https://zutheskunk.deviantart.com/art/MLP-Resource-Dinky-Hooves-01-212564935" target="_blank">ZuTheSkunk</a>
+      <br>Pinkie Pie face taken from Fimfiction emoticons.
+      <br><strong>Playtesters:</strong> Fyrestorm, Karzafal, #fimfiction IRC
+    </p>
+    <hr>
+    <div class="footer">
+      <a href="https://github.com/blackhole12/PonyClicker" target="_blank">Fork this project on Github</a>
+      <a href="https://github.com/blackhole12/PonyClicker/blob/gh-pages/CHANGELIST.md" target="_blank">View Changelog</a>
+    </div>
+  </div>
+  <div id="upgradeoverlay" class="tooltip" data-item="-1"></div>
+  <div id="mousetexts"></div>
+  <div id="notices"></div>
+  <div id="overlay" class="tooltip" data-item="2"></div>
+  <div id="loadscreen"><div class="spinner"></div><div class="spinner2"></div><div class="spinner3"></div></div>
+  <script>
+    // Analytics
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','http://www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-63026815-1', 'auto');
+    ga('send', 'pageview');
+  </script>
+	<script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+  <script src="ponyclicker.js"></script>
+</body>
+</html>
