@@ -11,8 +11,9 @@ $(function(){
       $EnableE = $('#EnableEffects'),
       $EnableF = $('#EnableFocus'),
       $EnableW = $('#EnableWarn'),
-      $upgrades_total = $('#upgrades_total');
-  
+      $upgrades_total = $('#upgrades_total'),
+      $ponyversion = {major:0,minor:86,revision:0};
+      
   function CreateGame() {
     return {
       upgrades:[], // list of upgrade IDs that are owned
@@ -864,7 +865,7 @@ $(function(){
 
     // Display buy/sell information
     var helpStr = '<li><kbd>Shift + Click</kbd> to buy 10';
-    if (xcount > 0) helpStr += ', <kbd>Right click</kbd> to sell 1';
+    if (xcount > 0 && item>0) helpStr += ', <kbd>Right click</kbd> to sell 1'; // you can't sell ponies
     $ul.append(helpStr+'</li>');
     
     $overlay.append('<hr>',$ul).show();
@@ -1063,15 +1064,12 @@ $(function(){
   
   function CheckForUpdates() {
     $.ajax({
-      url:'./CHANGELIST.md',
-      dataType:'text',
-      beforeSend: function( xhr ) { xhr.overrideMimeType( "text/plain" ); }, // Firefox REQUIRES this, contentType is not sufficient. ¯\(°_o)/¯
-      contentType: 'text/plain',
+      url:'./version.json',
+      cache:'false', // jQuery bypasses cache by appending a timestamp to the request
+      dataType:'json',
+      beforeSend: function(xhr) { xhr.overrideMimeType( "application/json" ); }, // Firefox REQUIRES this, dataType is not sufficient. ¯\(°_o)/¯
       success: function(data,status,r) {
-        var ind = data.substring(2).indexOf('#')+2;
-        var end = data.substring(ind).indexOf('\n')+ind;
-        // This does NOT attempt any greater than comparison because doing this properly on version numbers is nontrivial. Example: v1.10 > v1.1
-        if(data.substring(ind+2,end).trim() != $('#ponyversion').html()) { 
+        if(data.major > $ponyversion.major || (data.major == $ponyversion.major && data.minor > $ponyversion.minor)) {
           $('#pagealert').addClass('pagealertactive');
         }        
       }
@@ -1162,6 +1160,7 @@ $(function(){
         if (e) e.returnValue = text;
         return text;
     };
+    $('#ponyversion').html($ponyversion.major + '.' + $ponyversion.minor);
     
     InitializeGame();
     ResizeCanvas();
