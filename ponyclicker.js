@@ -12,7 +12,7 @@ $(function(){
       $EnableF = $('#EnableFocus'),
       $EnableW = $('#EnableWarn'),
       $upgrades_total = $('#upgrades_total'),
-      $ponyversion = {major:0,minor:86,revision:0};
+      $ponyversion = {major:0,minor:87,revision:0};
       
   function CreateGame() {
     return {
@@ -40,7 +40,7 @@ $(function(){
     };
   }
 
-  var PonyList = ["Pinkie Pie", "Adagio Dazzle", "Aloe", "Amethyst Star", "Applebloom", "Applejack", "Aria Blaze", "Babs Seed", "Berry Punch", "Big McIntosh", "Blossomforth", "Braeburn", "Carrot Top", "Cheerilee", "Cheese Sandwich", "Chrysalis", "Cloudchaser", "Coco Pommel", "Colgate", "Daring Do", "Diamond Tiara", "Dinky Doo", "Ditsy Doo", "Dr Whooves", "Fancy Pants", "Flam", "Fleur de Lis", "Flim", "Flitter", "Fluttershy", "Hoity Toity", "King Sombra", "Lightning Dust", "Lotus", "Lyra Heartstrings", "Maud Pie", "Mrs Harshwhinny", "Night Glider", "Octavia Melody", "Prince Blueblood", "Princess Cadance", "Princess Celestia", "Princess Luna", "Rainbow Dash", "Rarity", "Scootaloo", "Shining Armor", "Silver Spoon", "Sonata Dusk", "Starlight Glimmer", "Sunset Shimmer", "Sweetie Belle", "Thunderlane", "Trenderhoof", "Trixie", "Trouble Shoes", "Twilight Sparkle", "Zecora" ];
+  var PonyList = ["Pinkie Pie", "Adagio Dazzle", "Aloe", "Amethyst Star", "Applebloom", "Applejack", "Aria Blaze", "Babs Seed", "Berry Punch", "Big McIntosh", "Blossomforth", "Braeburn", "Carrot Top", "Cheerilee", "Cheese Sandwich", "Chrysalis", "Cloudchaser", "Coco Pommel", "Colgate", "Daring Do", "Diamond Tiara", "Dinky Doo", "Ditsy Doo", "Dr Whooves", "Fancy Pants", "Flam", "Fleur de Lis", "Flim", "Flitter", "Fluttershy", "Hoity Toity", "King Sombra", "Lightning Dust", "Lotus", "Lyra Heartstrings", "Maud Pie", "Mrs Harshwhinny", "Night Glider", "Octavia Melody", "Prince Blueblood", "Princess Cadance", "Princess Celestia", "Princess Luna", "Rainbow Dash", "Rarity", "Scootaloo", "Shining Armor", "Silver Spoon", "Sonata Dusk", "Starlight Glimmer", "Sunset Shimmer", "Sweetie Belle", "Thunderlane", "Trenderhoof", "Trixie", "Trouble Shoes", "Twilight Sparkle", "Zecora", "Vinyl Scratch"];
   // https://stackoverflow.com/a/2450976/1344955
   function shuffle(array) {
     var currentIndex = array.length, temporaryValue, randomIndex;
@@ -849,7 +849,7 @@ $(function(){
     $overlay.empty().append($title, '<hr><p>'+x.desc+'</p>');//<ul>
     var $ul = $(document.createElement('ul'));
 
-    if(x.formula) $ul.append('<li>'+x.formula+'</li>');
+    if(x.formula) $ul.append('<li class="formula">'+x.formula+'</li>');
     if(x.SPS_cache > 0 || item==1) $ul.append('<li>Each '+x.name.toLowerCase()+' generates <b>'+Pluralize(x.SPS_cache, ' smile')+'</b> per second</li>');
     if(xcount > 0 && x.SPS_cache > 0) $ul.append('<li><b>'+PrettyNum(xcount)+'</b> '+x.plural.toLowerCase()+' generating <b>'+Pluralize(xcount*x.SPS_cache, ' smile')+'</b> per second</li>');
 
@@ -857,9 +857,11 @@ $(function(){
     nstore[item]+=1;
     var nSPS = CalcSPS(nstore, false),
         sps_increase = nSPS - Game.SPS,
-        payPerSmile = xcost/(nSPS - Game.SPS);
+        payPerSmile = xcost/(nSPS - Game.SPS),
+        increaseText = sps_increase > 0 ? 'will increase your SPS by <b>'+PrettyNum(sps_increase)+'</b>' : "<b>won't</b> increase your SPS",
+        payPerSmileText = isFinite(payPerSmile) ? '<i>You pay <b>'+Pluralize(payPerSmile, ' smile') + '</b> per +1 SPS</i>' : '';
 
-    $ul.append('<li>Buying one '+x.name.toLowerCase()+' will increase your SPS by <b>'+PrettyNum(sps_increase)+'</b>'+(isFinite(payPerSmile)?'<i>You pay <b>'+Pluralize(payPerSmile, ' smile') + '</b> per +1 SPS</i>':'') + '</li>');
+    $ul.append('<li>Buying one '+x.name.toLowerCase()+' '+increaseText+payPerSmileText+'</li>');
 
     // Display buy/sell information
     var helpStr = '<li><kbd>Shift + Click</kbd> to buy 10';
@@ -1031,7 +1033,7 @@ $(function(){
       }
   };
   function aniEndFunc() {
-    this.parentNode.removeChild(this);
+    $(this).remove();
   }
   var $mousetexts = $('#mousetexts');
   function ShowMouseText(text,x,y) {
