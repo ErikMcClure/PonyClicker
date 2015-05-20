@@ -252,11 +252,24 @@ $(function(){
           "Try new smile-powered Muffins today!",
           'Mayor held hostage by crazed Doctor, who demands that a muffin factory be built "for the sake of all ponykind!"',
           'Derpy and Troubleshoes get married! Ponyville does not survive the wedding.',
-          'Scientists investigate whether excessive muffin consumption can lead to long, overbearing plots.'
+          'Scientists investigate whether excessive muffin consumption can lead to long, overbearing plots.',
+          'Rarity to design new fashion line for plus sized mares, claiming “Muffin tops are in fashion this season”.',
+          "Rainbow Dash to host new midnight release party for AK Yearling’s latest novel, ‘Daring Do and the Muffin Man of Azkaban’.",
+          "Fluttershy cancels bi-weekly critter picnic in exchange for new Muffin Social. Critters could not be reached for comment.",
+          "Applejack introduces apple-spice muffins, in attempt to reignite declining produce sales.",
+          "Twilight Sparkle under house arrest for magically mammal manipulation, for trying to cross a mouse with a muffin.",
+          "Pinkie Pie launches new re-branding of cupcakes as ‘dessert muffins’, meets with mixed results."
         );
       }
       if(Game.muffins > 100) {
-        news.push('Derpy crashes into giant muffin. Irony is not amused.');
+        news.push('Derpy crashes into giant muffin. Irony is not amused.',
+        "Discord caught eating 40 muffins in one sitting, that’s as many as four 10’s, and that’s terrible.",
+          "Princess Celestia has eaten at least 37 muffins this year, when reached for comment, Princess Luna responded with ‘In a row?’.",
+          "Princess Cadence Announces that all muffins produced in the Crystal Empire now come with ‘Free Shipping’.  Her Highness then winked suggestively.",
+          "As muffin craze sweeps Equestria, Sapphire Shores to star in new musical, ‘My Little Muffin, Baked-goods are Magic’.",
+          "Diamond Tiara insists that her father has a bigger muffin collection than you, no matter how improbable that sounds.",
+          "New Poll from the Foal Free Press reveals that no food makes a young filly smile as much as a muffin."
+          );
       }
     }
 
