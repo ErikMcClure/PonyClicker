@@ -326,6 +326,8 @@ $(function(){
     '204': { name:"Music Makes Everything Better", desc: "Listen to the smile song.", muffins:1},
     '205': { name:"You Monster", desc: "Sell a friendship.", muffins:1},
     '206': { name:"No Booping Allowed", desc: "Get <b>"+PrettyNum(1000000000000)+"</b> smiles with only 35 pony clicks.", muffins:1, cond:function() { return Game.clicks <= 35 && Game.totalsmiles >= 1000000000000; } },
+    '207': { name:"Wheel of Friendship", desc: "Spin the ponies.", muffins:1, cond:function() { return vangle>0.05; } },
+    '208': { name:"Centrifuge of Friendship", desc: "Spin the ponies <b>really fast</b>.", muffins:2, cond:function() { return vangle>3; } },
     '255': { name:"Completionist", desc: "Get all the achievements.", muffins:100}
   };
 
@@ -778,7 +780,7 @@ $(function(){
   }
 
    // Ticks are used for things like updating the total playtime
-  var lastTime, startTime, lastTick, lastSave;
+  var lastTime, startTime, lastTick, lastSave, lastSpin;
   function UpdateGame(timestamp) {
     if(!startTime) {
       startTime =
@@ -788,6 +790,14 @@ $(function(){
       lastSave = timestamp;
     }
     Game.delta = timestamp - lastTime;
+    
+    if(Math.abs(vangle)>0.0005) curangle += vangle*0.9;
+    vangle *= 0.95;
+    if(curangle != lastSpin) {
+      document.getElementById('ponyspin').style.transform = ('rotate('+curangle+'rad)');
+      lastSpin = curangle;
+    }
+    
     var hasFocus = !Game.settings.optimizeFocus || document.hasFocus(),
         framelength = (hasFocus?33:500); // 33 is 30 FPS
     if(Game.delta>framelength) { // play at 30 FPS or the text starts flickering
@@ -828,9 +838,9 @@ $(function(){
     window.requestAnimationFrame(UpdateGame);
   }
 
-  function UpdateOverlay(item, y) {
+  function UpdateOverlay(item, y, mobile) {
     if(y != null && item >= 0)
-      $overlay.css('top',function(){ return Math.min(Math.max(y-40,0),window.innerHeight-this.offsetHeight) });
+      $overlay.css('top',function(){ return Math.min(Math.max(y-(mobile?(16+this.offsetHeight):40),0),window.innerHeight-this.offsetHeight); });
     if(item == null)
       item = $overlay.attr('data-item');
     else if(item == $overlay.attr('data-item')) return;
@@ -875,8 +885,8 @@ $(function(){
 
     if(y != null && item >= 0) {
       $upgradeoverlay.css({
-        left: x-312 + 'px',
-        top: Math.max(y-14,0),
+        left: Math.max(0, x-320) + 'px',
+        top: function(){ return Math.min(Math.max(y-(14+this.offsetHeight),0),window.innerHeight-this.offsetHeight); }
       });
       if(y > ($storeupgrades.get(0).offsetHeight + $storeupgrades.offset().top)) item = -1;
     }
@@ -888,8 +898,8 @@ $(function(){
     
     if(item < 0) return $upgradeoverlay.hide();
     
-    var x = upgradeList[curUpgradeList[item]];
-    $upgradeoverlay.empty().html('<div class="title"><p>'+x.name+'</p><span>'+smilethumb+PrettyNum(x.cost)+'</span></div><hr><p>'+x.desc+'</p>').show();
+    var u = upgradeList[curUpgradeList[item]];
+    $upgradeoverlay.empty().html('<div class="title"><p>'+u.name+'</p><span>'+smilethumb+PrettyNum(u.cost)+'</span></div><hr><p>'+u.desc+'</p>').show();
   }
   function ProcessSPS(delta) {
     Earn(Game.SPS*(delta/1000.0));
@@ -914,7 +924,7 @@ $(function(){
     UpdateStore();
     UpdateSPS();
     UpdateOverlay(null, null);
-    OrganizePonies();
+    if(id<2) OrganizePonies();
     CheckAchievements(achievements_shop);
   }
   function Sell(id) {
@@ -939,7 +949,7 @@ $(function(){
     UpdateStore();
     UpdateSPS();
     UpdateOverlay(null, null);
-    OrganizePonies();
+    if(id<2) OrganizePonies();
     $stat_buildings.html(CountBuildings(Game.store).toFixed(0));
   }
   function BuyUpgrade(id) {
@@ -973,7 +983,8 @@ $(function(){
   }
   function OrganizePonies() {
     var n = Game.store[0],
-        r=(n>1?260:0),
+        radd = n*30,
+        r=(n>1?140+radd:0),
         a = (2*Math.PI)/ n,
         th = (n-2)*0.08,
         edge = GetEdgeLength(r, n);
@@ -989,15 +1000,38 @@ $(function(){
                 left: Math.cos(a*i + th)*r-(edge/2),
                 width: edge,
                 height: edge,
-                backgroundSize: edge+'px',
-                backgroundImage: 'url("ponies/'+PonyList[pone]+'.svg")',
               });
 
       (function($el,index){ $el.on('click', function(){ Click(index) }) })($ponyDiv,i);
 
+      var $innerpony = $(document.createElement('div')).css({
+        transform: 'rotate('+(a*i + th + Math.PI/2)+'rad)',
+        backgroundSize: edge+'px',
+        backgroundImage: 'url("ponies/'+PonyList[pone]+'.svg")',
+      });
+      $ponyDiv.append($innerpony);
+      
       $ponywrapper.append($ponyDiv);
     }
 
+    canvaslines.width = r*2;
+    canvaslines.height = r*2;
+    canvaslines.style.left= -r + 'px';
+    radd+=20;
+    switch(n)
+    {
+      case 1:
+      case 2:
+        break;
+      case 3:
+        radd = radd+edge*0.4;
+        break;
+      default:
+        radd = radd+edge*0.5;
+    }
+    document.getElementById('ponywrapper').style.top = radd + 'px';
+    canvaslines.style.top= -r + radd + 'px';
+    
     // Draw friendship lines
     ctxlines.clearRect(0, 0, $canvaslines.width(), $canvaslines.height());
     ctxlines.beginPath();
@@ -1058,7 +1092,7 @@ $(function(){
   function ShowMenu(b) {
     $menubtn.toggle();
     $menu.toggle();
-    $board.css('padding-left',b?'259px':0);
+    if($doc.width() >= 600) $board.css('padding-left',b?'259px':0);
     ResizeCanvas();
   }
   
@@ -1082,16 +1116,17 @@ $(function(){
     var root = $('#buy0')[0],
         wrapper = $('#storewrapper')[0],
         item = -1,
-        actualTop = root.offsetTop-wrapper.scrollTop;
+        actualTop = root.offsetTop-wrapper.scrollTop+wrapper.offsetTop,
+        mobile = $doc.width() < 600;
         
     if((event.clientX>wrapper.offsetLeft) && (event.clientY>actualTop)) {
       item = Math.floor((event.clientY - actualTop)/root.offsetHeight);
       if(item >= Store.length) item = -1;
     }
-    UpdateOverlay(item, event.clientY);
+    UpdateOverlay(item, event.clientY, mobile);
 
     item = -1;
-    actualTop = $('#storeupgrades')[0].offsetTop-wrapper.scrollTop;
+    actualTop = $('#storeupgrades')[0].offsetTop-wrapper.scrollTop+wrapper.offsetTop;
     if((event.clientX>wrapper.offsetLeft) && (event.clientY>actualTop)) {
       item = Math.floor((event.clientY - actualTop)/52)*6 + Math.floor((event.clientX - wrapper.offsetLeft)/52);
     }
@@ -1143,14 +1178,40 @@ $(function(){
     EarnAchievement(204);
   });
   
+  var curangle = 0;
+  var lastangle = 0;
+  var vangle = 0;
+  var vlastangle = 0;
+  var mleftdown = false;
   $('#pagealert').on('click',function(){
     SaveGame(); Game.settings.closingWarn=false; location.reload(true);
+  });
+  
+  function getAngle(event) {
+      var cx = $ponywrapper.offset().left;
+      var cy = $ponywrapper.offset().top;
+      return Math.atan2(event.clientY-cy, event.clientX-cx);
+  }
+  $('#ponyboard').on('mousedown', function(event){
+    if(event.which===1) {
+      mleftdown = true; 
+      lastangle = getAngle(event)-curangle;
+      vlastangle = vangle = 0;
+    }
+  }); 
+  $('#ponyboard').on('mousemove', function(event){
+    if(mleftdown) {
+      vlastangle = getAngle(event)-(curangle+lastangle);
+      curangle = (getAngle(event)-lastangle);
+    }    
   });
   
   // doOnLoad equivalent
   $w.on('load',function(){
     $doc
       .on('mousemove',setMouseMove)
+      .on('mouseup',function(event){ if(event.which===1) { vangle = vlastangle; mleftdown=false; vlastangle = 0; } })
+      .on('mousedown',function(event){ if(event.which===1) { vlastangle=vangle; }})
       .on('keydown', setShiftDown)
       .on('keyup', setShiftUp);
     window.onbeforeunload = function (e) {
