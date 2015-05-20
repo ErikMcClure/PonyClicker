@@ -257,7 +257,7 @@ $(function(){
           "Rainbow Dash to host new midnight release party for AK Yearling’s latest novel, ‘Daring Do and the Muffin Man of Azkaban’.",
           "Fluttershy cancels bi-weekly critter picnic in exchange for new Muffin Social. Critters could not be reached for comment.",
           "Applejack introduces apple-spice muffins, in attempt to reignite declining produce sales.",
-          "Twilight Sparkle under house arrest for magically mammal manipulation, for trying to cross a mouse with a muffin.",
+          "Twilight Sparkle under house arrest for magical mammal manipulation, for trying to cross a mouse with a muffin.",
           "Pinkie Pie launches new re-branding of cupcakes as ‘dessert muffins’, meets with mixed results."
         );
       }
