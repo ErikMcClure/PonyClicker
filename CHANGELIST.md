@@ -1,6 +1,14 @@
 # Pony Clicker Change Log
 This is the change log for Pony Clicker. Some minor changes may not be reflected in this log.
 
+## v0.88
+- Implemented basic mobile interface
+- Players now boop ponies instead of click them (Resolve #38)
+- Added choice to show numbers as names, scientific notation, or long form (Resolve #61)
+
+## v0.87
+- Fixed memory leak
+
 ## v0.86
 - Fix timer so it uses the delta properly when tab isn't visible.
 - Rewrite everything in jQuery (DJDavid98)

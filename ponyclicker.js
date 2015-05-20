@@ -36,6 +36,7 @@ $(function(){
         useCanvas:true,
         optimizeFocus:false,
         closingWarn:false,
+        numDisplay:0, // 0 is names, 1 is raw numbers, 2 is scientific notation
       }
     };
   }
@@ -94,6 +95,7 @@ $(function(){
     {
       case 3:
         Game = g;
+        if(Game.settings.numDisplay === undefined) Game.settings.numDisplay = 0;
         break;
       default:
         alert('Unrecognized version! Game not loaded.');
@@ -128,11 +130,16 @@ $(function(){
     $EnableE.prop('checked',Game.settings.useCanvas);
     $EnableF.prop('checked',Game.settings.optimizeFocus);
     $EnableW.prop('checked',Game.settings.closingWarn);
+    $('#numdisplay' + Game.settings.numDisplay).prop('checked', true);
   }
   function GetSettings() {
     Game.settings.useCanvas = $EnableE.prop('checked');
     Game.settings.optimizeFocus = $EnableF.prop('checked');
     Game.settings.closingWarn = $EnableW.prop('checked');
+    if($('#numdisplay0').prop('checked')) Game.settings.numDisplay = 0;
+    if($('#numdisplay1').prop('checked')) Game.settings.numDisplay = 1;
+    if($('#numdisplay2').prop('checked')) Game.settings.numDisplay = 2;
+    UpdateSPS();
   }
 
   LoadGame();
@@ -267,13 +274,45 @@ $(function(){
       .last().prependTo($news).css('opacity',0).html(GetNews()).fadeTo(500,1)
       .next().fadeTo(500,0);
   }
+  function NumCommas(x) {
+    if(x<1e20) { // if we're below the precision threshold of toFixed, we cheat and insert commas into that.
+      var n = x.toFixed(0);
+      var len = n.length%3;
+      if(!len) len = 3;
+      var r = n.substring(0, len);
+      for(var i = len; i < n.length; i+=3) {
+        r += ',' + n.substring(i, i+3);
+      }
+      return r;
+    }
+    // TODO: This is laughably inefficient because we build the arrays in reverse.
+    var r = (Math.floor(x)%1000).toFixed(0);
+    x = Math.floor(x/1000);
+    while(x) {
+      var len = r.split(',')[0].length;
+      for(var i = len; i < 3; ++i) {
+        r = '0' + r;
+      }
+      r = (x%1000).toFixed(0) + ',' + r;
+      x = Math.floor(x/1000);
+    }
+    return r;
+  }
   function PrettyNum(x, fixed) {
-    var d = Math.floor(Math.log10(x));
-    if(d<6) return x.toFixed(0);
-    x = Math.floor(x/Math.pow(10,d-(d%3)-3));
-    var n = Math.floor((d-3)/3) - 1;
-    if(n >= number_names.length) return "Infinity";
-    return (fixed?(x/1000).toFixed(3):(x/1000)) + " " + number_names[n];
+    switch(Game.settings.numDisplay)
+    {
+    case 0:
+      var d = Math.floor(Math.log10(x));
+      if(d<6) return NumCommas(x);
+      x = Math.floor(x/Math.pow(10,d-(d%3)-3));
+      var n = Math.floor((d-3)/3) - 1;
+      if(n >= number_names.length) return "Infinity";
+      return (fixed?(x/1000).toFixed(3):(x/1000)) + " " + number_names[n];
+    case 1:
+      return NumCommas(Math.floor(x));
+    case 2:
+      return (x<=999999)?NumCommas(x):(x.toExponential(3).replace("e+","&times;10<sup>")+'</sup>');
+    }
   }
   function Pluralize(n, s, fixed) { return PrettyNum(n, fixed) + s + ((n==1)?'':'s'); }
 
@@ -285,12 +324,12 @@ $(function(){
   function gen_totalsps(sps, store) { var total = 0; for(var i = 0; i < sps.length; ++i) { total += sps[i]*store[i]; } return total; }
 
   var upgradeList = [ {cost:0, name:"UNDEFINED", desc:"ERROR", fn:null},
-    {cost:700, name:"Clicking Assistants", desc: "Clicking gets +1 SPC for every pony you have.", fn:function(sps,store){return gen_upgradetype2(sps, store[0], 1, 0);} },
-    {cost:7000, name:"Friendship is Clicking", desc: "Clicking gets +1 SPC for every friendship you have.", fn:function(sps,store){return gen_upgradetype2(sps, store[1], 1, 0);} },
-    {cost:70000, name:"Ticklish Cursors", desc: "Clicking gets 1% of your SPS.", fn:function(sps,store){return gen_upgradetype2(sps, gen_totalsps(sps, store), 0.01, 0); }},
-    {cost:700000, name:"Feathered Cursors", desc: "Clicking gets 2% of your SPS.", fn:function(sps,store){return gen_upgradetype2(sps, gen_totalsps(sps, store), 0.02, 0); }},
-    {cost:8000000, name:"Advanced Tickle-fu", desc: "Clicking gets 3% of your SPS.", fn:function(sps,store){return gen_upgradetype2(sps, gen_totalsps(sps, store), 0.03, 0); }},
-    {cost:90000000, name:"Happiness Injection", desc: "Clicking gets 4% of your SPS.", fn:function(sps,store){return gen_upgradetype2(sps, gen_totalsps(sps, store), 0.04, 0); }},
+    {cost:700, name:"Booping Assistants", desc: "Booping gets +1 SPC for every pony you have.", fn:function(sps,store){return gen_upgradetype2(sps, store[0], 1, 0);} },
+    {cost:7000, name:"Friendship is Booping", desc: "Booping gets +1 SPC for every friendship you have.", fn:function(sps,store){return gen_upgradetype2(sps, store[1], 1, 0);} },
+    {cost:70000, name:"Ticklish Cursors", desc: "Booping gets 1% of your SPS.", fn:function(sps,store){return gen_upgradetype2(sps, gen_totalsps(sps, store), 0.01, 0); }},
+    {cost:700000, name:"Feathered Cursors", desc: "Booping gets 2% of your SPS.", fn:function(sps,store){return gen_upgradetype2(sps, gen_totalsps(sps, store), 0.02, 0); }},
+    {cost:8000000, name:"Advanced Tickle-fu", desc: "Booping gets 3% of your SPS.", fn:function(sps,store){return gen_upgradetype2(sps, gen_totalsps(sps, store), 0.03, 0); }},
+    {cost:90000000, name:"Happiness Injection", desc: "Booping gets 4% of your SPS.", fn:function(sps,store){return gen_upgradetype2(sps, gen_totalsps(sps, store), 0.04, 0); }},
     {cost:10000, name:"Friendship Is Magic", desc: "Friendships generate +1 SPS for every other friendship.", fn:gen_upgradetype1(1, 1, 0) },
     {cost:1000000, name:"Friendship Is Spellcraft", desc: "Friendships generate +10 SPS for every other friendship.", fn:gen_upgradetype1(1, 10, 0) },
     {cost:100000000, name:"Friendship Is Sorcery", desc: "Friendships generate +100 SPS for every other friendship.", fn:gen_upgradetype1(1, 100, 0) },
@@ -318,14 +357,14 @@ $(function(){
 
   var achievementList = {
     '1': { name:"Participation Award", desc: "You moved the mouse!", muffins:0},
-    '2': { name:"Hi there!", desc: "Click a pony <b>once</b>.", muffins:0, cond:function(){ return Game.clicks > 0; } },
+    '2': { name:"Hi there!", desc: "Boop a pony <b>once</b>.", muffins:0, cond:function(){ return Game.clicks > 0; } },
     '200': { name:"Cautious", desc: "Manually save the game.", muffins:1},
     '201': { name:"Paranoid", desc: "Export a save.", muffins:1},
     '202': { name:"Time Machine", desc: "Import a save.", muffins:1},
     '203': { name:"Narcissism!", desc: "Click the image of Cloud Hop on the credits page.", muffins:1},
     '204': { name:"Music Makes Everything Better", desc: "Listen to the smile song.", muffins:1},
     '205': { name:"You Monster", desc: "Sell a friendship.", muffins:1},
-    '206': { name:"No Booping Allowed", desc: "Get <b>"+PrettyNum(1000000000000)+"</b> smiles with only 35 pony clicks.", muffins:1, cond:function() { return Game.clicks <= 35 && Game.totalsmiles >= 1000000000000; } },
+    '206': { name:"No Booping Allowed", desc: "Get <b>"+PrettyNum(1000000000000)+"</b> smiles with only 35 pony boops.", muffins:1, cond:function() { return Game.clicks <= 35 && Game.totalsmiles >= 1000000000000; } },
     '207': { name:"Wheel of Friendship", desc: "Spin the ponies.", muffins:1, cond:function() { return vangle>0.05; } },
     '208': { name:"Centrifuge of Friendship", desc: "Spin the ponies <b>really fast</b>.", muffins:2, cond:function() { return vangle>3; } },
     '255': { name:"Completionist", desc: "Get all the achievements.", muffins:100}
@@ -346,9 +385,9 @@ $(function(){
   var extraAchievements = Object.keys(achievementList).length-3; // minus three because the array starts at 1 instead of 0
   var achievementCount = 3;
   var achievements_clicks = genAchievements(
-    ["That tickles!", "Tickle War", "Tickle War II: The Retickling", "This Can't Be Healthy", "Carpal Tunnel Syndrome", "Wrist In Pieces", "Clickception"],
-    [10,100,1000,10000,50000,100000,200000],
-    function(n) { return "Click a pony <b>"+PrettyNum(n)+"</b> times."; },
+    ["That tickles!", "Tickle War", "Tickle War II: The Retickling", "It's Over Nine Thousand!", "This Can't Be Healthy", "Carpal Tunnel Syndrome", "Wrist In Pieces"],
+    [10,100,1000,9001,25000,50000,100000],
+    function(n) { return "Boop a pony <b>"+PrettyNum(n)+"</b> times."; },
     function(n) { return function() { return Game.clicks >= n; }; });
   achievements_clicks.push(2);
 
