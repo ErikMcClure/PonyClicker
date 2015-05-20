@@ -49,12 +49,23 @@
         <input type="checkbox" id="EnableWarn" /> <span>Warn when closing window</span>
       </label>
     </section>
+    <section class="options">
+      <label title="Shorten numbers by displaying their names. Example: 10 vigintillion.">
+        <input type="radio" name="numdisplay" id="numdisplay0" value="0" /> <span>Use Number Names</span>
+      </label>
+      <label title="Do not shorten any numbers. Example: 74,547,584,943,904,958">
+        <input type="radio" name="numdisplay" id="numdisplay1" value="1" /> <span>Display Entire Number</span>
+      </label>
+      <label title="Display numbers in scientific notation. Example: 74.547x10^37">
+        <input type="radio" name="numdisplay" id="numdisplay2" value="2" /> <span>Use Scientific Notation</span>
+      </label>
+    </section>
     <section class="stats">
       <p>Smiles Available: <span class="cursmiles" id="stat_cursmiles">0</span></p>
       <p>Total Smiles: <span class="totalsmiles">0</span></p>
       <p>Smiles Per Second: <span class="SPS">0</span></p>
-      <p>Pony Clicks: <span class="clicks">0</span></p>
-      <p>Smiles Per Click: <span class="SPC">0</span></p>
+      <p>Pony Boops: <span class="clicks">0</span></p>
+      <p>Smiles Per Boop: <span class="SPC">0</span></p>
       <p>Buildings Owned: <span class="buildings">0</span></p>
       <p>Time Played: <span class="time">0</span></p>
       <p>Muffins: <span class="muffins">0</span> <span class="fade" style="display:none;">(<span class="achievementmuffins">0</span> from achievements)</span></p>
@@ -94,7 +105,6 @@
   </div>
   <div id="credits" class="modal" style="width: 450px;display:none;margin-top:-200px;">
 
-    <!--<div class="button" style="position:absolute; right:0; top:0" onclick="document.getElementById('credits').style.display='none';">[x]</div>-->
     <button>[x]</button>
     <b>Pony Clicker v<span id="ponyversion"></span> <i>by</i> Cloud Hop</b>
     <hr>
