@@ -1002,7 +1002,7 @@ $(function(){
                 height: edge,
               });
 
-      (function($el,index){ $el.on('click', function(){ Click(index) }) })($ponyDiv,i);
+      (function($el,index){ $el.on('touchstart mousedown', function(){ Click(index) }) })($ponyDiv,i);
 
       var $innerpony = $(document.createElement('div')).css({
         transform: 'rotate('+(a*i + th + Math.PI/2)+'rad)',
@@ -1192,14 +1192,14 @@ $(function(){
       var cy = $ponywrapper.offset().top;
       return Math.atan2(event.clientY-cy, event.clientX-cx);
   }
-  $('#ponyboard').on('mousedown', function(event){
+  $('#ponyboard').on('touchstart mousedown', function(event){
     if(event.which===1) {
       mleftdown = true; 
       lastangle = getAngle(event)-curangle;
       vlastangle = vangle = 0;
     }
   }); 
-  $('#ponyboard').on('mousemove', function(event){
+  $('#ponyboard').on('touchmove mousemove', function(event){
     if(mleftdown) {
       vlastangle = getAngle(event)-(curangle+lastangle);
       curangle = (getAngle(event)-lastangle);
@@ -1210,8 +1210,8 @@ $(function(){
   $w.on('load',function(){
     $doc
       .on('mousemove',setMouseMove)
-      .on('mouseup',function(event){ if(event.which===1) { vangle = vlastangle; mleftdown=false; vlastangle = 0; } })
-      .on('mousedown',function(event){ if(event.which===1) { vlastangle=vangle; }})
+      .on('touchend mouseup',function(event){ if(event.which===1) { vangle = vlastangle; mleftdown=false; vlastangle = 0; } })
+      .on('touchstart mousedown',function(event){ if(event.which===1) { vlastangle=vangle; }})
       .on('keydown', setShiftDown)
       .on('keyup', setShiftUp);
     window.onbeforeunload = function (e) {
