@@ -839,67 +839,75 @@ $(function(){
   }
 
   function UpdateOverlay(item, y, mobile) {
-    if(y != null && item >= 0)
-      $overlay.css('top',function(){ return Math.min(Math.max(y-(mobile?(16+this.offsetHeight):40),0),window.innerHeight-this.offsetHeight); });
     if(item == null)
       item = $overlay.attr('data-item');
-    else if(item == $overlay.attr('data-item')) return;
-    $overlay.attr('data-item', item);
-
-    if(item < 0) return $overlay.hide();
-
-    var x = Store[item],
-        xcount = Game.store[item],
-        xcost = x.cost(xcount),
-        $title = $(document.createElement('div'))
-          .addClass('title')
-          .append('<p>'+x.name+'</p><span>'+smilethumb+PrettyNum(xcost)+'</span>');
-
-    if(xcount > 0) $title.append('<div>['+PrettyNum(xcount)+' owned]</div>');
-    $overlay.empty().append($title, '<hr><p>'+x.desc+'</p>');//<ul>
-    var $ul = $(document.createElement('ul'));
-
-    if(x.formula) $ul.append('<li class="formula">'+x.formula+'</li>');
-    if(x.SPS_cache > 0 || item==1) $ul.append('<li>Each '+x.name.toLowerCase()+' generates <b>'+Pluralize(x.SPS_cache, ' smile')+'</b> per second</li>');
-    if(xcount > 0 && x.SPS_cache > 0) $ul.append('<li><b>'+PrettyNum(xcount)+'</b> '+x.plural.toLowerCase()+' generating <b>'+Pluralize(xcount*x.SPS_cache, ' smile')+'</b> per second</li>');
-
-    var nstore = Game.store.slice();
-    nstore[item]+=1;
-    var nSPS = CalcSPS(nstore, false),
-        sps_increase = nSPS - Game.SPS,
-        payPerSmile = xcost/(nSPS - Game.SPS),
-        increaseText = sps_increase > 0 ? 'will increase your SPS by <b>'+PrettyNum(sps_increase)+'</b>' : "<b>won't</b> increase your SPS",
-        payPerSmileText = isFinite(payPerSmile) ? '<i>You pay <b>'+Pluralize(payPerSmile, ' smile') + '</b> per +1 SPS</i>' : '';
-
-    $ul.append('<li>Buying one '+x.name.toLowerCase()+' '+increaseText+payPerSmileText+'</li>');
-
-    // Display buy/sell information
-    var helpStr = '<li><kbd>Shift + Click</kbd> to buy 10';
-    if (xcount > 0 && item>0) helpStr += ', <kbd>Right click</kbd> to sell 1'; // you can't sell ponies
-    $ul.append(helpStr+'</li>');
+    else if(item != $overlay.attr('data-item'))
+    {
+      $overlay.attr('data-item', item);
+  
+      if(item < 0) return $overlay.hide();
+  
+      var x = Store[item],
+          xcount = Game.store[item],
+          xcost = x.cost(xcount),
+          $title = $(document.createElement('div'))
+            .addClass('title')
+            .append('<p>'+x.name+'</p><span>'+smilethumb+PrettyNum(xcost)+'</span>');
+  
+      if(xcount > 0) $title.append('<div>['+PrettyNum(xcount)+' owned]</div>');
+      $overlay.empty().append($title, '<hr><p>'+x.desc+'</p>');//<ul>
+      var $ul = $(document.createElement('ul'));
+  
+      if(x.formula) $ul.append('<li class="formula">'+x.formula+'</li>');
+      if(x.SPS_cache > 0 || item==1) $ul.append('<li>Each '+x.name.toLowerCase()+' generates <b>'+Pluralize(x.SPS_cache, ' smile')+'</b> per second</li>');
+      if(xcount > 0 && x.SPS_cache > 0) $ul.append('<li><b>'+PrettyNum(xcount)+'</b> '+x.plural.toLowerCase()+' generating <b>'+Pluralize(xcount*x.SPS_cache, ' smile')+'</b> per second</li>');
+  
+      var nstore = Game.store.slice();
+      nstore[item]+=1;
+      var nSPS = CalcSPS(nstore, false),
+          sps_increase = nSPS - Game.SPS,
+          payPerSmile = xcost/(nSPS - Game.SPS),
+          increaseText = sps_increase > 0 ? 'will increase your SPS by <b>'+PrettyNum(sps_increase)+'</b>' : "<b>won't</b> increase your SPS",
+          payPerSmileText = isFinite(payPerSmile) ? '<i>You pay <b>'+Pluralize(payPerSmile, ' smile') + '</b> per +1 SPS</i>' : '';
+  
+      $ul.append('<li>Buying one '+x.name.toLowerCase()+' '+increaseText+payPerSmileText+'</li>');
+  
+      // Display buy/sell information
+      var helpStr = '<li><kbd>Shift + Click</kbd> to buy 10';
+      if (xcount > 0 && item>0) helpStr += ', <kbd>Right click</kbd> to sell 1'; // you can't sell ponies
+      $ul.append(helpStr+'</li>');
+      
+      $overlay.append('<hr>',$ul).show();
+    }
     
-    $overlay.append('<hr>',$ul).show();
+    if(y != null && item >= 0)
+      $overlay.css('top',function(){ return Math.min(Math.max(y-(mobile?(16+this.offsetHeight):40),0),window.innerHeight-this.offsetHeight); });
   }
   function UpdateUpgradeOverlay(item, x, y) {
     if(item != null && item >= curUpgradeList.length) item = -1;
 
     if(y != null && item >= 0) {
-      $upgradeoverlay.css({
-        left: Math.max(0, x-320) + 'px',
-        top: function(){ return Math.min(Math.max(y-(14+this.offsetHeight),0),window.innerHeight-this.offsetHeight); }
-      });
       if(y > ($storeupgrades.get(0).offsetHeight + $storeupgrades.offset().top)) item = -1;
     }
     if(item == null)
       item = $upgradeoverlay.attr('data-item');
-    else if(item == $upgradeoverlay.attr('data-item')) return;
-    if(item >= curUpgradeList.length) item = -1; // This edge case happens when you buy all the upgrades
-    $upgradeoverlay.attr('data-item', item);
+    else if(item != $upgradeoverlay.attr('data-item'))
+    {
+      if(item >= curUpgradeList.length) item = -1; // This edge case happens when you buy all the upgrades
+      $upgradeoverlay.attr('data-item', item);
+      
+      if(item < 0) return $upgradeoverlay.hide();
+      
+      var u = upgradeList[curUpgradeList[item]];
+      $upgradeoverlay.empty().html('<div class="title"><p>'+u.name+'</p><span>'+smilethumb+PrettyNum(u.cost)+'</span></div><hr><p>'+u.desc+'</p>').show();
+    }
     
-    if(item < 0) return $upgradeoverlay.hide();
-    
-    var u = upgradeList[curUpgradeList[item]];
-    $upgradeoverlay.empty().html('<div class="title"><p>'+u.name+'</p><span>'+smilethumb+PrettyNum(u.cost)+'</span></div><hr><p>'+u.desc+'</p>').show();
+    if(y != null && item >= 0) {
+      $upgradeoverlay.css({
+        left: Math.max(0, x-320) + 'px',
+        top: function(){ return Math.min(Math.max(y-(14+this.offsetHeight),0),window.innerHeight-this.offsetHeight); }
+      });
+    }
   }
   function ProcessSPS(delta) {
     Earn(Game.SPS*(delta/1000.0));
@@ -1002,7 +1010,7 @@ $(function(){
                 height: edge,
               });
 
-      (function($el,index){ $el.on('touchstart mousedown', function(){ Click(index) }) })($ponyDiv,i);
+      (function($el,index){ $el.on('click', function(){ Click(index) }) })($ponyDiv,i);
 
       var $innerpony = $(document.createElement('div')).css({
         transform: 'rotate('+(a*i + th + Math.PI/2)+'rad)',
@@ -1119,7 +1127,7 @@ $(function(){
         actualTop = root.offsetTop-wrapper.scrollTop+wrapper.offsetTop,
         mobile = $doc.width() < 600;
         
-    if((event.clientX>wrapper.offsetLeft) && (event.clientY>actualTop)) {
+    if((event.clientX>wrapper.offsetLeft) && (event.clientY>actualTop) && (!mobile || event.clientY>wrapper.offsetTop)) {
       item = Math.floor((event.clientY - actualTop)/root.offsetHeight);
       if(item >= Store.length) item = -1;
     }
@@ -1127,7 +1135,7 @@ $(function(){
 
     item = -1;
     actualTop = $('#storeupgrades')[0].offsetTop-wrapper.scrollTop+wrapper.offsetTop;
-    if((event.clientX>wrapper.offsetLeft) && (event.clientY>actualTop)) {
+    if((event.clientX>wrapper.offsetLeft) && (event.clientY>actualTop) && (!mobile || event.clientY>wrapper.offsetTop)) {
       item = Math.floor((event.clientY - actualTop)/52)*6 + Math.floor((event.clientX - wrapper.offsetLeft)/52);
     }
     UpdateUpgradeOverlay(item, event.clientX, event.clientY);
@@ -1188,30 +1196,41 @@ $(function(){
   });
   
   function getAngle(event) {
-      var cx = $ponywrapper.offset().left;
-      var cy = $ponywrapper.offset().top;
-      return Math.atan2(event.clientY-cy, event.clientX-cx);
+    var cx = $ponywrapper.offset().left;
+    var cy = $ponywrapper.offset().top;
+    return Math.atan2(event.clientY-cy, event.clientX-cx);
   }
-  $('#ponyboard').on('touchstart mousedown', function(event){
-    if(event.which===1) {
-      mleftdown = true; 
-      lastangle = getAngle(event)-curangle;
-      vlastangle = vangle = 0;
-    }
+  var fnmousedown = function(event) {
+    mleftdown = true; 
+    lastangle = getAngle(event)-curangle;
+    vlastangle = vangle = 0;
+  }
+  var fnmousemove = function(event) {
+    vlastangle = getAngle(event)-(curangle+lastangle);
+    curangle = (getAngle(event)-lastangle);
+  }
+  var fnmouseup = function(event) {
+    vangle = vlastangle;
+    mleftdown=false;
+    vlastangle = 0;
+  }
+  $('#ponyboard').on('mousedown', function(event){
+    if(event.which===1) fnmousedown(event);
   }); 
-  $('#ponyboard').on('touchmove mousemove', function(event){
-    if(mleftdown) {
-      vlastangle = getAngle(event)-(curangle+lastangle);
-      curangle = (getAngle(event)-lastangle);
-    }    
+  $('#ponyboard').on('touchstart', function(event){ fnmousedown(event.originalEvent.targetTouches[0]); });
+  $('#ponyboard').on('mousemove', function(event){
+    if(mleftdown) fnmousemove(event);
   });
+  $('#ponyboard').on('touchmove', function(event){ event.preventDefault(); fnmousemove(event.originalEvent.targetTouches[0]);});
   
   // doOnLoad equivalent
   $w.on('load',function(){
     $doc
       .on('mousemove',setMouseMove)
-      .on('touchend mouseup',function(event){ if(event.which===1) { vangle = vlastangle; mleftdown=false; vlastangle = 0; } })
-      .on('touchstart mousedown',function(event){ if(event.which===1) { vlastangle=vangle; }})
+      .on('mouseup',function(event){ if(event.which===1) fnmouseup(event); })
+      .on('touchend touchcancel',function(event){ fnmouseup(event); })
+      .on('mousedown',function(event){ if(event.which===1) { vlastangle=vangle; }})
+      .on('touchstart',function(event){ vlastangle=vangle; })
       .on('keydown', setShiftDown)
       .on('keyup', setShiftUp);
     window.onbeforeunload = function (e) {
