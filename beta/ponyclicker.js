@@ -31,11 +31,12 @@ $(function(){
       achievement_muffins:0, // Muffins from achievements only, recalculated every time an achievement is earned
       store:[1,0,0,0,0,0,0,0,0,0,0,0,0], // amount player has bought of each store item.
       ponyList:genPonyList(), // precalculated list of randomized ponies (so we can reconstruct them after a save/load)
-      version:3, // incremented every time this object format changes so we know to deal with it.
+      version:4, // incremented every time this object format changes so we know to deal with it.
       settings: {
         useCanvas:true,
         optimizeFocus:false,
         closingWarn:false,
+        numDisplay:0, // 0 is names, 1 is raw numbers, 2 is scientific notation
       }
     };
   }
@@ -93,6 +94,9 @@ $(function(){
     switch(g.version)
     {
       case 3:
+        g.settings.numDisplay = 0;
+        g.version = 4;
+      case 4:
         Game = g;
         break;
       default:
@@ -128,11 +132,16 @@ $(function(){
     $EnableE.prop('checked',Game.settings.useCanvas);
     $EnableF.prop('checked',Game.settings.optimizeFocus);
     $EnableW.prop('checked',Game.settings.closingWarn);
+    $('#numdisplay' + Game.settings.numDisplay).prop('checked', true);
   }
   function GetSettings() {
     Game.settings.useCanvas = $EnableE.prop('checked');
     Game.settings.optimizeFocus = $EnableF.prop('checked');
     Game.settings.closingWarn = $EnableW.prop('checked');
+    if($('#numdisplay0').prop('checked')) Game.settings.numDisplay = 0;
+    if($('#numdisplay1').prop('checked')) Game.settings.numDisplay = 1;
+    if($('#numdisplay2').prop('checked')) Game.settings.numDisplay = 2;
+    UpdateSPS();
   }
 
   LoadGame();
@@ -245,11 +254,24 @@ $(function(){
           "Try new smile-powered Muffins today!",
           'Mayor held hostage by crazed Doctor, who demands that a muffin factory be built "for the sake of all ponykind!"',
           'Derpy and Troubleshoes get married! Ponyville does not survive the wedding.',
-          'Scientists investigate whether excessive muffin consumption can lead to long, overbearing plots.'
+          'Scientists investigate whether excessive muffin consumption can lead to long, overbearing plots.',
+          'Rarity to design new fashion line for plus sized mares, claiming “Muffin tops are in fashion this season”.',
+          "Rainbow Dash to host new midnight release party for AK Yearling’s latest novel, ‘Daring Do and the Muffin Man of Azkaban’.",
+          "Fluttershy cancels bi-weekly critter picnic in exchange for new Muffin Social. Critters could not be reached for comment.",
+          "Applejack introduces apple-spice muffins, in attempt to reignite declining produce sales.",
+          "Twilight Sparkle under house arrest for magical mammal manipulation, for trying to cross a mouse with a muffin.",
+          "Pinkie Pie launches new re-branding of cupcakes as ‘dessert muffins’, meets with mixed results."
         );
       }
       if(Game.muffins > 100) {
-        news.push('Derpy crashes into giant muffin. Irony is not amused.');
+        news.push('Derpy crashes into giant muffin. Irony is not amused.',
+        "Discord caught eating 40 muffins in one sitting, that’s as many as four 10’s, and that’s terrible.",
+          "Princess Celestia has eaten at least 37 muffins this year, when reached for comment, Princess Luna responded with ‘In a row?’.",
+          "Princess Cadence Announces that all muffins produced in the Crystal Empire now come with ‘Free Shipping’.  Her Highness then winked suggestively.",
+          "As muffin craze sweeps Equestria, Sapphire Shores to star in new musical, ‘My Little Muffin, Baked-goods are Magic’.",
+          "Diamond Tiara insists that her father has a bigger muffin collection than you, no matter how improbable that sounds.",
+          "New Poll from the Foal Free Press reveals that no food makes a young filly smile as much as a muffin."
+          );
       }
     }
 
@@ -267,45 +289,101 @@ $(function(){
       .last().prependTo($news).css('opacity',0).html(GetNews()).fadeTo(500,1)
       .next().fadeTo(500,0);
   }
-  function PrettyNum(x, fixed) {
-    var d = Math.floor(Math.log10(x));
-    if(d<6) return x.toFixed(0);
-    x = Math.floor(x/Math.pow(10,d-(d%3)-3));
-    var n = Math.floor((d-3)/3) - 1;
-    if(n >= number_names.length) return "Infinity";
-    return (fixed?(x/1000).toFixed(3):(x/1000)) + " " + number_names[n];
+  function NumCommas(x) {
+    if(x<1e20) { // if we're below the precision threshold of toFixed, we cheat and insert commas into that.
+      var n = x.toFixed(0);
+      var len = n.length%3;
+      if(!len) len = 3;
+      var r = n.substring(0, len);
+      for(var i = len; i < n.length; i+=3) {
+        r += ',' + n.substring(i, i+3);
+      }
+      return r;
+    }
+    // TODO: This is laughably inefficient because we build the arrays in reverse.
+    var r = (Math.floor(x)%1000).toFixed(0);
+    x = Math.floor(x/1000);
+    while(x) {
+      var len = r.split(',')[0].length;
+      for(var i = len; i < 3; ++i) {
+        r = '0' + r;
+      }
+      r = (x%1000).toFixed(0) + ',' + r;
+      x = Math.floor(x/1000);
+    }
+    return r;
   }
-  function Pluralize(n, s, fixed) { return PrettyNum(n, fixed) + s + ((n==1)?'':'s'); }
+  function PrettyNum(x, fixed) {
+    switch(Game.settings.numDisplay)
+    {
+    case 0:
+      var d = Math.floor(Math.log10(x));
+      if(d<6) return NumCommas(x);
+      x = Math.floor(x/Math.pow(10,d-(d%3)-3));
+      var n = Math.floor((d-3)/3) - 1;
+      if(n >= number_names.length) return "Infinity";
+      return (fixed?(x/1000).toFixed(3):(x/1000)) + " " + number_names[n];
+    case 1:
+      return NumCommas(Math.floor(x));
+    case 2:
+      return (x<=999999)?NumCommas(x):(x.toExponential(3).replace("e+","&times;10<sup>")+'</sup>');
+    }
+  }
+  function PrintTime(time) {
+    var t = [0, 0, 0, 0, 0]; // years, days, hours, minutes, seconds
+    t[4] = time % 60;
+    time = (time - t[4]) / 60;
+    t[3] = time % 60;
+    time = (time - t[3]) / 60;
+    t[2] = time % 24;
+    time = (time - t[2]) / 24;
+    t[1] = time % 365;
+    t[0] = (time - t[1]) / 365;
+    if (t[0] > 100) return "Centuries"; // more than 100 years
+    for (var i = 3; i <= 4; i++) if (t[i] < 10) t[i] = "0" + t[i];
+    var output = (t[2]>0?(t[2] + ":"):"") + t[3] + ":" + t[4];
+    if (t[1]) output = t[1] + " days and " + output;
+    if (t[0]) output = t[0] + " years, " + output;
+    return output;
+  }
+  function Pluralize2(n, s, s2, fixed) { return PrettyNum(n, fixed) + ((n==1)?s:s2); }
+  function Pluralize(n, s, fixed) { return Pluralize2(n, s, s + 's', fixed); }
 
-  function basic_upgrade(sps, item, p, m) { sps[item] = (sps[item]+p)*(m+1); return sps; }
-  function global_upgrade(sps, p, m) { for(var i = 0; i < sps.length; ++i) { sps[i] = (sps[i]+p)*(m+1); } return sps; }
-  function gen_upgradetype1(item, pSPS, mSPS) { return function(sps, store) { var c = store[item]; return basic_upgrade(sps, item, pSPS*c, mSPS*c); } }
-  function gen_upgradetype2(sps, count, pSPS, mSPS) { Game.SPC+=(pSPS*count); Game.SPC*=(1+mSPS); return sps; }
-  function gen_muffinupgrade(pSPS, mSPS) { return function(sps, store) { return global_upgrade(sps, pSPS, mSPS*Game.muffins); } }
-  function gen_totalsps(sps, store) { var total = 0; for(var i = 0; i < sps.length; ++i) { total += sps[i]*store[i]; } return total; }
+  function gen_upgradetype1(item, pSPS, mSPS) { return function(sps, store) { sps.pStore[item] += pSPS*store[item]; sps.mStore[item] += mSPS*store[item]; return sps; } }
+  function gen_upgradetype2(item, p, m) { return function(sps, store) { sps.pSPC += p*store[item]; sps.mSPC += m; return sps; } }
+  function gen_muffinupgrade(pSPS, mSPS) { return function(sps, store) { sps.mMuffin += mSPS*Game.muffins; return sps; } }
 
+  /* upgrade pool object: {
+    pSPS, // Global additive bonus to SPS (applied after store)
+    mSPS, // Global multiplier to SPS (applied after store)
+    pSPC, // Additive bonus to SPC
+    mSPC, // percentage of the total SPS after everything else has been applied to add to the SPC
+    mMuffin, // multiplier bonus applied after global SPS bonus (usually muffins)
+    pStore, // Array of additive bonuses to individual store item SPS
+    mStore // array of multiplicative bonuses to individual store item SPS
+  }*/
   var upgradeList = [ {cost:0, name:"UNDEFINED", desc:"ERROR", fn:null},
-    {cost:700, name:"Clicking Assistants", desc: "Clicking gets +1 SPC for every pony you have.", fn:function(sps,store){return gen_upgradetype2(sps, store[0], 1, 0);} },
-    {cost:7000, name:"Friendship is Clicking", desc: "Clicking gets +1 SPC for every friendship you have.", fn:function(sps,store){return gen_upgradetype2(sps, store[1], 1, 0);} },
-    {cost:70000, name:"Ticklish Cursors", desc: "Clicking gets 1% of your SPS.", fn:function(sps,store){return gen_upgradetype2(sps, gen_totalsps(sps, store), 0.01, 0); }},
-    {cost:700000, name:"Feathered Cursors", desc: "Clicking gets 2% of your SPS.", fn:function(sps,store){return gen_upgradetype2(sps, gen_totalsps(sps, store), 0.02, 0); }},
-    {cost:8000000, name:"Advanced Tickle-fu", desc: "Clicking gets 3% of your SPS.", fn:function(sps,store){return gen_upgradetype2(sps, gen_totalsps(sps, store), 0.03, 0); }},
-    {cost:90000000, name:"Happiness Injection", desc: "Clicking gets 4% of your SPS.", fn:function(sps,store){return gen_upgradetype2(sps, gen_totalsps(sps, store), 0.04, 0); }},
+    {cost:600, name:"Booping Assistants", desc: "Booping gets +1 SPC for every pony you have.", fn:gen_upgradetype2(0, 1, 0)},
+    {cost:7000, name:"Friendship is Booping", desc: "Booping gets +1 SPC for every friendship you have.", fn:gen_upgradetype2(1, 1, 0) },
+    {cost:70000, name:"Ticklish Cursors", desc: "Booping gets 1% of your SPS.", fn:gen_upgradetype2(0, 0, 0.01)},
+    {cost:700000, name:"Feathered Cursors", desc: "Booping gets an additional 2% of your SPS.", fn:gen_upgradetype2(0, 0, 0.02)},
+    {cost:8000000, name:"Advanced Tickle-fu", desc: "Booping gets an additional 3% of your SPS.", fn:gen_upgradetype2(0, 0, 0.03)},
+    {cost:90000000, name:"Happiness Injection", desc: "Booping gets an additional 4% of your SPS.", fn:gen_upgradetype2(0, 0, 0.04)},
     {cost:10000, name:"Friendship Is Magic", desc: "Friendships generate +1 SPS for every other friendship.", fn:gen_upgradetype1(1, 1, 0) },
     {cost:1000000, name:"Friendship Is Spellcraft", desc: "Friendships generate +10 SPS for every other friendship.", fn:gen_upgradetype1(1, 10, 0) },
     {cost:100000000, name:"Friendship Is Sorcery", desc: "Friendships generate +100 SPS for every other friendship.", fn:gen_upgradetype1(1, 100, 0) },
     {cost:10000000000, name:"Friendship Is Witchcraft", desc: "Friendships generate +1000 SPS for every other friendship.", fn:gen_upgradetype1(1, 1000, 0) },
     {cost:1000000000000, name:"Friendship Is Benefits", desc: "Friendships generate +10000 SPS for every other friendship.", fn:gen_upgradetype1(1, 10000, 0) },
     {cost:7777777, name:"I just don't know what went wrong!", desc: "You gain +0.1% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.001) },
-    {cost:777777777, name:"That one mailmare", desc: "You gain +0.2% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.002) },
-    {cost:77777777777, name:"Derpy Delivery Service", desc: "You gain +0.3% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.003) },
-    {cost:7777777777777, name:"Blueberry Muffins", desc: "You gain +0.4% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.004) },
-    {cost:777777777777777, name:"Chocolate-chip Muffins", desc: "You gain +0.5% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.005) },
-    {cost:77777777777777777, name:"Lemon Muffins", desc: "You gain +0.6% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.006) },
-    {cost:7777777777777777777, name:"Poppy seed Muffins", desc: "You gain +0.7% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.007) },
-    {cost:777777777777777777777, name:"Muffin Bakeries", desc: "You gain +0.8% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.008) },
-    {cost:77777777777777777777777, name:"Designer Muffins", desc: "You gain +0.9% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.009) },
-    {cost:7777777777777777777777777, name:"Muffin Factories", desc: "You gain +1% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.01) },
+    {cost:777777777, name:"That one mailmare", desc: "You gain an additional +0.2% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.002) },
+    {cost:77777777777, name:"Derpy Delivery Service", desc: "You gain an additional +0.3% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.003) },
+    {cost:7777777777777, name:"Blueberry Muffins", desc: "You gain an additional +0.4% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.004) },
+    {cost:777777777777777, name:"Chocolate-chip Muffins", desc: "You gain an additional +0.5% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.005) },
+    {cost:77777777777777777, name:"Lemon Muffins", desc: "You gain an additional +0.6% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.006) },
+    {cost:7777777777777777777, name:"Poppy seed Muffins", desc: "You gain an additional +0.7% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.007) },
+    {cost:777777777777777777777, name:"Muffin Bakeries", desc: "You gain an additional +0.8% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.008) },
+    {cost:77777777777777777777777, name:"Designer Muffins", desc: "You gain an additional +0.9% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.009) },
+    {cost:7777777777777777777777777, name:"Muffin Factories", desc: "You gain an additional +1% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.01) },
     //{cost:50000, name:"Upgrade 3", desc: "Parties generate +1 SPS for every other party.", fn:gen_upgradetype1(2, 1, 0) }
   ];
 
@@ -318,14 +396,14 @@ $(function(){
 
   var achievementList = {
     '1': { name:"Participation Award", desc: "You moved the mouse!", muffins:0},
-    '2': { name:"Hi there!", desc: "Click a pony <b>once</b>.", muffins:0, cond:function(){ return Game.clicks > 0; } },
+    '2': { name:"Hi there!", desc: "Boop a pony <b>once</b>.", muffins:0, cond:function(){ return Game.clicks > 0; } },
     '200': { name:"Cautious", desc: "Manually save the game.", muffins:1},
     '201': { name:"Paranoid", desc: "Export a save.", muffins:1},
     '202': { name:"Time Machine", desc: "Import a save.", muffins:1},
     '203': { name:"Narcissism!", desc: "Click the image of Cloud Hop on the credits page.", muffins:1},
     '204': { name:"Music Makes Everything Better", desc: "Listen to the smile song.", muffins:1},
     '205': { name:"You Monster", desc: "Sell a friendship.", muffins:1},
-    '206': { name:"No Booping Allowed", desc: "Get <b>"+PrettyNum(1000000000000)+"</b> smiles with only 35 pony clicks.", muffins:1, cond:function() { return Game.clicks <= 35 && Game.totalsmiles >= 1000000000000; } },
+    '206': { name:"No Booping Allowed", desc: "Get <b>"+PrettyNum(1000000000000)+"</b> smiles with only 35 pony boops.", muffins:1, cond:function() { return Game.clicks <= 35 && Game.totalsmiles >= 1000000000000; } },
     '207': { name:"Wheel of Friendship", desc: "Spin the ponies.", muffins:1, cond:function() { return vangle>0.05; } },
     '208': { name:"Centrifuge of Friendship", desc: "Spin the ponies <b>really fast</b>.", muffins:2, cond:function() { return vangle>3; } },
     '255': { name:"Completionist", desc: "Get all the achievements.", muffins:100}
@@ -346,9 +424,9 @@ $(function(){
   var extraAchievements = Object.keys(achievementList).length-3; // minus three because the array starts at 1 instead of 0
   var achievementCount = 3;
   var achievements_clicks = genAchievements(
-    ["That tickles!", "Tickle War", "Tickle War II: The Retickling", "This Can't Be Healthy", "Carpal Tunnel Syndrome", "Wrist In Pieces", "Clickception"],
-    [10,100,1000,10000,50000,100000,200000],
-    function(n) { return "Click a pony <b>"+PrettyNum(n)+"</b> times."; },
+    ["That tickles!", "Tickle War", "Tickle War II: The Retickling", "It's Over Nine Thousand!", "This Can't Be Healthy", "Carpal Tunnel Syndrome", "Wrist In Pieces"],
+    [10,100,1000,9001,25000,50000,100000],
+    function(n) { return "Boop a pony <b>"+PrettyNum(n)+"</b> times."; },
     function(n) { return function() { return Game.clicks >= n; }; });
   achievements_clicks.push(2);
 
@@ -368,7 +446,7 @@ $(function(){
     return genAchievements(
     names,
     [1, 50, 100, 150, 200],
-    function(n) { return "Buy <b>"+Pluralize(n, "</b> " + Store[item].name.toLowerCase()) + "."; },
+    function(n) { return "Buy <b>"+Pluralize2(n, "</b> " + Store[item].name.toLowerCase(), "</b> " + Store[item].plural.toLowerCase()) + "."; },
     genShopCond(item));
   }
 
@@ -447,7 +525,7 @@ $(function(){
             :'<strong>'+dynFontSize(upgradeList[prop].name)+'</strong><i>[upgrade]</i><hr><p>'+upgradeList[prop].desc+'</p>'
           )
           .appendTo($ach);
-
+        if(!upgrade) $(document.createElement('div')).addClass('muffin').html('+' + achievementList[prop].muffins).appendTo($ach);
         if (Game.achievements[prop]==null && !upgrade) $ach.addClass('hidden');
 
         return $ach;
@@ -695,14 +773,19 @@ $(function(){
         var hide = upgradeList[i].cost>Game.smiles;
         curUpgradeList.push(i);
         scopeUpgradeList.push(hide?-i:i);
-        var $ach = $(document.createElement('div'))
-          .addClass('achievement'+(hide?' hidden':''))
-          .css('background-image','url(upgrades.png)');
-
-        (function($el,index){ $el.on('click',function(){ BuyUpgrade(index) }); })($ach,i);
-
-        achs.push($ach);
       }
+    }
+    
+    curUpgradeList.sort(function(a, b){return upgradeList[a].cost-upgradeList[b].cost});
+    
+    for(var i = 0; i < curUpgradeList.length; ++i) {
+      var $ach = $(document.createElement('div'))
+        .addClass('achievement'+(hide?' hidden':''))
+        .css('background-image','url(upgrades.png)');
+
+      (function($el,index){ $el.on('click',function(){ BuyUpgrade(index) }); })($ach,curUpgradeList[i]);
+
+      achs.push($ach);
     }
     if(!arraysEqual(lastUpgrade,scopeUpgradeList)) {
       $storeupgrades.empty().append(achs);
@@ -719,22 +802,36 @@ $(function(){
   // Seperating this out lets us make predictions on what a purchase will do to your SPS
   function CalcSPS(store, docache) {
     var res = CalcSPSinit(store);
-    var SPC = Game.SPC;
-
-    Game.SPC = 1;
-    for(var i = Game.upgrades.length-1; i >= 0; i-=1) {
-      res = upgradeList[Game.upgrades[i]].fn(res, store);
-      if(!res || !res.length) {
+    
+    var obj = {
+      pSPS:0, // Global additive bonus to SPS (applied after store)
+      mSPS:0, // Global multiplier to SPS (applied after store)
+      pSPC:0, // Additive bonus to SPC
+      mSPC:0, // percentage of the total SPS after everything else has been applied to add to the SPC
+      mMuffin:0, // multiplier bonus applied after global SPS bonus (usually muffins)
+      pStore:new Array(res.length), // Array of additive bonuses to individual store item SPS
+      mStore:new Array(res.length) // array of multiplicative bonuses to individual store item SPS
+    };
+    for(var i = 0; i < res.length; ++i) { obj.pStore[i]=0; obj.mStore[i]=0; } // initialize values
+    
+    for(var i = 0; i < Game.upgrades.length; ++i) {
+      obj = upgradeList[Game.upgrades[i]].fn(obj, store);
+      if(!obj || obj.pSPS === undefined) {
         alert("ILLEGAL UPGRADE: " + Game.upgrades[i]);
       }
     }
-    if(!docache) { Game.SPC = SPC; } // HACK to fix SPC exploit
 
     var SPS = 0;
-    for(var i = 0; i < res.length; ++i) {
+    for(var i = 0; i < res.length; ++i) { // Calculate individual store object SPS and create base SPS amount
+      res[i] = (res[i]+obj.pStore[i])*(obj.mStore[i]+1.0);
       if(docache) { Store[i].SPS_cache = res[i]; }
       SPS += res[i]*store[i];
     }
+    SPS = (SPS+obj.pSPS)*(obj.mSPS+1.0); // Apply global SPS modifiers
+    SPS *= (obj.mMuffin+1.0); // Apply muffin modifiers
+    if(docache) // Calculate resulting SPC if we're caching values.
+      Game.SPC = 1 + obj.pSPC + (obj.mSPC*SPS);
+    
     return SPS;
   }
   function CalcSPSinit(store) {
@@ -803,6 +900,8 @@ $(function(){
     if(Game.delta>framelength) { // play at 30 FPS or the text starts flickering
       ProcessSPS(Game.delta);
       lastTime = timestamp;
+      //var $overlaytime = $('#overlaytime'); // Can't cache this because it's destroyed often
+      //if($overlaytime.length) $overlaytime.html(CalcTimeItem($overlaytime.attr('data-item')));
     }
     if((timestamp - lastNews)>newswait) {
       UpdateNews();
@@ -838,68 +937,90 @@ $(function(){
     window.requestAnimationFrame(UpdateGame);
   }
 
+  function CalcTimeItem(item) {
+    var time = Math.ceil((Store[item].cost(Game.store[item]) - Game.smiles) / Game.SPS);
+    return (time <= 0)?'<b>now</b>':('in <b>' + PrintTime(time)+'</b>');
+  }
+  
   function UpdateOverlay(item, y, mobile) {
-    if(y != null && item >= 0)
-      $overlay.css('top',function(){ return Math.min(Math.max(y-(mobile?(16+this.offsetHeight):40),0),window.innerHeight-this.offsetHeight); });
+    var skip = false;
     if(item == null)
       item = $overlay.attr('data-item');
-    else if(item == $overlay.attr('data-item')) return;
-    $overlay.attr('data-item', item);
-
-    if(item < 0) return $overlay.hide();
-
-    var x = Store[item],
-        xcount = Game.store[item],
-        xcost = x.cost(xcount),
-        $title = $(document.createElement('div'))
-          .addClass('title')
-          .append('<p>'+x.name+'</p><span>'+smilethumb+PrettyNum(xcost)+'</span>');
-
-    if(xcount > 0) $title.append('<div>['+PrettyNum(xcount)+' owned]</div>');
-    $overlay.empty().append($title, '<hr><p>'+x.desc+'</p>');//<ul>
-    var $ul = $(document.createElement('ul'));
-
-    if(x.formula) $ul.append('<li class="formula">'+x.formula+'</li>');
-    if(x.SPS_cache > 0 || item==1) $ul.append('<li>Each '+x.name.toLowerCase()+' generates <b>'+Pluralize(x.SPS_cache, ' smile')+'</b> per second</li>');
-    if(xcount > 0 && x.SPS_cache > 0) $ul.append('<li><b>'+PrettyNum(xcount)+'</b> '+x.plural.toLowerCase()+' generating <b>'+Pluralize(xcount*x.SPS_cache, ' smile')+'</b> per second</li>');
-
-    var nstore = Game.store.slice();
-    nstore[item]+=1;
-    var nSPS = CalcSPS(nstore, false),
-        sps_increase = nSPS - Game.SPS,
-        payPerSmile = xcost/(nSPS - Game.SPS),
-        increaseText = sps_increase > 0 ? 'will increase your SPS by <b>'+PrettyNum(sps_increase)+'</b>' : "<b>won't</b> increase your SPS",
-        payPerSmileText = isFinite(payPerSmile) ? '<i>You pay <b>'+Pluralize(payPerSmile, ' smile') + '</b> per +1 SPS</i>' : '';
-
-    $ul.append('<li>Buying one '+x.name.toLowerCase()+' '+increaseText+payPerSmileText+'</li>');
-
-    // Display buy/sell information
-    var helpStr = '<li><kbd>Shift + Click</kbd> to buy 10';
-    if (xcount > 0 && item>0) helpStr += ', <kbd>Right click</kbd> to sell 1'; // you can't sell ponies
-    $ul.append(helpStr+'</li>');
+    else if(item == $overlay.attr('data-item'))
+      skip = true;
+      
+    if(!skip)
+    {
+      $overlay.attr('data-item', item);
+  
+      if(item < 0) return $overlay.hide();
+  
+      var x = Store[item],
+          xcount = Game.store[item],
+          xcost = x.cost(xcount),
+          $title = $(document.createElement('div'))
+            .addClass('title')
+            .append('<p>'+x.name+'</p><span>'+smilethumb+PrettyNum(xcost)+'</span>');
+  
+      if(xcount > 0) $title.append('<div>['+PrettyNum(xcount)+' owned]</div>');
+      $overlay.empty().append($title, '<hr><p>'+x.desc+'</p>');//<ul>
+      var $ul = $(document.createElement('ul'));
+  
+      if(x.formula) $ul.append('<li class="formula">'+x.formula+'</li>');
+      if(x.SPS_cache > 0 || item==1) $ul.append('<li>Each '+x.name.toLowerCase()+' generates <b>'+Pluralize(x.SPS_cache, ' smile')+'</b> per second</li>');
+      if(xcount > 0 && x.SPS_cache > 0) $ul.append('<li><b>'+PrettyNum(xcount)+'</b> '+x.plural.toLowerCase()+' generating <b>'+Pluralize(xcount*x.SPS_cache, ' smile')+'</b> per second</li>');
+      var lowerbound = Game.SPS/140737488355328; // this is Game.SPS / 2^47, which gives us about 5 bits of meaningful precision before the double falls apart.
+      var nstore = Game.store.slice();
+      nstore[item]+=1;
+      var nSPS = CalcSPS(nstore, false),
+          sps_increase = nSPS - Game.SPS,
+          payPerSmile = xcost/(nSPS - Game.SPS),
+          increaseText = sps_increase > 0 ? 'will increase your SPS by <b>'+(sps_increase > lowerbound ? PrettyNum(sps_increase) : 'almost nothing')+'</b>' : "<b>won't</b> increase your SPS",
+          payPerSmileText = isFinite(payPerSmile) ? '<i>You pay <b>'+(sps_increase > lowerbound ? Pluralize(payPerSmile, ' smile') : 'way too many smiles') + '</b> per +1 SPS</i>' : '';
+  
+      $ul.append('<li>Buying one '+x.name.toLowerCase()+' '+increaseText+payPerSmileText+'</li>');
+      if(xcost>Game.smiles && Game.SPS > 0) $ul.append('<li>This can be purchased <span id="overlaytime" data-item="'+item+'">' + CalcTimeItem(item) + '</span></li>');
+      
+      // Display buy/sell information
+      var helpStr = '<li><kbd>Shift + Click</kbd> to buy 10';
+      if (xcount > 0 && item>0) helpStr += ', <kbd>Right click</kbd> to sell 1'; // you can't sell ponies
+      $ul.append(helpStr+'</li>');
+      
+      $overlay.append('<hr>',$ul).show();
+    }
     
-    $overlay.append('<hr>',$ul).show();
+    if(y != null && item >= 0)
+      $overlay.css('top',function(){ return Math.min(Math.max(y-(mobile?(16+this.offsetHeight):40),0),window.innerHeight-this.offsetHeight); });
   }
   function UpdateUpgradeOverlay(item, x, y) {
+    var skip = false;
     if(item != null && item >= curUpgradeList.length) item = -1;
 
+    if(y != null && item >= 0) {
+      if(y > ($storeupgrades.get(0).offsetHeight + $storeupgrades.offset().top)) item = -1;
+    }
+    if(item == null)
+      item = $upgradeoverlay.attr('data-item');
+    else if(item == $upgradeoverlay.attr('data-item'))
+      skip = true;
+      
+    if(!skip)
+    {
+      if(item >= curUpgradeList.length) item = -1; // This edge case happens when you buy all the upgrades
+      $upgradeoverlay.attr('data-item', item);
+      
+      if(item < 0) return $upgradeoverlay.hide();
+      
+      var u = upgradeList[curUpgradeList[item]];
+      $upgradeoverlay.empty().html('<div class="title"><p>'+u.name+'</p><span>'+smilethumb+PrettyNum(u.cost)+'</span></div><hr><p>'+u.desc+'</p>').show();
+    }
+    
     if(y != null && item >= 0) {
       $upgradeoverlay.css({
         left: Math.max(0, x-320) + 'px',
         top: function(){ return Math.min(Math.max(y-(14+this.offsetHeight),0),window.innerHeight-this.offsetHeight); }
       });
-      if(y > ($storeupgrades.get(0).offsetHeight + $storeupgrades.offset().top)) item = -1;
     }
-    if(item == null)
-      item = $upgradeoverlay.attr('data-item');
-    else if(item == $upgradeoverlay.attr('data-item')) return;
-    if(item >= curUpgradeList.length) item = -1; // This edge case happens when you buy all the upgrades
-    $upgradeoverlay.attr('data-item', item);
-    
-    if(item < 0) return $upgradeoverlay.hide();
-    
-    var u = upgradeList[curUpgradeList[item]];
-    $upgradeoverlay.empty().html('<div class="title"><p>'+u.name+'</p><span>'+smilethumb+PrettyNum(u.cost)+'</span></div><hr><p>'+u.desc+'</p>').show();
   }
   function ProcessSPS(delta) {
     Earn(Game.SPS*(delta/1000.0));
@@ -1002,7 +1123,7 @@ $(function(){
                 height: edge,
               });
 
-      (function($el,index){ $el.on('touchstart mousedown', function(){ Click(index) }) })($ponyDiv,i);
+      (function($el,index){ $el.on('click', function(){ Click(index) }) })($ponyDiv,i);
 
       var $innerpony = $(document.createElement('div')).css({
         transform: 'rotate('+(a*i + th + Math.PI/2)+'rad)',
@@ -1056,13 +1177,13 @@ $(function(){
   }
 
   var setShiftDown = function(event){
-      if(event.keyCode === 16 || event.charCode === 16){
+      if(event.keyCode === 16 || event.charCode === 16 || event.keyCode === 17 || event.charCode === 17){
           Game.shiftDown = true;
       }
   };
 
   var setShiftUp = function(event){
-      if(event.keyCode === 16 || event.charCode === 16){
+      if(event.keyCode === 16 || event.charCode === 16 || event.keyCode === 17 || event.charCode === 17){
           Game.shiftDown = false;
       }
   };
@@ -1119,7 +1240,7 @@ $(function(){
         actualTop = root.offsetTop-wrapper.scrollTop+wrapper.offsetTop,
         mobile = $doc.width() < 600;
         
-    if((event.clientX>wrapper.offsetLeft) && (event.clientY>actualTop)) {
+    if((event.clientX>wrapper.offsetLeft) && (event.clientY>actualTop) && (!mobile || event.clientY>wrapper.offsetTop)) {
       item = Math.floor((event.clientY - actualTop)/root.offsetHeight);
       if(item >= Store.length) item = -1;
     }
@@ -1127,7 +1248,7 @@ $(function(){
 
     item = -1;
     actualTop = $('#storeupgrades')[0].offsetTop-wrapper.scrollTop+wrapper.offsetTop;
-    if((event.clientX>wrapper.offsetLeft) && (event.clientY>actualTop)) {
+    if((event.clientX>wrapper.offsetLeft) && (event.clientY>actualTop) && (!mobile || event.clientY>wrapper.offsetTop)) {
       item = Math.floor((event.clientY - actualTop)/52)*6 + Math.floor((event.clientX - wrapper.offsetLeft)/52);
     }
     UpdateUpgradeOverlay(item, event.clientX, event.clientY);
@@ -1188,30 +1309,41 @@ $(function(){
   });
   
   function getAngle(event) {
-      var cx = $ponywrapper.offset().left;
-      var cy = $ponywrapper.offset().top;
-      return Math.atan2(event.clientY-cy, event.clientX-cx);
+    var cx = $ponywrapper.offset().left;
+    var cy = $ponywrapper.offset().top;
+    return Math.atan2(event.clientY-cy, event.clientX-cx);
   }
-  $('#ponyboard').on('touchstart mousedown', function(event){
-    if(event.which===1) {
-      mleftdown = true; 
-      lastangle = getAngle(event)-curangle;
-      vlastangle = vangle = 0;
-    }
+  var fnmousedown = function(event) {
+    mleftdown = true; 
+    lastangle = getAngle(event)-curangle;
+    vlastangle = vangle = 0;
+  }
+  var fnmousemove = function(event) {
+    vlastangle = getAngle(event)-(curangle+lastangle);
+    curangle = (getAngle(event)-lastangle);
+  }
+  var fnmouseup = function(event) {
+    vangle = vlastangle;
+    mleftdown=false;
+    vlastangle = 0;
+  }
+  $('#ponyboard').on('mousedown', function(event){
+    if(event.which===1) fnmousedown(event);
   }); 
-  $('#ponyboard').on('touchmove mousemove', function(event){
-    if(mleftdown) {
-      vlastangle = getAngle(event)-(curangle+lastangle);
-      curangle = (getAngle(event)-lastangle);
-    }    
+  $('#ponyboard').on('touchstart', function(event){ fnmousedown(event.originalEvent.targetTouches[0]); });
+  $('#ponyboard').on('mousemove', function(event){
+    if(mleftdown) fnmousemove(event);
   });
+  $('#ponyboard').on('touchmove', function(event){ event.preventDefault(); fnmousemove(event.originalEvent.targetTouches[0]);});
   
   // doOnLoad equivalent
   $w.on('load',function(){
     $doc
       .on('mousemove',setMouseMove)
-      .on('touchend mouseup',function(event){ if(event.which===1) { vangle = vlastangle; mleftdown=false; vlastangle = 0; } })
-      .on('touchstart mousedown',function(event){ if(event.which===1) { vlastangle=vangle; }})
+      .on('mouseup',function(event){ if(event.which===1) fnmouseup(event); })
+      .on('touchend touchcancel',function(event){ fnmouseup(event); })
+      .on('mousedown',function(event){ if(event.which===1) { vlastangle=vangle; }})
+      .on('touchstart',function(event){ vlastangle=vangle; })
       .on('keydown', setShiftDown)
       .on('keyup', setShiftUp);
     window.onbeforeunload = function (e) {

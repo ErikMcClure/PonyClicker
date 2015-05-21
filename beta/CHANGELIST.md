@@ -1,6 +1,21 @@
 # Pony Clicker Change Log
 This is the change log for Pony Clicker. Some minor changes may not be reflected in this log.
 
+## v0.88
+- Implemented basic mobile interface
+- Players now boop ponies instead of click them (Resolve #38)
+- Added choice to show numbers as names, scientific notation, or long form (Resolve #61)
+- You can now use both ctrl and shift to bulk buy to deal with firefox (Fix #62)
+- Muffin counts displayed on achievements.
+- Fix pluralization on achievements.
+- Overlay now has a timer saying when you will be able to buy something (Resolve #60)
+- Upgrade system overhauled into buckets (Resolve #34)
+- Upgrade list is now sorted
+- Added a lower bound check to address precision issues (Resolve #42)
+
+## v0.87
+- Fixed memory leak
+
 ## v0.86
 - Fix timer so it uses the delta properly when tab isn't visible.
 - Rewrite everything in jQuery (DJDavid98)
