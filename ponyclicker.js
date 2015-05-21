@@ -12,7 +12,7 @@ $(function(){
       $EnableF = $('#EnableFocus'),
       $EnableW = $('#EnableWarn'),
       $upgrades_total = $('#upgrades_total'),
-      $ponyversion = {major:0,minor:88,revision:0};
+      $ponyversion = {major:0,minor:89,revision:0};
       
   function CreateGame() {
     return {
@@ -626,7 +626,7 @@ $(function(){
 
   // The game's difficulty is modelled using a series of curves defined by these values
   function fn_ratio(init,curve) { return function(n) { return init*Math.pow(curve,n); }; }
-  var fcurve = 1.3; // Friendship curve
+  var fcurve = 1.26; // Friendship curve
   var fcurve_init = 20;
   var rcurve = 1.13; // cost ratio curve
   var rcurve_init = 32; // Initial cost ratio (for a party)
@@ -689,7 +689,7 @@ $(function(){
     var cost = fn_cost1(Fvals[i-2]);
     var b = fn_estimatebuildings(cost, i);
     Store[i].initcost = initcost(Fvals[i-2],i,b);
-    Store[i].costcurve = 1.2 + (i*i*0.0048); //fn_costcurve(5, fn_rratio(i-2)*1.5, i, Store[i].initcost);
+    Store[i].costcurve = 1.2 + (i*i*0.0045); //fn_costcurve(5, fn_rratio(i-2)*1.5, i, Store[i].initcost);
   }
 
   Store[0].cost = fn_cost0;

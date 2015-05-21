@@ -1,6 +1,9 @@
 # Pony Clicker Change Log
 This is the change log for Pony Clicker. Some minor changes may not be reflected in this log.
 
+## v0.89
+- Cut late game costs to help compensate for upgrade adjustment
+
 ## v0.88
 - Implemented basic mobile interface
 - Players now boop ponies instead of click them (Resolve #38)
