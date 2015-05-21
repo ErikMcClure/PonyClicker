@@ -224,7 +224,7 @@ $(function(){
         "Princess Twilight found overdosed on friendship, taken to rehab center!",
         "Citizens of Ponyville so happy they invent new word for it! Debates about how to spell it immediately turn into murderous riots!");
     } else if(Game.totalsmiles < 1000000000000000) {
-      news.push("Ponyville citizens suffer from chronic happiness! Doctors unsure if it's actually a problem or not!");
+      news.push("Ponyville citizens diagnosed with chronic happiness! Doctors unsure if it's actually a problem or not!");
     } else if(Game.totalsmiles < 1000000000000000000) {
       news.push("Scientists split friendship and discover a runaway chain reaction! Nuclear friendship bomb proposed by military!");
     } else {
@@ -235,7 +235,7 @@ $(function(){
     if(Game.totalsmiles > 10000) {
       news.push(
         'Twilight found shipping Rainbow Dash with everything in the universe! Riots erupt all across Equestria!',
-        'Lyra and BonBon revealed as "just friends"! Ponies everywhere faint in shock!',
+        'Lyra and BonBon revealed as "just friends"! Ponies everywhere faint in shock! Octavia and Vinyl Scratch refuse to comment.',
         "Celestia's insatiable desire for cake causes caketastrophe in the Royal Kitchen! A memorial service for the lost chocolate chips to be held on Monday.",
         "Pink menace at Sugarcube corner goes batty, takes 15 muffins hostage!",
         "Citizens of Ponyville vote to create a public library instead of relying on a private collection organized by a crazed purple mare!",
@@ -245,7 +245,13 @@ $(function(){
         "Rainbow Dash reportedly investing in the Cloud. Pegasi everywhere confused by what this means.",
         "Princess Twilight discovers that ponies are actually tiny nuclear reactors! \"That explains why I never need to go to the bathroom,\" says Rainbow Dash.",
         "Pony pony Pony pony pony pony Pony pony!",
-        "Princess Twilight Sparkle dating a peach! The peach has no comment on the matter."
+        "Princess Twilight Sparkle dating a peach! The peach has no comment on the matter.",
+        'Doctor Whoves bumps into himself. Ponyville citizens worried that there will be "No more."',
+        'Big Mac and Smarty Pants have deep philosophical conversations. When asked what he sounds like, Smarty Pants refuesed to comment.',
+        'BAD TIMBERWOLF',
+        'Apple Bloom found in shock on the edge of the Everfree Forest; says she visited a village of ponies with no Cutie Marks.',
+        'Applejack finds golden apple. Looks away awkwardly and quickly changes the subject when asked how she found it.',
+        'Pinkie Pie found running around Ponyville, proclaiming "Our lives aren\'t reality and that we\'re just a bunch of animated characters on a TV show meant for the entertainment of others!"'
       );
 
       if(Game.muffins > 10) {
@@ -270,7 +276,13 @@ $(function(){
           "Princess Cadence Announces that all muffins produced in the Crystal Empire now come with ‘Free Shipping’.  Her Highness then winked suggestively.",
           "As muffin craze sweeps Equestria, Sapphire Shores to star in new musical, ‘My Little Muffin, Baked-goods are Magic’.",
           "Diamond Tiara insists that her father has a bigger muffin collection than you, no matter how improbable that sounds.",
-          "New Poll from the Foal Free Press reveals that no food makes a young filly smile as much as a muffin."
+          "New Poll from the Foal Free Press reveals that no food makes a young filly smile as much as a muffin.",
+          'Sugarcube Corner hold muffin bake sale. Ponyville mourns the loss of many ponies during the ensuring muffin frenzy.',
+          "Chrysalis returns! Says she's just buying muffins."
+          );
+      }
+      if(Game.muffins > 200) {
+        news.push('Send help. Trapped in Equestria, being forced to write silly news messages.'
           );
       }
     }
