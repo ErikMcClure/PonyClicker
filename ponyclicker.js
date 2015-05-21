@@ -246,7 +246,7 @@ $(function(){
         "Princess Twilight discovers that ponies are actually tiny nuclear reactors! \"That explains why I never need to go to the bathroom,\" says Rainbow Dash.",
         "Pony pony Pony pony pony pony Pony pony!",
         "Princess Twilight Sparkle dating a peach! The peach has no comment on the matter.",
-        'Doctor Whoves bumps into himself. Ponyville citizens worried that there will be "No more."',
+        'Doctor Whooves bumps into himself. Ponyville citizens worried that there will be "No more."',
         'Big Mac and Smarty Pants have deep philosophical conversations. When asked what he sounds like, Smarty Pants refuesed to comment.',
         'BAD TIMBERWOLF',
         'Apple Bloom found in shock on the edge of the Everfree Forest; says she visited a village of ponies with no Cutie Marks.',
