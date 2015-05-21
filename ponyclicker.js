@@ -499,7 +499,7 @@ $(function(){
             :'<strong>'+dynFontSize(upgradeList[prop].name)+'</strong><i>[upgrade]</i><hr><p>'+upgradeList[prop].desc+'</p>'
           )
           .appendTo($ach);
-
+        if(!upgrade) $(document.createElement('div')).addClass('muffin').html('+' + achievementList[prop].muffins).appendTo($ach);
         if (Game.achievements[prop]==null && !upgrade) $ach.addClass('hidden');
 
         return $ach;
@@ -1116,13 +1116,13 @@ $(function(){
   }
 
   var setShiftDown = function(event){
-      if(event.keyCode === 16 || event.charCode === 16){
+      if(event.keyCode === 16 || event.charCode === 16 || event.keyCode === 17 || event.charCode === 17){
           Game.shiftDown = true;
       }
   };
 
   var setShiftUp = function(event){
-      if(event.keyCode === 16 || event.charCode === 16){
+      if(event.keyCode === 16 || event.charCode === 16 || event.keyCode === 17 || event.charCode === 17){
           Game.shiftDown = false;
       }
   };
