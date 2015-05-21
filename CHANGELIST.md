@@ -9,6 +9,9 @@ This is the change log for Pony Clicker. Some minor changes may not be reflected
 - Muffin counts displayed on achievements.
 - Fix pluralization on achievements.
 - Overlay now has a timer saying when you will be able to buy something (Resolve #60)
+- Upgrade system overhauled into buckets (Resolve #34)
+- Upgrade list is now sorted
+- Added a lower bound check to address precision issues (Resolve #42)
 
 ## v0.87
 - Fixed memory leak
