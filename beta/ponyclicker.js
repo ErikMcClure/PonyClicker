@@ -12,7 +12,7 @@ $(function(){
       $EnableF = $('#EnableFocus'),
       $EnableW = $('#EnableWarn'),
       $upgrades_total = $('#upgrades_total'),
-      $ponyversion = {major:0,minor:87,revision:0};
+      $ponyversion = {major:0,minor:88,revision:0};
       
   function CreateGame() {
     return {
@@ -779,6 +779,7 @@ $(function(){
     curUpgradeList.sort(function(a, b){return upgradeList[a].cost-upgradeList[b].cost});
     
     for(var i = 0; i < curUpgradeList.length; ++i) {
+        var hide = upgradeList[curUpgradeList[i]].cost>Game.smiles;
       var $ach = $(document.createElement('div'))
         .addClass('achievement'+(hide?' hidden':''))
         .css('background-image','url(upgrades.png)');
@@ -1299,7 +1300,7 @@ $(function(){
     EarnAchievement(204);
   });
   
-  var curangle = 0;
+  var curangle = -Math.PI/2; // this starts pinkie right side up.
   var lastangle = 0;
   var vangle = 0;
   var vlastangle = 0;
