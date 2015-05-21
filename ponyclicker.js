@@ -327,7 +327,25 @@ $(function(){
       return (x<=999999)?NumCommas(x):(x.toExponential(3).replace("e+","&times;10<sup>")+'</sup>');
     }
   }
-  function Pluralize(n, s, fixed) { return PrettyNum(n, fixed) + s + ((n==1)?'':'s'); }
+  function PrintTime(time) {
+    var t = [0, 0, 0, 0, 0]; // years, days, hours, minutes, seconds
+    t[4] = time % 60;
+    time = (time - t[4]) / 60;
+    t[3] = time % 60;
+    time = (time - t[3]) / 60;
+    t[2] = time % 24;
+    time = (time - t[2]) / 24;
+    t[1] = time % 365;
+    t[0] = (time - t[1]) / 365;
+    if (t[0] > 100) return "Centuries"; // more than 100 years
+    for (var i = 3; i <= 4; i++) if (t[i] < 10) t[i] = "0" + t[i];
+    var output = (t[2]>0?(t[2] + ":"):"") + t[3] + ":" + t[4];
+    if (t[1]) output = t[1] + " days and " + output;
+    if (t[0]) output = t[0] + " years, " + output;
+    return output;
+  }
+  function Pluralize2(n, s, s2, fixed) { return PrettyNum(n, fixed) + ((n==1)?s:s2); }
+  function Pluralize(n, s, fixed) { return Pluralize2(n, s, s + 's', fixed); }
 
   function basic_upgrade(sps, item, p, m) { sps[item] = (sps[item]+p)*(m+1); return sps; }
   function global_upgrade(sps, p, m) { for(var i = 0; i < sps.length; ++i) { sps[i] = (sps[i]+p)*(m+1); } return sps; }
@@ -420,7 +438,7 @@ $(function(){
     return genAchievements(
     names,
     [1, 50, 100, 150, 200],
-    function(n) { return "Buy <b>"+Pluralize(n, "</b> " + Store[item].name.toLowerCase()) + "."; },
+    function(n) { return "Buy <b>"+Pluralize2(n, "</b> " + Store[item].name.toLowerCase(), "</b> " + Store[item].plural.toLowerCase()) + "."; },
     genShopCond(item));
   }
 
@@ -855,6 +873,8 @@ $(function(){
     if(Game.delta>framelength) { // play at 30 FPS or the text starts flickering
       ProcessSPS(Game.delta);
       lastTime = timestamp;
+      var $overlaytime = $('#overlaytime'); // Can't cache this because it's destroyed often
+      if($overlaytime.length) $overlaytime.html(CalcTimeItem($overlaytime.attr('data-item')));
     }
     if((timestamp - lastNews)>newswait) {
       UpdateNews();
@@ -890,6 +910,11 @@ $(function(){
     window.requestAnimationFrame(UpdateGame);
   }
 
+  function CalcTimeItem(item) {
+    var time = Math.ceil((Store[item].cost(Game.store[item]) - Game.smiles) / Game.SPS);
+    return (time <= 0)?'<b>now</b>':('in <b>' + PrintTime(time)+'</b>');
+  }
+  
   function UpdateOverlay(item, y, mobile) {
     if(item == null)
       item = $overlay.attr('data-item');
@@ -923,7 +948,8 @@ $(function(){
           payPerSmileText = isFinite(payPerSmile) ? '<i>You pay <b>'+Pluralize(payPerSmile, ' smile') + '</b> per +1 SPS</i>' : '';
   
       $ul.append('<li>Buying one '+x.name.toLowerCase()+' '+increaseText+payPerSmileText+'</li>');
-  
+      if(xcost>Game.smiles && Game.SPS > 0) $ul.append('<li>This can be purchased <span id="overlaytime" data-item="'+item+'">' + CalcTimeItem(item) + '</span></li>');
+      
       // Display buy/sell information
       var helpStr = '<li><kbd>Shift + Click</kbd> to buy 10';
       if (xcount > 0 && item>0) helpStr += ', <kbd>Right click</kbd> to sell 1'; // you can't sell ponies

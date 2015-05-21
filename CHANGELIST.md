@@ -7,6 +7,8 @@ This is the change log for Pony Clicker. Some minor changes may not be reflected
 - Added choice to show numbers as names, scientific notation, or long form (Resolve #61)
 - You can now use both ctrl and shift to bulk buy to deal with firefox (Fix #62)
 - Muffin counts displayed on achievements.
+- Fix pluralization on achievements.
+- Overlay now has a timer saying when you will be able to buy something (Resolve #60)
 
 ## v0.87
 - Fixed memory leak
