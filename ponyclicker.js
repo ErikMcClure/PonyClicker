@@ -1329,6 +1329,7 @@ $(function(){
   }
   var fnmouseup = function(event) {
     vangle = vlastangle;
+    CheckAchievements([207, 208]);
     mleftdown=false;
     vlastangle = 0;
   }
