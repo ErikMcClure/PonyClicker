@@ -12,6 +12,7 @@ This is the change log for Pony Clicker. Some minor changes may not be reflected
 - Upgrade system overhauled into buckets (Resolve #34)
 - Upgrade list is now sorted
 - Added a lower bound check to address precision issues (Resolve #42)
+- Boosted muffin bonus to compensate for new upgrade system
 
 ## v0.87
 - Fixed memory leak
