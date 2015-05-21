@@ -362,29 +362,33 @@ $(function(){
     pStore, // Array of additive bonuses to individual store item SPS
     mStore // array of multiplicative bonuses to individual store item SPS
   }*/
+  
+  var defcond = function(){ return this.cost < (Game.totalsmiles*1.1)};
+  function gencountcond(item, count) { return function() { return Game.store[item] >= count && this.cost < (Game.totalsmiles*1.2)} }
+  
   var upgradeList = [ {cost:0, name:"UNDEFINED", desc:"ERROR", fn:null},
-    {cost:600, name:"Booping Assistants", desc: "Booping gets +1 SPC for every pony you have.", fn:gen_upgradetype2(0, 1, 0)},
-    {cost:7000, name:"Friendship is Booping", desc: "Booping gets +1 SPC for every friendship you have.", fn:gen_upgradetype2(1, 1, 0) },
-    {cost:70000, name:"Ticklish Cursors", desc: "Booping gets 1% of your SPS.", fn:gen_upgradetype2(0, 0, 0.01)},
-    {cost:700000, name:"Feathered Cursors", desc: "Booping gets an additional 2% of your SPS.", fn:gen_upgradetype2(0, 0, 0.02)},
-    {cost:8000000, name:"Advanced Tickle-fu", desc: "Booping gets an additional 3% of your SPS.", fn:gen_upgradetype2(0, 0, 0.03)},
-    {cost:90000000, name:"Happiness Injection", desc: "Booping gets an additional 4% of your SPS.", fn:gen_upgradetype2(0, 0, 0.04)},
-    {cost:10000, name:"Friendship Is Magic", desc: "Friendships generate +1 SPS for every other friendship.", fn:gen_upgradetype1(1, 1, 0) },
-    {cost:1000000, name:"Friendship Is Spellcraft", desc: "Friendships generate +10 SPS for every other friendship.", fn:gen_upgradetype1(1, 10, 0) },
-    {cost:100000000, name:"Friendship Is Sorcery", desc: "Friendships generate +100 SPS for every other friendship.", fn:gen_upgradetype1(1, 100, 0) },
-    {cost:10000000000, name:"Friendship Is Witchcraft", desc: "Friendships generate +1000 SPS for every other friendship.", fn:gen_upgradetype1(1, 1000, 0) },
-    {cost:1000000000000, name:"Friendship Is Benefits", desc: "Friendships generate +10000 SPS for every other friendship.", fn:gen_upgradetype1(1, 10000, 0) },
-    {cost:7777777, name:"I just don't know what went wrong!", desc: "You gain +0.1% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.001) },
-    {cost:777777777, name:"That one mailmare", desc: "You gain an additional +0.2% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.002) },
-    {cost:77777777777, name:"Derpy Delivery Service", desc: "You gain an additional +0.3% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.003) },
-    {cost:7777777777777, name:"Blueberry Muffins", desc: "You gain an additional +0.4% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.004) },
-    {cost:777777777777777, name:"Chocolate-chip Muffins", desc: "You gain an additional +0.5% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.005) },
-    {cost:77777777777777777, name:"Lemon Muffins", desc: "You gain an additional +0.6% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.006) },
-    {cost:7777777777777777777, name:"Poppy seed Muffins", desc: "You gain an additional +0.7% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.007) },
-    {cost:777777777777777777777, name:"Muffin Bakeries", desc: "You gain an additional +0.8% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.008) },
-    {cost:77777777777777777777777, name:"Designer Muffins", desc: "You gain an additional +0.9% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.009) },
-    {cost:7777777777777777777777777, name:"Muffin Factories", desc: "You gain an additional +1% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.01) },
-    //{cost:50000, name:"Upgrade 3", desc: "Parties generate +1 SPS for every other party.", fn:gen_upgradetype1(2, 1, 0) }
+    {cost:600, name:"Booping Assistants", desc: "Booping gets +1 SPC for every pony you have.", fn:gen_upgradetype2(0, 1, 0), cond:defcond},
+    {cost:7000, name:"Friendship is Booping", desc: "Booping gets +1 SPC for every friendship you have.", fn:gen_upgradetype2(1, 1, 0), cond:defcond },
+    {cost:70000, name:"Ticklish Cursors", desc: "Booping gets 1% of your SPS.", fn:gen_upgradetype2(0, 0, 0.01), cond:defcond},
+    {cost:700000, name:"Feathered Cursors", desc: "Booping gets an additional 2% of your SPS.", fn:gen_upgradetype2(0, 0, 0.02), cond:defcond},
+    {cost:8000000, name:"Advanced Tickle-fu", desc: "Booping gets an additional 3% of your SPS.", fn:gen_upgradetype2(0, 0, 0.03), cond:defcond},
+    {cost:90000000, name:"Happiness Injection", desc: "Booping gets an additional 4% of your SPS.", fn:gen_upgradetype2(0, 0, 0.04), cond:defcond},
+    {cost:10000, name:"Friendship Is Magic", desc: "Friendships generate +1 SPS for every other friendship.", fn:gen_upgradetype1(1, 1, 0), cond:defcond },
+    {cost:1000000, name:"Friendship Is Spellcraft", desc: "Friendships generate +10 SPS for every other friendship.", fn:gen_upgradetype1(1, 10, 0), cond:defcond },
+    {cost:100000000, name:"Friendship Is Sorcery", desc: "Friendships generate +100 SPS for every other friendship.", fn:gen_upgradetype1(1, 100, 0), cond:defcond },
+    {cost:10000000000, name:"Friendship Is Witchcraft", desc: "Friendships generate +1000 SPS for every other friendship.", fn:gen_upgradetype1(1, 1000, 0), cond:defcond },
+    {cost:1000000000000, name:"Friendship Is Benefits", desc: "Friendships generate +10000 SPS for every other friendship.", fn:gen_upgradetype1(1, 10000, 0), cond:defcond },
+    {cost:7777777, name:"I just don't know what went wrong!", desc: "You gain +1% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.01), cond:defcond },
+    {cost:777777777, name:"That one mailmare", desc: "You gain an additional +2% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.02), cond:defcond },
+    {cost:77777777777, name:"Derpy Delivery Service", desc: "You gain an additional +3% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.03), cond:defcond },
+    {cost:7777777777777, name:"Blueberry Muffins", desc: "You gain an additional +4% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.04), cond:defcond },
+    {cost:777777777777777, name:"Chocolate-chip Muffins", desc: "You gain an additional +5% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.05), cond:defcond },
+    {cost:77777777777777777, name:"Lemon Muffins", desc: "You gain an additional +6% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.06), cond:defcond },
+    {cost:7777777777777777777, name:"Poppy seed Muffins", desc: "You gain an additional +7% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.07), cond:defcond },
+    {cost:777777777777777777777, name:"Muffin Bakeries", desc: "You gain an additional +8% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.08), cond:defcond },
+    {cost:77777777777777777777777, name:"Designer Muffins", desc: "You gain an additional +9% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.09), cond:defcond },
+    {cost:7777777777777777777777777, name:"Muffin Factories", desc: "You gain an additional +10% SPS for every muffin you have.", fn:gen_muffinupgrade(0, 0.1), cond:defcond },
+    //{cost:50000, name:"Upgrade 3", desc: "Parties generate +1 SPS for every other party.", fn:gen_upgradetype1(2, 1, 0), cond:gencountcond(2,1) },
   ];
 
   for(var i = 0; i < upgradeList.length; ++i) {
@@ -769,7 +773,7 @@ $(function(){
     var scopeUpgradeList = []; // we mark whether or not something is disabled by negating it's ID, but we can't put negatives in curUpgradeList.
     var achs = [];
     for(var i = 1; i < upgradeList.length; ++i) { // start at one to skip UNDEFINED upgrade
-      if(upgradeList[i].cost < (Game.totalsmiles*0.8) && Game.upgradeHash[i] == null) {
+      if(upgradeList[i].cond() && Game.upgradeHash[i] == null) {
         var hide = upgradeList[i].cost>Game.smiles;
         curUpgradeList.push(i);
         scopeUpgradeList.push(hide?-i:i);
