@@ -8,20 +8,28 @@
   <meta name="copyright" content="Copyright (c)2015 Cloud Hop" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:700,400" />
+  <style>
+    .graph {
+      display: inline-block;
+      margin: 4px;
+    }
+  </style>
 </head>
 <body>
   <h2>Pony Clicker Analysis</h2>
   <hr>
   <div id="mainchart"></div>
-  <div id="storechart" style="display:inline-block;"></div>
-  <div id="deltachart" style="display:inline-block;"></div>
+  <div id="storechart" class="graph"></div>
+  <div id="deltachart" class="graph"></div>
+  <div id="estimatechart" class="graph"></div>
+  <div id="estimatesps" class="graph"></div>
   
   <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
   <script type="text/javascript" src="https://www.google.com/jsapi"></script>
   <script type="text/javascript" >var disable_ponyclicker = 1;</script>
   <script type="text/javascript" src="../PonyClicker.js"></script>
   <script>
-    google.load('visualization', '1.1', {packages: ['line']});
+    google.load('visualization', '1.1', {packages: ['corechart','line']});
     google.setOnLoadCallback(drawCharts);
     
     var $doc = $(document),
@@ -29,7 +37,27 @@
     
     function triangular(n) { return (n*(n-1))/2; } // number of edges in a complete graph of n nodes
     function NeedsMorePonies(store) { return store[1] >= triangular(store[0]); }
+    function storetotalcost(i, n) { var r = ponyclicker.Store[i].costcurve; return ponyclicker.Store[i].initcost*((1 - Math.pow(r, n+1))/(1 - r)); }
+    function inv_storetotalcost(i, cost) { var r = ponyclicker.Store[i].costcurve; var I = ponyclicker.Store[i].initcost; return (Math.log(1 - (cost/I)*(1 - r))/Math.log(r)) - 1; }
+    
+    function inv_triangular(n) { return 0.5*(Math.sqrt(8*n + 1) + 1); } // Returns the triangular number that would produce this many edges
+    function EstimateBuildings(i, f) {
+      var cost = storetotalcost(1, f);
+      return Math.floor(inv_storetotalcost(i, cost));
+      //return Math.floor(Math.log(cost/ponyclicker.Store[i].initcost)/Math.log(ponyclicker.Store[i].costcurve))
+    }
+    function EstimateStore(f) {
+      var r = [Math.floor(inv_triangular(f)), f];
       
+      for(var i = 2; i < ponyclicker.Store.length; ++i) {
+        r.push(Math.max(0, EstimateBuildings(i, f)));
+      }
+      return r;
+    }
+    function EstimateSPS(i, f) {
+      var store = EstimateStore(f);
+      return ponyclicker.Store[i].fn_SPS(store)*store[i];
+    }
     // Nearly optimal play strategy: 
     // 1. Find building with lowest per +1 SPS cost. This is the target building.
     // 2. Look for other buildings that can be bought before that one, and whose SPS bonus result in a reduced time-to-buy for the target building that exceeds the amount of time lost by purchasing that building instead.
@@ -113,7 +141,8 @@
       waitdata.push(Math.floor(delta));
     }
     
-    function buildChart(id, data, title, subtitle, width, height) {
+    function buildChart(id, data, title, subtitle, width, height, log) {
+      if(!log) log = false;
       var options = {
         chart: {
           title: title,
@@ -122,12 +151,22 @@
         width: width,
         height: height,
         interpolateNulls: true,
-        pointSize: 5,
-        pointsVisible: true,
+        vAxis: {logScale: log}
       };
-
-      var mainchart = new google.charts.Line(document.getElementById(id));
+      
+      var mainchart;
+      if(log) mainchart = new google.visualization.LineChart(document.getElementById(id));
+      else mainchart = new google.charts.Line(document.getElementById(id));
       mainchart.draw(data, options);
+    }
+    function buildStoreData(title, storevar) {
+      var data = new google.visualization.DataTable();
+      data.addColumn('number', title);
+      for(var i = 0; i < ponyclicker.Store.length; ++i) {
+        data.addColumn('number', ponyclicker.Store[i].plural);
+        storevar.push(0);
+      }
+      return data;
     }
     function drawCharts() {
       var data = new google.visualization.DataTable();
@@ -139,12 +178,7 @@
       buildChart('mainchart', data, 'Optimal Game Playthrough', 'Ponyclicker SPS over time', $doc.width()-100, 400);
       
       var storevar = [];
-      data = new google.visualization.DataTable();
-      data.addColumn('number', 'Game Time (seconds)');
-      for(var i = 0; i < ponyclicker.Store.length; ++i) {
-        data.addColumn('number', ponyclicker.Store[i].plural);
-        storevar.push(0);
-      }
+      data = buildStoreData('Game Time (seconds)', storevar);
 
       data.addRows(xdata.map(function(e, i) {
         var r = [xdata[i]];
@@ -152,7 +186,7 @@
         return r.concat(storevar);
       }));
 
-      buildChart('storechart', data, 'Optimal Game Purchases', 'Waiting period before next purchase', $doc.width()/2 - 50, 500);
+      buildChart('storechart', data, 'Optimal Game Purchases', 'Store purchases over time', $doc.width()/2 - 50, 500);
       
       data = new google.visualization.DataTable();
       data.addColumn('number', 'Game Time (seconds)');
@@ -162,6 +196,29 @@
 
       buildChart('deltachart', data, 'Optimal Game Wait', 'Waiting period before next purchase', $doc.width()/2 - 50, 500);
       
+      storevar = [];
+      data = buildStoreData('Game Time (seconds)', storevar);
+      data.addRows(xdata.map(function(e, i) {
+        storevar[shopdata[i]]+=1;
+        var r = [xdata[i]];
+        return r.concat(EstimateStore(storevar[1]));
+      }));
+
+      buildChart('estimatechart', data, 'Estimated Game Purchases', 'Estimated store purchases over time', $doc.width()/2 - 50, 500);
+      
+      storevar = [];
+      data = buildStoreData('Number of friends', storevar);
+      var addrows = [];
+      for(var i = 0; i < 500; ++i) {
+        var row = [i];
+        for(var j = 0; j < ponyclicker.Store.length; ++j) {
+          row.push(EstimateSPS(j, i));
+        }        
+        addrows.push(row);
+      }
+      data.addRows(addrows);
+
+      buildChart('estimatesps', data, 'Estimated Store SPS', 'Estimated SPS curves for each building', $doc.width()/2 - 50, 500, true);
     }
   
   //$w.on('resize',ResizeCanvas);
