@@ -1,6 +1,11 @@
 # Pony Clicker Change Log
 This is the change log for Pony Clicker. Some minor changes may not be reflected in this log.
 
+## v0.90
+- Reorganized javascript code
+- Added index.html redirection to ponyclicker.html
+- Introduced utilities/analysis.html
+
 ## v0.89
 - Cut late game costs to help compensate for upgrade adjustment
 
