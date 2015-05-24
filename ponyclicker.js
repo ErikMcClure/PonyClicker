@@ -117,28 +117,23 @@ var ponyclicker = (function(){
 
   // The cost of ponies is based on the cost of buying k+1 friendships, where k is the number of edges in a complete graph of n-nodes, which is just a triangular number. So, we take the current number of ponies, find the corresponding triangular number, add one and plug that into the friendship cost function.
   var fn_cost0 = function(n) { return (n<2)?15:fn_cost1(triangular(n)+1); };
-
-  Store[0].fn_SPS = function(P,F,B) { return 0; };
-  Store[1].fn_SPS = function(P,F,B) { return 1.0; };
-  Store[2].fn_SPS = function(P,F,B) { return P; };
-  Store[3].fn_SPS = function(P,F,B) { return F; };
-  Store[4].fn_SPS = function(P,F,B) { return (P+F)*2.0; };
-  Store[5].fn_SPS = function(P,F,B) { return (P+F+B); };
-  Store[6].fn_SPS = function(P,F,B) { return (P*F)*1.5; };
-  Store[7].fn_SPS = function(P,F,B) { return (P*(F+B)); };
-  Store[8].fn_SPS = function(P,F,B) { return (P*F*(B+1)); };
-  Store[9].fn_SPS = function(P,F,B) { return Math.pow(2, P)*F+B; };
-  Store[10].fn_SPS = function(P,F,B) { return Math.pow(2, P)*F*(B+1); };
-  Store[11].fn_SPS = function(P,F,B) { return factorial_limit(P,5)+(F*B); };
+  function countb(store) { var r=0; for(var i = 2; i < store.length; ++i) r+=store[i]; return r; }
+  
+  Store[0].fn_SPS = function(store) { return 0; };
+  Store[1].fn_SPS = function(store) { return 1.0; };
+  Store[2].fn_SPS = function(store) { return store[0]; };
+  Store[3].fn_SPS = function(store) { return store[1]; };
+  Store[4].fn_SPS = function(store) { return (store[0]+store[1])*2.0; };
+  Store[5].fn_SPS = function(store) { return (store[0]+store[1]+countb(store)); };
+  Store[6].fn_SPS = function(store) { return (store[0]*store[1])*1.5; };
+  Store[7].fn_SPS = function(store) { return (store[0]*(store[1]+countb(store))); };
+  Store[8].fn_SPS = function(store) { return (store[0]*store[1]*(countb(store)+1)); };
+  Store[9].fn_SPS = function(store) { return Math.pow(2, store[0])*store[1]+countb(store); };
+  Store[10].fn_SPS = function(store) { return Math.pow(2, store[0])*store[1]*(countb(store)+1); };
+  Store[11].fn_SPS = function(store) { return factorial_limit(store[0],5)+(store[1]*countb(store)); };
   //Store[12].fn_SPS = function(P,F,B) { return 0; };
 
   function inv_cost(i, cost) { return Math.floor(Math.log(cost/Store[i].initcost)/Math.log(Store[i].costcurve)) }
-  function fn_estimatebuildings(cost, max) {
-    var b = 0;
-    for(var j = 2; j < max; j++)
-      b += inv_cost(j, cost);
-    return b;
-  }
   // Return a curve that results in a cost equal to the new SPS ratio after n buildings are bought.
   /*function fn_costcurve(n,ratio,i,cost) {
     // x is the new cost
@@ -156,17 +151,20 @@ var ponyclicker = (function(){
 
   var Fvals = [4,12,30,35,45,45,45,70,51,100];
   var fn_rratio = fn_ratio(rcurve_init,rcurve); // gets the SPS ratio for a store of level n
-  function initSPS(f,r,b) { return Store[r].fn_SPS(Math.floor(inv_triangular(f)),f,b); }
-  function initcost(f,r,b) { return initSPS(f,r,b)*fn_rratio(r-2); }
-  
+  function initSPS(i, store) { return Store[i].fn_SPS(store); }
+  function initcost(i, store) { return initSPS(i, store)*fn_rratio(i-2); }
+  function estimatestore(f, max) { 
+    var s = [Math.floor(inv_triangular(f)),f];
+    for(var j = 2; j < max; j++)
+      s.push(inv_cost(j, fn_cost1(f)));
+    return s;
+  }
   for(var i = 2; i < 12; ++i) {
-    var cost = fn_cost1(Fvals[i-2]);
-    var b = fn_estimatebuildings(cost, i);
-    Store[i].initcost = initcost(Fvals[i-2],i,b);
+    Store[i].initcost = initcost(i, estimatestore(Fvals[i-2], i));
     Store[i].costcurve = 1.2 + (i*i*0.0045); //fn_costcurve(5, fn_rratio(i-2)*1.5, i, Store[i].initcost);
   }
   
-  function default_cost(i, n) { return Store[i].initcost*Math.pow(Store[i].costcurve,n) }
+  function default_cost(i, n) { return Store[i].initcost*Math.pow(Store[i].costcurve,n); }
 
   Store[0].cost = fn_cost0;
   Store[1].cost = fn_cost1;
@@ -185,7 +183,7 @@ var ponyclicker = (function(){
   // -------------------------------- Game Loading and Settings --------------------------------
   //
   function ResetGame() {
-    var muffins = Math.floor(inv_triangular(Game.totalsmiles/1000000000000))-1;
+    //var muffins = Math.floor(inv_triangular(Game.totalsmiles/1000000000000))-1;
     //Game.muffins += muffins;
     //ShowNotice("Game reset", ((muffins==0)?null:"You get <b>" + Pluralize(muffins, " muffin") + "</b> for your <b>" + Pluralize(Game.totalsmiles, " smile") + "</b>"), null);
     ShowNotice("Game Reset", "Muffin prestige has been temporarily disabled, sorry!");
@@ -687,7 +685,7 @@ var ponyclicker = (function(){
     var B = CountBuildings(store);
     var result = [];
     for(var i = 0; i < Store.length; ++i) {
-      result.push(Store[i].fn_SPS(P,F,B));
+      result.push(Store[i].fn_SPS(store));
     }
     return result;
   }
