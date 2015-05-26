@@ -121,7 +121,7 @@ body {
   margin:0;
   background: #593319;
   color:#fcfcfc;
-  padding: 0 5px 13px 6px;
+  padding: 0 5px 13px 60px;
   font-variant: small-caps;
   font-weight: bold;
   font-size: 24px;
@@ -137,6 +137,7 @@ body {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  overflow:hidden;
 }
 .store li:hover {
   background: #694329;
@@ -148,7 +149,23 @@ body {
   border-bottom: 2px #bb967d solid;
   border-right: 2px #bb967d solid;
   background: #503019;
-  padding: 2px 3px 11px 8px;
+  padding: 2px 3px 11px 62px;
+}
+.store li .icon {
+  position:absolute;
+  top:1px;
+  left:2px;
+  width:54px;
+  height:54px;
+  background-size: 54px 54px;
+}
+.store li:active .icon {
+  top:3px;
+  left:4px; 
+}
+.disable .icon {
+  top:1px !important;
+  left:2px !important;
 }
 .disable {
   color:#aaa !important;
@@ -157,7 +174,7 @@ body {
   border-left: 2px #454033 solid !important;
   border-bottom: 2px #251e0f solid !important;
   border-right: 2px #251e0f solid !important;
-  padding: 0 5px 13px 6px !important;
+  padding: 0 5px 13px 60px !important;
 }
 .store li .cost {
   display:inline-block;
@@ -170,7 +187,7 @@ body {
 .store li .cost span {
   position:relative;
   left: 30px;
-  top:4px;
+  top:6px;
 }
 .store li #ponycost {
   position:absolute;
@@ -183,6 +200,7 @@ body {
 
 .store li .cost img {
   position:absolute;
+  top:5px;
 }
 .store li .count {
   position:absolute;
