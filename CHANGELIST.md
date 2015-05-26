@@ -5,6 +5,11 @@ This is the change log for Pony Clicker. Some minor changes may not be reflected
 - Reorganized javascript code
 - Added index.html redirection to ponyclicker.html
 - Introduced utilities/analysis.html
+- Drastically lowered boop count requirements for achievements
+- Completely rebalanced building SPS formulas
+- Moved muffin upgrades to late game
+- Added store icons
+- use strict javascript (I wish I knew about this earlier)
 
 ## v0.89
 - Cut late game costs to help compensate for upgrade adjustment
