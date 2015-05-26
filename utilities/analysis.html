@@ -23,6 +23,8 @@
   <div id="deltachart" class="graph"></div>
   <div id="estimatechart" class="graph"></div>
   <div id="estimatesps" class="graph"></div>
+  <div id="ratiochart" class="graph"></div>
+  <div id="costchart" class="graph"></div>
   
   <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
   <script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -43,7 +45,7 @@
     function inv_triangular(n) { return 0.5*(Math.sqrt(8*n + 1) + 1); } // Returns the triangular number that would produce this many edges
     function EstimateBuildings(i, f) {
       var cost = storetotalcost(1, f);
-      return Math.floor(inv_storetotalcost(i, cost));
+      return Math.floor(inv_storetotalcost(i, cost/2));
       //return Math.floor(Math.log(cost/ponyclicker.Store[i].initcost)/Math.log(ponyclicker.Store[i].costcurve))
     }
     function EstimateStore(f) {
@@ -68,7 +70,7 @@
     
     // Find optimal purchase
     function GetOptimalPurchase(g) {
-      var curSPS = ponyclicker.CalcSPS(g.store, g, false);
+      var curSPS = ponyclicker.CalcSPS(g.store, g.upgrades, false);
       var target = 0;
       var targetPPS = null;
       var targetdelta = null;
@@ -78,7 +80,7 @@
       for(var i = 0; i < ponyclicker.Store.length; ++i) {
         var nstore = g.store.slice();
         nstore[i]+=1;
-        var nSPS = ponyclicker.CalcSPS(nstore, g, false),
+        var nSPS = ponyclicker.CalcSPS(nstore, g.upgrades, false),
           sps_increase = nSPS - curSPS,
           xcost = ponyclicker.Store[i].cost(g.store[i]),
           payPerSmile = xcost/sps_increase;
@@ -91,7 +93,22 @@
         }
       }
       
-      var ndiff = 0;
+      // Search for any suitable upgrades
+      for(var i = 1; i < ponyclicker.Upgrades.length; ++i) {
+        if(g.upgrades.indexOf(i) >= 0) continue; // skip upgrades we already have
+        var nupgrades = g.upgrades.slice();
+        nupgrades.push(i);
+        var nSPS = ponyclicker.CalcSPS(g.store, nupgrades, false),
+          sps_increase = nSPS - curSPS,
+          payPerSmile = ponyclicker.Upgrades[i].cost/sps_increase;
+        
+        if(payPerSmile <= targetPPS) {
+          targetPPS = payPerSmile;
+          target = -i; //upgrades are negative
+        }
+      }
+      
+      //var ndiff = 0;
       // See if any other buildings can be bought before this one. If there are, buy the one that gives us the greatest time reduction.
       // TODO: This doesn't work yet and i can't be assed to figure out why.
       /*for(var i = 0; i < ponyclicker.Store.length; ++i) {
@@ -123,19 +140,20 @@
     var shopdata = [];
     var waitdata = [];
     
-    for(var i = 0; i < 101; ++i) {
+    for(var i = 0; i < 230; ++i) {
       var opt = GetOptimalPurchase(game);
-      var cost = ponyclicker.Store[opt].cost(game.store[opt]);
-      var curSPS = ponyclicker.CalcSPS(game.store, game, false);
+      var cost = ((opt>=0)?ponyclicker.Store[opt].cost(game.store[opt]):ponyclicker.Upgrades[-opt].cost);
+      var curSPS = ponyclicker.CalcSPS(game.store, game.upgrades, false);
       var delta = (cost - game.smiles)/curSPS;
       if(delta < 0) delta = 0;
       game.smiles += delta*curSPS;
       game.totalsmiles += delta*curSPS;
       game.totalTime += delta;
       game.smiles -= cost;
-      game.store[opt] += 1;
+      if(opt>=0) game.store[opt] += 1;
+      else game.upgrades.push(-opt);
       
-      spsdata.push(Math.floor(ponyclicker.CalcSPS(game.store, game, false)));
+      spsdata.push(Math.floor(ponyclicker.CalcSPS(game.store, game.upgrades, false)));
       xdata.push(Math.floor(game.totalTime));
       shopdata.push(opt);
       waitdata.push(Math.floor(delta));
@@ -219,6 +237,20 @@
       data.addRows(addrows);
 
       buildChart('estimatesps', data, 'Estimated Store SPS', 'Estimated SPS curves for each building', $doc.width()/2 - 50, 500, true);
+      
+      storevar = [];
+      data = buildStoreData('Number of friends', storevar);
+      var addrows = [];
+      for(var i = 0; i < 150; ++i) {
+        var row = [i];
+        for(var j = 0; j < ponyclicker.Store.length; ++j) {
+          row.push(ponyclicker.Store[j].cost(EstimateBuildings(j, i))/EstimateSPS(j, i));
+        }        
+        addrows.push(row);
+      }
+      data.addRows(addrows);
+
+      buildChart('ratiochart', data, 'Estimated Cost/SPS Ratio', 'Estimated Cost/SPS ratios for each building', $doc.width()/2 - 50, 500, true);      
     }
   
   //$w.on('resize',ResizeCanvas);
