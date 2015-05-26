@@ -10,11 +10,11 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="1203.72"
-   height="1112.13"
+   height="1203.72"
    id="svg4536"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="New document 4">
+   sodipodi:docname="hoofbump.svg">
   <defs
      id="defs4538" />
   <sodipodi:namedview
@@ -43,7 +43,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -51,16 +51,16 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(0,59.767817)">
+     transform="translate(0,151.35781)">
     <path
        style="fill:#f9b961;fill-opacity:1;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="M 1738.4234,863.90971 C 1458.2467,705.98361 1171.8362,524.68082 870.19865,286.27664 L 736.11595,77.561626 c 0,0 -97.69253,-107.937642 -186.26396,0.63379 l 0.25254,3.20377 44.95667,544.010874 3.36222,4.21393 c 0,0 419.99998,348.57139 1142.85708,525.71431"
+       d="M 1738.4234,823.90971 C 1458.2467,665.98361 1171.8362,484.68082 870.19865,246.27664 L 736.11595,37.561626 c 0,0 -97.69253,-107.937642 -186.26396,0.63379 l 0.25254,3.20377 44.95667,544.010874 3.36222,4.21393 c 0,0 419.99998,348.57139 1142.85708,525.71431"
        id="path5922"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccccccc" />
     <g
        id="_x31__1_-9"
-       transform="translate(-3529.5085,-1987.8212)">
+       transform="translate(-3529.5085,-2027.8212)">
       <path
          style="fill:#ea7133"
          inkscape:connector-curvature="0"
@@ -79,7 +79,7 @@
     </g>
     <g
        id="_x32_-3"
-       transform="translate(-3536.5999,-2000.2981)"
+       transform="translate(-3536.5999,-2040.2981)"
        style="fill:#a1daf7;fill-opacity:1">
       <path
          style="fill:#a1daf7;fill-opacity:1;stroke:#6aa8db;stroke-width:30;stroke-miterlimit:10"

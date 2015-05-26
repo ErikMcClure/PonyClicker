@@ -9,12 +9,12 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="107.02625"
+   width="270.78625"
    height="270.78952"
    id="svg3343"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="New document 2">
+   sodipodi:docname="cello.svg">
   <defs
      id="defs3345" />
   <sodipodi:namedview
@@ -25,19 +25,19 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.35"
-     inkscape:cx="128.51313"
-     inkscape:cy="-167.46239"
+     inkscape:cx="210.39313"
+     inkscape:cy="-167.46241"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      fit-margin-top="0"
-     fit-margin-left="0"
-     fit-margin-right="0"
+     fit-margin-left="81.88"
+     fit-margin-right="81.88"
      fit-margin-bottom="0"
-     inkscape:window-width="1920"
-     inkscape:window-height="1028"
-     inkscape:window-x="1272"
-     inkscape:window-y="217"
+     inkscape:window-width="1280"
+     inkscape:window-height="1002"
+     inkscape:window-x="-8"
+     inkscape:window-y="-2"
      inkscape:window-maximized="1" />
   <metadata
      id="metadata3348">
@@ -47,7 +47,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -55,7 +55,7 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-246.48687,-94.11028)">
+     transform="translate(-164.60687,-94.11028)">
     <g
        transform="matrix(0.03449709,0,0,0.03449709,-79.313101,-203.18669)"
        id="g4692">

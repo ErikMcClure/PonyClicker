@@ -10,7 +10,7 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="195.88722"
+   width="272.20721"
    height="272.20523"
    id="svg3525"
    version="1.1"
@@ -93,20 +93,20 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.35"
-     inkscape:cx="-335.62783"
-     inkscape:cy="207.53116"
+     inkscape:cx="-221.14783"
+     inkscape:cy="207.53117"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      fit-margin-top="15"
-     fit-margin-left="15"
-     fit-margin-right="15"
+     fit-margin-left="53.16"
+     fit-margin-right="53.16"
      fit-margin-bottom="15"
-     inkscape:window-width="463"
-     inkscape:window-height="423"
-     inkscape:window-x="1355"
-     inkscape:window-y="300"
-     inkscape:window-maximized="0" />
+     inkscape:window-width="1920"
+     inkscape:window-height="1028"
+     inkscape:window-x="1272"
+     inkscape:window-y="217"
+     inkscape:window-maximized="1" />
   <metadata
      id="metadata3530">
     <rdf:RDF>
@@ -123,7 +123,7 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-710.62783,-467.68815)">
+     transform="translate(-672.46783,-467.68815)">
     <g
        style="display:inline"
        id="g5176"

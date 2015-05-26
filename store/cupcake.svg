@@ -9,11 +9,11 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="113.88545"
-   height="154.99625"
+   width="155.00113"
+   height="154.22372"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.3.1 r9886"
+   inkscape:version="0.48.4 r9939"
    sodipodi:docname="cupcake.svg"
    inkscape:export-filename="C:\Users\Andrew\Desktop\mlp\Art\fan art\mine\vectors\cupcake.png"
    inkscape:export-xdpi="5806.8872"
@@ -68,19 +68,19 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="3.959798"
-     inkscape:cx="43.426899"
-     inkscape:cy="79.41483"
+     inkscape:cx="63.995437"
+     inkscape:cy="79.400512"
      inkscape:document-units="px"
      inkscape:current-layer="layer5"
      showgrid="false"
      fit-margin-top="0"
-     fit-margin-left="0"
-     fit-margin-right="0"
+     fit-margin-left="20.55"
+     fit-margin-right="20.55"
      fit-margin-bottom="0"
-     inkscape:window-width="1600"
-     inkscape:window-height="838"
+     inkscape:window-width="1280"
+     inkscape:window-height="1002"
      inkscape:window-x="-8"
-     inkscape:window-y="-8"
+     inkscape:window-y="-2"
      inkscape:window-maximized="1" />
   <metadata
      id="metadata7">
@@ -90,7 +90,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -99,7 +99,7 @@
      id="layer5"
      inkscape:label="cake"
      style="display:inline"
-     transform="translate(-6.6075841,-9.375)">
+     transform="translate(13.960954,-10.133207)">
     <path
        style="fill:#da9855;fill-opacity:1;stroke:#b37038;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        d="m 19.697975,121.22968 6.912145,30.10444 c 0,0 0.713676,2.95118 0.916537,3.2306 0.202861,0.27942 1.080826,0.57372 1.623384,0.84835 23.956499,12.12622 50.608316,8.43233 67.766734,-0.83102 0.62118,-0.33536 1.639384,-0.71882 1.825636,-1.02749 0.186252,-0.30867 0.430936,-1.92771 0.430936,-1.92771 l 6.387593,-34.18524 z"
@@ -138,7 +138,7 @@
      id="layer4"
      inkscape:label="icing fill"
      style="display:inline"
-     transform="translate(-6.6075841,-9.375)">
+     transform="translate(13.960954,-10.133207)">
     <path
        style="fill:#daec98;fill-opacity:1;stroke:none"
        d="M 57.073619,38.144635 C 38.937137,47.06982 32.464126,52.224868 33.84011,67.944135 21.248433,70.354148 10.210823,74.040715 16.162441,91.68272 -36.212694,140.88473 181.86549,141.15312 100.0051,76.277894 109.71808,63.258929 103.44698,57.458579 92.428958,53.802 95.59787,25.551298 50.88619,36.553923 70.963216,10.870516 51.110374,15.484543 54.703889,26.994557 57.073619,38.144635 z"
@@ -151,7 +151,7 @@
      id="layer3"
      inkscape:label="icing highlight"
      style="display:inline"
-     transform="translate(-6.6075841,-9.375)">
+     transform="translate(13.960954,-10.133207)">
     <path
        style="opacity:0.8;fill:none;stroke:#e5f4b6;stroke-width:8;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter3845)"
        d="M 35.355339,97.743635 C 63.031326,101.16937 80.862905,97.56339 94.449263,90.925106"
@@ -176,7 +176,7 @@
      id="layer2"
      inkscape:label="icing outline"
      style="display:inline"
-     transform="translate(-6.6075841,-9.375)">
+     transform="translate(13.960954,-10.133207)">
     <path
        style="fill:none;stroke:#acc65a;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        d="M 34.345187,66.681444 C 29.736258,42.780171 56.880441,44.667435 57.073618,36.376868 57.266796,28.086302 47.140452,15.75292 70.963216,12.133207 50.760165,36.629406 95.964492,22.739808 92.17642,55.317228"
