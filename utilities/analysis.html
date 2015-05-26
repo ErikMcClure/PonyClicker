@@ -13,12 +13,49 @@
       display: inline-block;
       margin: 4px;
     }
+    .upgrade {
+      position:absolute;
+      top: 444px;
+      z-index:2;
+      height:16px;
+      width:16px;
+      background:#226622;
+      color: #fff;
+      font-size: 16px;
+      font-weight: bold;
+      text-align: center;
+      border-radius: 2px;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+    .upgrade div {
+      position:absolute;
+      display: none;
+      width: 300px;
+      background:#333;
+      border:1px solid #666;
+      padding:4px;
+      border-radius: 4px;
+      font-weight: normal;
+      left:-50px;
+    }
+    .upgrade:hover div {
+      display:block;
+    }
   </style>
 </head>
 <body>
   <h2>Pony Clicker Analysis</h2>
+  <label title="Number of purchase steps to calculate in the optimal playthrough.">
+    <input id="optimalslider" type="range" min="10" max="1000" onchange="SetSteps(this.value);" onmousemove="document.getElementById('steps').innerHTML=this.value"/> <span id="steps">0</input>
+  </label>
   <hr>
   <div id="mainchart"></div>
+  <div id="mainupgrades"></div>
   <div id="storechart" class="graph"></div>
   <div id="deltachart" class="graph"></div>
   <div id="estimatechart" class="graph"></div>
@@ -31,116 +68,126 @@
   <script type="text/javascript" >var disable_ponyclicker = 1;</script>
   <script type="text/javascript" src="../PonyClicker.js"></script>
   <script>
-    google.load('visualization', '1.1', {packages: ['corechart','line']});
-    google.setOnLoadCallback(drawCharts);
+  google.load('visualization', '1.1', {packages: ['corechart','line']});
+  google.setOnLoadCallback(drawCharts);
+  
+  var $doc = $(document),
+      $w = $(window),
+      $steps = $('#steps');
+  
+  function triangular(n) { return (n*(n-1))/2; } // number of edges in a complete graph of n nodes
+  function NeedsMorePonies(store) { return store[1] >= triangular(store[0]); }
+  function storetotalcost(i, n) { var r = ponyclicker.Store[i].costcurve; return ponyclicker.Store[i].initcost*((1 - Math.pow(r, n+1))/(1 - r)); }
+  function inv_storetotalcost(i, cost) { var r = ponyclicker.Store[i].costcurve; var I = ponyclicker.Store[i].initcost; return (Math.log(1 - (cost/I)*(1 - r))/Math.log(r)) - 1; }
+  
+  function inv_triangular(n) { return 0.5*(Math.sqrt(8*n + 1) + 1); } // Returns the triangular number that would produce this many edges
+  function EstimateBuildings(i, f) {
+    var cost = storetotalcost(1, f);
+    return Math.floor(inv_storetotalcost(i, cost/2));
+    //return Math.floor(Math.log(cost/ponyclicker.Store[i].initcost)/Math.log(ponyclicker.Store[i].costcurve))
+  }
+  function EstimateStore(f) {
+    var r = [Math.floor(inv_triangular(f)), f];
     
-    var $doc = $(document),
-        $w = $(window);
-    
-    function triangular(n) { return (n*(n-1))/2; } // number of edges in a complete graph of n nodes
-    function NeedsMorePonies(store) { return store[1] >= triangular(store[0]); }
-    function storetotalcost(i, n) { var r = ponyclicker.Store[i].costcurve; return ponyclicker.Store[i].initcost*((1 - Math.pow(r, n+1))/(1 - r)); }
-    function inv_storetotalcost(i, cost) { var r = ponyclicker.Store[i].costcurve; var I = ponyclicker.Store[i].initcost; return (Math.log(1 - (cost/I)*(1 - r))/Math.log(r)) - 1; }
-    
-    function inv_triangular(n) { return 0.5*(Math.sqrt(8*n + 1) + 1); } // Returns the triangular number that would produce this many edges
-    function EstimateBuildings(i, f) {
-      var cost = storetotalcost(1, f);
-      return Math.floor(inv_storetotalcost(i, cost/2));
-      //return Math.floor(Math.log(cost/ponyclicker.Store[i].initcost)/Math.log(ponyclicker.Store[i].costcurve))
+    for(var i = 2; i < ponyclicker.Store.length; ++i) {
+      r.push(Math.max(0, EstimateBuildings(i, f)));
     }
-    function EstimateStore(f) {
-      var r = [Math.floor(inv_triangular(f)), f];
-      
-      for(var i = 2; i < ponyclicker.Store.length; ++i) {
-        r.push(Math.max(0, EstimateBuildings(i, f)));
-      }
-      return r;
-    }
-    function EstimateSPS(i, f) {
-      var store = EstimateStore(f);
-      return ponyclicker.Store[i].fn_SPS(store)*store[i];
-    }
-    // Nearly optimal play strategy: 
-    // 1. Find building with lowest per +1 SPS cost. This is the target building.
-    // 2. Look for other buildings that can be bought before that one, and whose SPS bonus result in a reduced time-to-buy for the target building that exceeds the amount of time lost by purchasing that building instead.
-    // 3. If such buildings exist, set the target building to the one that results in the greatest time reduction.
-    // 4. Buy the building when it becomes available, go back to step 1.
-    // 
-    // Note that for the purposes of this algorithm, upgrades are treated as buildings by calculating the SPS bonus one would get at the time of purchase. There is also special logic that requires the algorithm to buy a pony next if it wants a friendship when the graph is full. By following this algorithm, we can simulate an optimal playthrough based on our current game settings by skipping ahead to the next available purchase.
+    return r;
+  }
+  function EstimateSPS(i, f) {
+    var store = EstimateStore(f);
+    return ponyclicker.Store[i].fn_SPS(store)*store[i];
+  }
+  // Nearly optimal play strategy: 
+  // 1. Find building with lowest per +1 SPS cost. This is the target building.
+  // 2. Look for other buildings that can be bought before that one, and whose SPS bonus result in a reduced time-to-buy for the target building that exceeds the amount of time lost by purchasing that building instead.
+  // 3. If such buildings exist, set the target building to the one that results in the greatest time reduction.
+  // 4. Buy the building when it becomes available, go back to step 1.
+  // 
+  // Note that for the purposes of this algorithm, upgrades are treated as buildings by calculating the SPS bonus one would get at the time of purchase. There is also special logic that requires the algorithm to buy a pony next if it wants a friendship when the graph is full. By following this algorithm, we can simulate an optimal playthrough based on our current game settings by skipping ahead to the next available purchase.
+  
+  // Find optimal purchase
+  function GetOptimalPurchase(g) {
+    var curSPS = ponyclicker.CalcSPS(g.store, g.upgrades, false);
+    var target = 0;
+    var targetPPS = null;
+    var targetdelta = null;
+    var targetcost = null;
     
-    // Find optimal purchase
-    function GetOptimalPurchase(g) {
-      var curSPS = ponyclicker.CalcSPS(g.store, g.upgrades, false);
-      var target = 0;
-      var targetPPS = null;
-      var targetdelta = null;
-      var targetcost = null;
-      
-      // Find lowest +1 SPS cost.
-      for(var i = 0; i < ponyclicker.Store.length; ++i) {
-        var nstore = g.store.slice();
-        nstore[i]+=1;
-        var nSPS = ponyclicker.CalcSPS(nstore, g.upgrades, false),
-          sps_increase = nSPS - curSPS,
-          xcost = ponyclicker.Store[i].cost(g.store[i]),
-          payPerSmile = xcost/sps_increase;
-          
-        if(targetPPS === null || payPerSmile <= targetPPS) {
-          targetPPS = payPerSmile;
-          target = i;
-          targetdelta = (xcost - g.smiles)/curSPS;
-          targetcost = xcost;
-        }
-      }
-      
-      // Search for any suitable upgrades
-      for(var i = 1; i < ponyclicker.Upgrades.length; ++i) {
-        if(g.upgrades.indexOf(i) >= 0) continue; // skip upgrades we already have
-        var nupgrades = g.upgrades.slice();
-        nupgrades.push(i);
-        var nSPS = ponyclicker.CalcSPS(g.store, nupgrades, false),
-          sps_increase = nSPS - curSPS,
-          payPerSmile = ponyclicker.Upgrades[i].cost/sps_increase;
+    // Find lowest +1 SPS cost.
+    for(var i = 0; i < ponyclicker.Store.length; ++i) {
+      var nstore = g.store.slice();
+      nstore[i]+=1;
+      var nSPS = ponyclicker.CalcSPS(nstore, g.upgrades, false),
+        sps_increase = nSPS - curSPS,
+        xcost = ponyclicker.Store[i].cost(g.store[i]),
+        payPerSmile = xcost/sps_increase;
         
-        if(payPerSmile <= targetPPS) {
-          targetPPS = payPerSmile;
-          target = -i; //upgrades are negative
-        }
+      if(targetPPS === null || payPerSmile <= targetPPS) {
+        targetPPS = payPerSmile;
+        target = i;
+        targetdelta = (xcost - g.smiles)/curSPS;
+        targetcost = xcost;
       }
-      
-      //var ndiff = 0;
-      // See if any other buildings can be bought before this one. If there are, buy the one that gives us the greatest time reduction.
-      // TODO: This doesn't work yet and i can't be assed to figure out why.
-      /*for(var i = 0; i < ponyclicker.Store.length; ++i) {
-        var nstore = g.store.slice();
-        nstore[i]+=1;
-        var nSPS = ponyclicker.CalcSPS(nstore, g, false),
-          xcost = ponyclicker.Store[i].cost(g.store[i]),
-          delta = (xcost - g.smiles)/curSPS,
-          ndelta = targetcost/nSPS,
-          diff = ndelta+delta-targetdelta;
-          
-        if(delta < targetdelta && diff > ndiff) {
-          ndiff = diff;
-          target = i;
-        }
-      }*/
-      
-      // TODO: upgrades
-      
-      return (target==1 && NeedsMorePonies(g.store))?0:target;
     }
     
-    // Create game and bypass the early game
-    var game = ponyclicker.CreateGame();
+    // Search for any suitable upgrades
+    for(var i = 1; i < ponyclicker.Upgrades.length; ++i) {
+      if(g.upgrades.indexOf(i) >= 0) continue; // skip upgrades we already have
+      var nupgrades = g.upgrades.slice();
+      nupgrades.push(i);
+      var nSPS = ponyclicker.CalcSPS(g.store, nupgrades, false),
+        sps_increase = nSPS - curSPS,
+        payPerSmile = ponyclicker.Upgrades[i].cost/sps_increase;
+      
+      if(payPerSmile <= targetPPS) {
+        targetPPS = payPerSmile;
+        target = -i; //upgrades are negative
+      }
+    }
+    
+    //var ndiff = 0;
+    // See if any other buildings can be bought before this one. If there are, buy the one that gives us the greatest time reduction.
+    // TODO: This doesn't work yet and i can't be assed to figure out why.
+    /*for(var i = 0; i < ponyclicker.Store.length; ++i) {
+      var nstore = g.store.slice();
+      nstore[i]+=1;
+      var nSPS = ponyclicker.CalcSPS(nstore, g, false),
+        xcost = ponyclicker.Store[i].cost(g.store[i]),
+        delta = (xcost - g.smiles)/curSPS,
+        ndelta = targetcost/nSPS,
+        diff = ndelta+delta-targetdelta;
+        
+      if(delta < targetdelta && diff > ndiff) {
+        ndiff = diff;
+        target = i;
+      }
+    }*/
+    
+    // TODO: upgrades
+    
+    return (target==1 && NeedsMorePonies(g.store))?0:target;
+  }
+  
+  // Create game and bypass the early game
+  var game = null,
+      xdata = [],
+      spsdata = [],
+      shopdata = [],
+      waitdata = [];
+  
+  function CalcSteps(optimalsteps) {
+    localStorage.setItem('analysis_steps', optimalsteps);
+    $steps.html(optimalsteps);
+    game = ponyclicker.CreateGame();
     game.smiles = 100;
     game.totalsmiles = 100;
-    var xdata = [];
-    var spsdata = [];
-    var shopdata = [];
-    var waitdata = [];
-    
-    for(var i = 0; i < 230; ++i) {
+    xdata = [];
+    spsdata = [];
+    shopdata = [];
+    waitdata = [];
+  
+    for(var i = 0; i < optimalsteps; ++i) {
       var opt = GetOptimalPurchase(game);
       var cost = ((opt>=0)?ponyclicker.Store[opt].cost(game.store[opt]):ponyclicker.Upgrades[-opt].cost);
       var curSPS = ponyclicker.CalcSPS(game.store, game.upgrades, false);
@@ -158,101 +205,125 @@
       shopdata.push(opt);
       waitdata.push(Math.floor(delta));
     }
+  }
+  function buildChart(id, data, title, subtitle, width, height, log) {
+    if(!log) log = false;
+    var options = {
+      chart: {
+        title: title,
+        subtitle: subtitle
+      },
+      width: width,
+      height: height,
+      interpolateNulls: true,
+      vAxis: {logScale: log}
+    };
     
-    function buildChart(id, data, title, subtitle, width, height, log) {
-      if(!log) log = false;
-      var options = {
-        chart: {
-          title: title,
-          subtitle: subtitle
-        },
-        width: width,
-        height: height,
-        interpolateNulls: true,
-        vAxis: {logScale: log}
-      };
-      
-      var mainchart;
-      if(log) mainchart = new google.visualization.LineChart(document.getElementById(id));
-      else mainchart = new google.charts.Line(document.getElementById(id));
-      mainchart.draw(data, options);
+    var mainchart;
+    if(log) mainchart = new google.visualization.LineChart(document.getElementById(id));
+    else mainchart = new google.charts.Line(document.getElementById(id));
+    mainchart.draw(data, options);
+  }
+  function buildStoreData(title, storevar) {
+    var data = new google.visualization.DataTable();
+    data.addColumn('number', title);
+    for(var i = 0; i < ponyclicker.Store.length; ++i) {
+      data.addColumn('number', ponyclicker.Store[i].plural);
+      storevar.push(0);
     }
-    function buildStoreData(title, storevar) {
-      var data = new google.visualization.DataTable();
-      data.addColumn('number', title);
-      for(var i = 0; i < ponyclicker.Store.length; ++i) {
-        data.addColumn('number', ponyclicker.Store[i].plural);
-        storevar.push(0);
-      }
-      return data;
-    }
-    function drawCharts() {
-      var data = new google.visualization.DataTable();
-      data.addColumn('number', 'Game Time (seconds)');
-      data.addColumn('number', 'Total SPS');
-
-      data.addRows(xdata.map(function(e, i) { return [xdata[i], spsdata[i]]; }));
-      
-      buildChart('mainchart', data, 'Optimal Game Playthrough', 'Ponyclicker SPS over time', $doc.width()-100, 400);
-      
-      var storevar = [];
-      data = buildStoreData('Game Time (seconds)', storevar);
-
-      data.addRows(xdata.map(function(e, i) {
-        var r = [xdata[i]];
-        storevar[shopdata[i]]+=1;
-        return r.concat(storevar);
-      }));
-
-      buildChart('storechart', data, 'Optimal Game Purchases', 'Store purchases over time', $doc.width()/2 - 50, 500);
-      
-      data = new google.visualization.DataTable();
-      data.addColumn('number', 'Game Time (seconds)');
-      data.addColumn('number', 'Time To Next Building');
-
-      data.addRows(xdata.map(function(e, i) { return [xdata[i], waitdata[i]]; }));
-
-      buildChart('deltachart', data, 'Optimal Game Wait', 'Waiting period before next purchase', $doc.width()/2 - 50, 500);
-      
-      storevar = [];
-      data = buildStoreData('Game Time (seconds)', storevar);
-      data.addRows(xdata.map(function(e, i) {
-        storevar[shopdata[i]]+=1;
-        var r = [xdata[i]];
-        return r.concat(EstimateStore(storevar[1]));
-      }));
-
-      buildChart('estimatechart', data, 'Estimated Game Purchases', 'Estimated store purchases over time', $doc.width()/2 - 50, 500);
-      
-      storevar = [];
-      data = buildStoreData('Number of friends', storevar);
-      var addrows = [];
-      for(var i = 0; i < 500; ++i) {
-        var row = [i];
-        for(var j = 0; j < ponyclicker.Store.length; ++j) {
-          row.push(EstimateSPS(j, i));
-        }        
-        addrows.push(row);
-      }
-      data.addRows(addrows);
-
-      buildChart('estimatesps', data, 'Estimated Store SPS', 'Estimated SPS curves for each building', $doc.width()/2 - 50, 500, true);
-      
-      storevar = [];
-      data = buildStoreData('Number of friends', storevar);
-      var addrows = [];
-      for(var i = 0; i < 150; ++i) {
-        var row = [i];
-        for(var j = 0; j < ponyclicker.Store.length; ++j) {
-          row.push(ponyclicker.Store[j].cost(EstimateBuildings(j, i))/EstimateSPS(j, i));
-        }        
-        addrows.push(row);
-      }
-      data.addRows(addrows);
-
-      buildChart('ratiochart', data, 'Estimated Cost/SPS Ratio', 'Estimated Cost/SPS ratios for each building', $doc.width()/2 - 50, 500, true);      
-    }
+    return data;
+  }
   
+  function drawCharts() {
+    var data = new google.visualization.DataTable();
+    data.addColumn('number', 'Game Time (seconds)');
+    data.addColumn('number', 'Total SPS');
+
+    data.addRows(xdata.map(function(e, i) { return [xdata[i], spsdata[i]]; }));
+    
+    $('#mainupgrades').empty();
+    buildChart('mainchart', data, 'Optimal Game Playthrough', 'Ponyclicker SPS over time', $doc.width()-100, 400);
+    for(var i = 0; i < shopdata.length; ++i) {
+      if(shopdata[i]<0) {
+        var u = ponyclicker.Upgrades[-shopdata[i]];
+        $('#mainupgrades').append(
+          $(document.createElement('div'))
+            .addClass('upgrade')
+            .css({left: 52 + ((xdata[i]/xdata[xdata.length-1])*($('#mainupgrades').width() - 272)) + 'px'})
+            .html(-shopdata[i])
+            .append($(document.createElement('div')).html('<b>' + u.name + '</b> (' + u.cost + ' smiles): ' + u.desc))
+          );
+      }
+    }
+    
+    var storevar = [];
+    data = buildStoreData('Game Time (seconds)', storevar);
+
+    data.addRows(xdata.map(function(e, i) {
+      var r = [xdata[i]];
+      storevar[shopdata[i]]+=1;
+      return r.concat(storevar);
+    }));
+
+    buildChart('storechart', data, 'Optimal Game Purchases', 'Store purchases over time', $doc.width()/2 - 50, 500);
+    
+    data = new google.visualization.DataTable();
+    data.addColumn('number', 'Game Time (seconds)');
+    data.addColumn('number', 'Time To Next Building');
+
+    data.addRows(xdata.map(function(e, i) { return [xdata[i], waitdata[i]]; }));
+
+    buildChart('deltachart', data, 'Optimal Game Wait', 'Waiting period before next purchase', $doc.width()/2 - 50, 500);
+    
+    storevar = [];
+    data = buildStoreData('Game Time (seconds)', storevar);
+    data.addRows(xdata.map(function(e, i) {
+      storevar[shopdata[i]]+=1;
+      var r = [xdata[i]];
+      return r.concat(EstimateStore(storevar[1]));
+    }));
+
+    buildChart('estimatechart', data, 'Estimated Game Purchases', 'Estimated store purchases over time', $doc.width()/2 - 50, 500);
+    
+    storevar = [];
+    data = buildStoreData('Number of friends', storevar);
+    var addrows = [];
+    for(var i = 0; i < 500; ++i) {
+      var row = [i];
+      for(var j = 0; j < ponyclicker.Store.length; ++j) {
+        row.push(EstimateSPS(j, i));
+      }        
+      addrows.push(row);
+    }
+    data.addRows(addrows);
+
+    buildChart('estimatesps', data, 'Estimated Store SPS', 'Estimated SPS curves for each building', $doc.width()/2 - 50, 500, true);
+    
+    storevar = [];
+    data = buildStoreData('Number of friends', storevar);
+    var addrows = [];
+    for(var i = 0; i < 150; ++i) {
+      var row = [i];
+      for(var j = 0; j < ponyclicker.Store.length; ++j) {
+        row.push(ponyclicker.Store[j].cost(EstimateBuildings(j, i))/EstimateSPS(j, i));
+      }        
+      addrows.push(row);
+    }
+    data.addRows(addrows);
+
+    buildChart('ratiochart', data, 'Estimated Cost/SPS Ratio', 'Estimated Cost/SPS ratios for each building', $doc.width()/2 - 50, 500, true);
+  }
+  function SetSteps(s) {
+    var steps = s|0;
+    CalcSteps(steps);
+    drawCharts();
+  }
+  
+  if(localStorage.getItem('analysis_steps')===null)
+    localStorage.setItem('analysis_steps', '200');
+  var sget = localStorage.getItem('analysis_steps');
+  document.getElementById('optimalslider').value = sget;
+  CalcSteps(sget);
   //$w.on('resize',ResizeCanvas);
   </script>
 </body>
