@@ -18,7 +18,6 @@
       top: 444px;
       z-index:2;
       height:16px;
-      width:16px;
       background:#226622;
       color: #fff;
       font-size: 16px;
@@ -51,7 +50,7 @@
 <body>
   <h2>Pony Clicker Analysis</h2>
   <label title="Number of purchase steps to calculate in the optimal playthrough.">
-    <input id="optimalslider" type="range" min="10" max="1000" onchange="SetSteps(this.value);" onmousemove="document.getElementById('steps').innerHTML=this.value"/> <span id="steps">0</input>
+    <input id="optimalslider" type="range" min="10" max="4000" style="width:400px" onchange="SetSteps(this.value);" onmousemove="document.getElementById('steps').innerHTML=this.value"/> <span id="steps">0</input>
   </label>
   <hr>
   <div id="mainchart"></div>
@@ -245,11 +244,12 @@
     buildChart('mainchart', data, 'Optimal Game Playthrough', 'Ponyclicker SPS over time', $doc.width()-100, 400);
     for(var i = 0; i < shopdata.length; ++i) {
       if(shopdata[i]<0) {
+        var highlight = (-shopdata[i])>85;
         var u = ponyclicker.Upgrades[-shopdata[i]];
         $('#mainupgrades').append(
           $(document.createElement('div'))
             .addClass('upgrade')
-            .css({left: 52 + ((xdata[i]/xdata[xdata.length-1])*($('#mainupgrades').width() - 272)) + 'px'})
+            .css({left: 52 + ((xdata[i]/xdata[xdata.length-1])*($('#mainupgrades').width() - 272)) + 'px', background:(highlight?('#881111'):null), zIndex:(highlight?5:null) })
             .html(-shopdata[i])
             .append($(document.createElement('div')).html('<b>' + u.name + '</b> (' + u.cost + ' smiles): ' + u.desc))
           );
@@ -265,7 +265,7 @@
       return r.concat(storevar);
     }));
 
-    buildChart('storechart', data, 'Optimal Game Purchases', 'Store purchases over time', $doc.width()/2 - 50, 500);
+    /*buildChart('storechart', data, 'Optimal Game Purchases', 'Store purchases over time', $doc.width()/2 - 50, 500);
     
     data = new google.visualization.DataTable();
     data.addColumn('number', 'Game Time (seconds)');
@@ -311,7 +311,7 @@
     }
     data.addRows(addrows);
 
-    buildChart('ratiochart', data, 'Estimated Cost/SPS Ratio', 'Estimated Cost/SPS ratios for each building', $doc.width()/2 - 50, 500, true);
+    buildChart('ratiochart', data, 'Estimated Cost/SPS Ratio', 'Estimated Cost/SPS ratios for each building', $doc.width()/2 - 50, 500, true);*/
   }
   function SetSteps(s) {
     var steps = s|0;
