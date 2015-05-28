@@ -9,12 +9,12 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="401.61636"
-   height="142.27538"
+   width="401.70267"
+   height="396.94293"
    id="svg4081"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="New document 5">
+   sodipodi:docname="element_of_sweets.svg">
   <defs
      id="defs4083" />
   <sodipodi:namedview
@@ -25,15 +25,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.35"
-     inkscape:cx="200.80816"
-     inkscape:cy="69.944372"
+     inkscape:cx="200.85131"
+     inkscape:cy="198.47146"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     fit-margin-top="0"
+     fit-margin-top="129.67"
      fit-margin-left="0"
      fit-margin-right="0"
-     fit-margin-bottom="0"
+     fit-margin-bottom="129.67"
      inkscape:window-width="463"
      inkscape:window-height="423"
      inkscape:window-x="1530"
@@ -47,7 +47,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -55,7 +55,7 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-174.19184,-460.03118)">
+     transform="translate(-174.14869,-333.89071)">
     <g
        style="display:inline"
        id="g5286"

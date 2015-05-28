@@ -10,12 +10,12 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="278.71252"
-   height="129.06003"
+   width="278.71747"
+   height="276.496"
    id="svg3790"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="New document 4">
+   sodipodi:docname="element_of_loyalty.svg">
   <defs
      id="defs3792">
     <clipPath
@@ -39,15 +39,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.35"
-     inkscape:cx="394.37015"
-     inkscape:cy="-219.47587"
+     inkscape:cx="394.35873"
+     inkscape:cy="-144.60914"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     fit-margin-top="0"
+     fit-margin-top="74.83"
      fit-margin-left="0"
      fit-margin-right="0"
-     fit-margin-bottom="0"
+     fit-margin-bottom="74.83"
      inkscape:window-width="463"
      inkscape:window-height="423"
      inkscape:window-x="1455"
@@ -61,7 +61,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -69,7 +69,7 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(19.370155,-183.82629)">
+     transform="translate(19.358738,-111.25704)">
     <g
        transform="translate(-626.30404,105.42004)"
        id="g61">
@@ -179,14 +179,14 @@
         <polygon
            style="fill:#dec725;stroke:#aa8922;stroke-width:3;stroke-linejoin:round;stroke-miterlimit:10"
            stroke-miterlimit="10"
-           points="784.222,107.503 771.313,128.337 791.97,130.503 714.555,206.003 729.222,156.414 713.222,157.67 732.972,111.241 "
+           points="713.222,157.67 732.972,111.241 784.222,107.503 771.313,128.337 791.97,130.503 714.555,206.003 729.222,156.414 "
            id="polygon102" />
         <g
            id="g104">
           <polygon
              style="fill:#820e1e;stroke:#7c121f;stroke-width:1.5;stroke-miterlimit:10"
              stroke-miterlimit="10"
-             points="772.222,114.378 760.472,132.503 779.389,134.991 723.722,190.253 738.472,150.253 722.722,150.503 737.472,116.977 "
+             points="722.722,150.503 737.472,116.977 772.222,114.378 760.472,132.503 779.389,134.991 723.722,190.253 738.472,150.253 "
              id="polygon106" />
           <polygon
              style="fill:#fca6b5;stroke:#7c121f;stroke-width:1.5;stroke-linejoin:bevel;stroke-miterlimit:10"
@@ -221,7 +221,7 @@
           <polygon
              style="fill:#f94449;stroke:#7c121f;stroke-width:1.5;stroke-miterlimit:10"
              stroke-miterlimit="10"
-             points="762.347,120.337 752.472,136.586 771.313,137.479 734.013,173.746 744.222,144.845 728.218,145.896 740.639,121.841 "
+             points="728.218,145.896 740.639,121.841 762.347,120.337 752.472,136.586 771.313,137.479 734.013,173.746 744.222,144.845 "
              id="polygon120" />
         </g>
       </g>
