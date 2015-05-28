@@ -263,7 +263,7 @@ var ponyclicker = (function(){
   }
 
   function ExportGame() { return JSON.stringify(Game); }
-  function SaveGame() { localStorage.setItem('game', ExportGame()); ShowNotice("Game saved", null, null); }
+  function SaveGame() { localStorage.setItem('game', ExportGame()); ShowNotice("Игра сохранена", null, null); }
   function ApplySettings() {
     $EnableE.prop('checked',Game.settings.useCanvas);
     $EnableF.prop('checked',Game.settings.optimizeFocus);
