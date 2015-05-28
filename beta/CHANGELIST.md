@@ -1,6 +1,23 @@
 # Pony Clicker Change Log
 This is the change log for Pony Clicker. Some minor changes may not be reflected in this log.
 
+## v1.0
+- Reorganized javascript code
+- Added index.html redirection to ponyclicker.html
+- Introduced utilities/analysis.html
+- Drastically lowered boop count requirements for achievements
+- Completely rebalanced building SPS formulas (Resolve #28)
+- Moved muffin upgrades to late game
+- Added store icons
+- use strict javascript (I wish I knew about this earlier)
+- Added a ton of upgrades, change upgrades to use explicit IDs
+- Added option to make the most efficient store purchase tinted green
+- Introduced end-game event (Resolve #27)
+- Re-introduced prestige system using cupcakes
+
+## v0.89
+- Cut late game costs to help compensate for upgrade adjustment
+
 ## v0.88
 - Implemented basic mobile interface
 - Players now boop ponies instead of click them (Resolve #38)
@@ -12,6 +29,7 @@ This is the change log for Pony Clicker. Some minor changes may not be reflected
 - Upgrade system overhauled into buckets (Resolve #34)
 - Upgrade list is now sorted
 - Added a lower bound check to address precision issues (Resolve #42)
+- Boosted muffin bonus to compensate for new upgrade system
 
 ## v0.87
 - Fixed memory leak
