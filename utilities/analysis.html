@@ -131,8 +131,8 @@
     }
     
     // Search for any suitable upgrades
-    for(var i = 1; i < ponyclicker.Upgrades.length; ++i) {
-      if(g.upgrades.indexOf(i) >= 0) continue; // skip upgrades we already have
+    for(var i in ponyclicker.Upgrades) {
+      if(g.upgradeHash[i] !== undefined) continue; // skip upgrades we already have
       var nupgrades = g.upgrades.slice();
       nupgrades.push(i);
       var nSPS = ponyclicker.CalcSPS(g.store, nupgrades, false),
@@ -197,7 +197,7 @@
       game.totalTime += delta;
       game.smiles -= cost;
       if(opt>=0) game.store[opt] += 1;
-      else game.upgrades.push(-opt);
+      else { game.upgrades.push(-opt); game.upgradeHash[-opt] = -opt; }
       
       spsdata.push(Math.floor(ponyclicker.CalcSPS(game.store, game.upgrades, false)));
       xdata.push(Math.floor(game.totalTime));
