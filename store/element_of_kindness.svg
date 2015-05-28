@@ -10,12 +10,12 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="278.71103"
-   height="113.78257"
+   width="278.71783"
+   height="276.52203"
    id="svg4234"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="New document 10">
+   sodipodi:docname="element_of_kindness.svg">
   <defs
      id="defs4236">
     <clipPath
@@ -75,15 +75,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.35"
-     inkscape:cx="139.35275"
-     inkscape:cy="55.772046"
+     inkscape:cx="139.35892"
+     inkscape:cy="138.26102"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     fit-margin-top="0"
+     fit-margin-top="82.5"
      fit-margin-left="0"
      fit-margin-right="0"
-     fit-margin-bottom="0"
+     fit-margin-bottom="82.5"
      inkscape:window-width="463"
      inkscape:window-height="423"
      inkscape:window-x="1355"
@@ -97,7 +97,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -105,7 +105,7 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-235.64725,-474.35166)">
+     transform="translate(-235.64108,-394.10116)">
     <g
        transform="translate(70.182146,233.66416)"
        id="g267">
@@ -254,7 +254,7 @@
                 <polygon
                    style="fill:#bd3a75;stroke:#b94c7c;stroke-width:1.5;stroke-miterlimit:10"
                    stroke-miterlimit="10"
-                   points="273.317,347.023 284.692,349.148 287.192,345.648 285.38,336.898 292.505,332.898 297.692,338.773 315.067,337.523 320.317,332.523 326.192,325.898 332.692,321.148 342.808,311.523 336.442,305.273 320.567,296.898 318.942,289.148 292.505,287.398 290.942,299.273 274.817,306.523 268.192,313.773 281.067,317.648 302.567,313.148 282.817,334.023 278.692,340.023 "
+                   points="332.692,321.148 342.808,311.523 336.442,305.273 320.567,296.898 318.942,289.148 292.505,287.398 290.942,299.273 274.817,306.523 268.192,313.773 281.067,317.648 302.567,313.148 282.817,334.023 278.692,340.023 273.317,347.023 284.692,349.148 287.192,345.648 285.38,336.898 292.505,332.898 297.692,338.773 315.067,337.523 320.317,332.523 326.192,325.898 "
                    id="polygon326" />
                 <polyline
                    style="fill:#bd3a75;stroke:#b94c7c;stroke-width:1.5;stroke-miterlimit:10"
@@ -266,7 +266,7 @@
                  style="fill:#faafd1;stroke:#b94c7c;stroke-width:1.5;stroke-miterlimit:10"
                  clip-path="url(#SVGID_12_)"
                  stroke-miterlimit="10"
-                 points="326.067,338.023 324.942,347.013 334.817,348.648 343.567,344.023 341.692,331.773 331.567,333.523 309.067,314.398 331.067,299.148 341.192,296.398 348.192,295.273 344.192,288.148 339.317,285.99 331.567,285.99 331.692,292.898 306.567,309.023 291.442,297.398 292.067,289.398 280.067,285.99 269.942,285.99 266.942,288.898 263.317,295.273 271.567,296.898 304.442,313.148 285.692,325.648 278.317,321.023 271.192,331.773 279.817,334.023 305.988,321.273 "
+                 points="348.192,295.273 344.192,288.148 339.317,285.99 331.567,285.99 331.692,292.898 306.567,309.023 291.442,297.398 292.067,289.398 280.067,285.99 269.942,285.99 266.942,288.898 263.317,295.273 271.567,296.898 304.442,313.148 285.692,325.648 278.317,321.023 271.192,331.773 279.817,334.023 305.988,321.273 326.067,338.023 324.942,347.013 334.817,348.648 343.567,344.023 341.692,331.773 331.567,333.523 309.067,314.398 331.067,299.148 341.192,296.398 "
                  id="polygon330" />
               <polyline
                  style="fill:#faafd1;stroke:#b94c7c;stroke-width:1.5;stroke-miterlimit:10"
