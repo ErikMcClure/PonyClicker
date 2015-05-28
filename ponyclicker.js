@@ -944,7 +944,8 @@ var ponyclicker = (function(){
   }
   
   function ClickPinkie(id) {
-    CheckAchievements(['231','232','233'])
+    Game.clonespopped += 1;
+    CheckAchievements(['231','232','233']);
     Earn(Game.pinkies[id]);
     ShowMouseText("+" + PrettyNum(Game.pinkies[id]), -6, -40);
     Game.pinkies[id] = -1;
