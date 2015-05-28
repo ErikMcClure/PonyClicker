@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="1203.72"
+   height="1203.72"
+   id="svg4536"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="hoofbump.svg">
+  <defs
+     id="defs4538" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.12374369"
+     inkscape:cx="103.50858"
+     inkscape:cy="-570.93475"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1280"
+     inkscape:window-height="1002"
+     inkscape:window-x="-8"
+     inkscape:window-y="-2"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata4541">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,151.35781)">
+    <path
+       style="fill:#f9b961;fill-opacity:1;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 1738.4234,823.90971 C 1458.2467,665.98361 1171.8362,484.68082 870.19865,246.27664 L 736.11595,37.561626 c 0,0 -97.69253,-107.937642 -186.26396,0.63379 l 0.25254,3.20377 44.95667,544.010874 3.36222,4.21393 c 0,0 419.99998,348.57139 1142.85708,525.71431"
+       id="path5922"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccccccc" />
+    <g
+       id="_x31__1_-9"
+       transform="translate(-3529.5085,-2027.8212)">
+      <path
+         style="fill:#ea7133"
+         inkscape:connector-curvature="0"
+         id="path92-5"
+         d="m 5363.012,3162.547 c -2.209,-0.613 -223.898,-62.459 -484.157,-161.319 -343.557,-130.502 -597.66,-265.81 -734.841,-391.295 l -20.248,22.135 c 78.294,71.621 191.914,145.623 337.703,219.952 116.151,59.219 252.996,118.855 406.733,177.253 0,0 229.821,96.821 494.81,133.274 z" />
+      <path
+         style="fill:#ea7133"
+         inkscape:connector-curvature="0"
+         id="path94-2"
+         d="m 4419.521,2373.991 c -0.297,-0.843 -30.273,-85.255 -75.952,-169.913 -58.587,-108.581 -115.666,-168.45 -165.065,-173.135 -35.086,-3.326 -68.924,22.45 -100.55,76.62 l -25.908,-15.125 c 38.039,-65.157 81.554,-95.886 129.301,-91.36 60.746,5.768 124.266,69.38 188.794,189.07 46.738,86.691 49.38,183.843 49.38,183.843 z" />
+      <path
+         style="fill:#ea7133"
+         inkscape:connector-curvature="0"
+         id="path96-0"
+         d="m 4996.114,2715.331 c -153.791,-96.042 -284.222,-187.672 -380.409,-258.771 -100.245,-74.1 -180.072,-137.515 -222.77,-172.56 -9.226,-7.572 -2.896,-41.436 -2.896,-41.436 31.196,26.477 122.234,100.235 243.497,189.87 156.7,115.83 404.736,286.419 696.497,441.316 0,0 -61.032,-12.084 -159.534,-62.251 -62.272,-31.715 -132.121,-69.774 -174.385,-96.168 z" />
+    </g>
+    <g
+       id="_x32_-3"
+       transform="translate(-3536.5999,-2040.2981)"
+       style="fill:#a1daf7;fill-opacity:1">
+      <path
+         style="fill:#a1daf7;fill-opacity:1;stroke:#6aa8db;stroke-width:30;stroke-miterlimit:10"
+         inkscape:connector-curvature="0"
+         id="path233-4"
+         d="m 2999.467,3132.622 c 0,0 1041.533,-269.622 1175.533,-575.622 74.283,-169.631 -50.621,-447.794 -130,-482 -62.883,-27.097 -107.467,62.468 -136,152.285 -42,132.21 -790.986,611.559 -862.493,583.637"
+         stroke-miterlimit="10" />
+    </g>
+  </g>
+</svg>
