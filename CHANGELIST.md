@@ -1,7 +1,7 @@
 # Pony Clicker Change Log
 This is the change log for Pony Clicker. Some minor changes may not be reflected in this log.
 
-## v0.90
+## v1.0
 - Reorganized javascript code
 - Added index.html redirection to ponyclicker.html
 - Introduced utilities/analysis.html
@@ -13,6 +13,7 @@ This is the change log for Pony Clicker. Some minor changes may not be reflected
 - Added a ton of upgrades, change upgrades to use explicit IDs
 - Added option to make the most efficient store purchase tinted green
 - Introduced end-game event (Resolve #27)
+- Re-introduced prestige system using cupcakes
 
 ## v0.89
 - Cut late game costs to help compensate for upgrade adjustment
