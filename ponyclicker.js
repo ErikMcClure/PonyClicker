@@ -1571,7 +1571,7 @@ var ponyclicker = (function(){
 
   LoadGame();
   $achievements_total.html(achievementCount.toFixed(0));
-  $upgrades_total.html((Object.keys(upgradeList).length-1).toFixed(0)); //-1 for the error one at 0
+  $upgrades_total.html((Object.keys(upgradeList).length).toFixed(0));
   
   // Generate store HTML
   $store.empty();
