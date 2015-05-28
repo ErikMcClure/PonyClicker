@@ -822,6 +822,11 @@ a:hover {
   pointer-events: all;
 }
 
+.stats .legacy {
+  color:#ccf;
+  display:none;
+}
+
 /* SPINNERS!!!! */
 
 @-webkit-keyframes spinning {

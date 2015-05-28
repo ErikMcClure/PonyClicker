@@ -6,7 +6,7 @@ var ponyclicker = (function(){
     return Math.log(x) / Math.LN10;
   };
   
-  var $ponyversion = {major:0,minor:90,revision:0};
+  var $ponyversion = {major:0,minor:90,revision:1};
       
   function CreateGame() {
     return {
@@ -127,7 +127,7 @@ var ponyclicker = (function(){
   var fcurve_init = 20;
   var rcurve = 1.31; // cost ratio curve
   var rcurve_init = 15; // Initial cost ratio (jump forwards twice to get the cost ratio for a recital)
-  var ccurve = 1.21;
+  var ccurve = 1.22;
   
   // The fundamental curve is the cost of friendships. This forms a simple recurrence relation f_n = a*f_n-1, which has a closed-form solution of f_n = f_0*a^n
   var fn_cost1 = fn_ratio(fcurve_init, fcurve);
@@ -207,12 +207,12 @@ var ponyclicker = (function(){
     if(Game.totalsmiles > 1000000000000000000000000000) EarnAchievement(218);
     if(Game.totalsmiles > 1000000000000000000000000000000) EarnAchievement(219);
     
-    //var muffins = Math.floor(inv_triangular(Game.totalsmiles/1000000000000))-1;
-    //Game.muffins += muffins;
-    //ShowNotice("Game reset", ((muffins==0)?null:"You get <b>" + Pluralize(muffins, " muffin") + "</b> for your <b>" + Pluralize(Game.totalsmiles, " smile") + "</b>"), null);
-    ShowNotice("Game Reset", "Muffin prestige has been temporarily disabled, sorry!");
     Game.legacysmiles += Game.totalsmiles;
     Game.legacyclicks += Game.clicks;
+    var diff = Game.cupcakes;
+    Game.cupcakes = Math.floor(Math.pow(inv_triangular(Game.legacysmiles/1000000000000000000), 0.618));
+    diff = Game.cupcakes - diff;
+    ShowNotice("Game reset", ((diff==0)?null:"You get <b>" + Pluralize(diff, " cupcake") + "</b> for your <b>" + Pluralize(Game.totalsmiles, " smile") + "</b>"), null);
     Game.resets += 1;
     Game.store = [1,0,0,0,0,0,0,0,0,0,0,0,0];
     Game.upgrades = [];
@@ -242,6 +242,10 @@ var ponyclicker = (function(){
     UpdateNews();
     updateUpgradesAchievements();
     $stat_clicks.html(PrettyNum(Game.clicks));
+    $stat_legacyclicks.html(PrettyNum(Game.legacyclicks + Game.clicks));
+    $stat_resets.html(Game.resets);
+    $stat_cupcakes.html(PrettyNum(Game.cupcakes));
+    ShowLegacyStats();
     CheckAchievements(Object.keys(achievementList));
     UpdateSPS();
     ResetApocalypse();
@@ -271,7 +275,17 @@ var ponyclicker = (function(){
     if($('#numdisplay2').prop('checked')) Game.settings.numDisplay = 2;
     UpdateSPS();
   }
-
+  function ShowLegacyStats() {
+    var pclicks = $('#statlegacyclicks')[0],
+        psmiles = $('#statlegacysmiles')[0],
+        presets = $('#statresets')[0],
+        pcupcakes = $('#statcupcakes')[0];
+        
+    pclicks.style.display = (Game.legacyclicks>0?'block':'none');
+    psmiles.style.display = (Game.legacysmiles>0?'block':'none');
+    presets.style.display = (Game.resets>0?'block':'none');
+    pcupcakes.style.display = (Game.cupcakes>0?'block':'none');
+  }
   function GetRandNum(min, max) { // Random number in the range [low, high)
     return Math.floor(Math.random()*(max-min))+min;
   }
@@ -714,8 +728,8 @@ var ponyclicker = (function(){
     function(n) { return function(){ return (Game.store[0]>=n) && (Game.store[1] >= triangular(n)); }; }
   ));
    
-  achievements_shop.push(234); // Fixer Upper achievement
-  achievements_shop.push(230); // What Have You Done
+  achievements_shop.push('234'); // Fixer Upper achievement
+  achievements_shop.push('230'); // What Have You Done
   
   achievementCount += extraAchievements; // for our special ones at the end
 
@@ -751,6 +765,7 @@ var ponyclicker = (function(){
       Earn(amount);
       Game.clicks += 1;
       $stat_clicks.html(PrettyNum(Game.clicks));
+      $stat_legacyclicks.html(PrettyNum(Game.clicks+Game.legacyclicks, true));
       ShowMouseText('+' + PrettyNum(amount), 2, -40);
       CheckAchievements(achievements_clicks);
   }
@@ -761,6 +776,7 @@ var ponyclicker = (function(){
     $score.html(Pluralize(Game.smiles, " smile", true));
     $stat_cursmiles.html(PrettyNum(Game.smiles, true));
     $stat_totalsmiles.html(PrettyNum(Game.totalsmiles, true));
+    $stat_legacysmiles.html(PrettyNum(Game.totalsmiles+Game.legacysmiles, true));
     UpdateStore();
     CheckAchievements(achievements_smiles);
   }
@@ -792,7 +808,7 @@ var ponyclicker = (function(){
     return count;
   }
   // Seperating this out lets us make predictions on what a purchase will do to your SPS
-  function CalcSPS(store, upgrades, docache) {
+  function CalcSPS(store, upgrades, cupcakes, docache) {
     var res = CalcSPSinit(store);
     
     var obj = {
@@ -821,6 +837,7 @@ var ponyclicker = (function(){
     }
     SPS = (SPS+obj.pSPS)*(obj.mSPS+1.0); // Apply global SPS modifiers
     SPS *= (obj.mMuffin+1.0); // Apply muffin modifiers
+    SPS *= ((cupcakes*0.005)+1.0); // Apply cupcake modifiers
     if(docache) // Calculate resulting SPC if we're caching values.
       Game.SPC = 1 + obj.pSPC + (obj.mSPC*SPS);
     
@@ -893,6 +910,7 @@ var ponyclicker = (function(){
     updateUpgradesAchievements();
     UpdateStore();
     UpdateUpgradeOverlay(null, null, null);
+    CheckAchievements(achievements_shop);
     CheckApocalypse();
   }
   var MAX_PINKIES = 50;
@@ -929,9 +947,9 @@ var ponyclicker = (function(){
     if(id == null) {
       if(pinkie_freelist.length == 0) return;
       id = pinkie_freelist.pop();
+      Game.pinkies[id] = 0;
     }
     var w = pbg.offsetWidth, h = pb.offsetHeight;
-    Game.pinkies[id] = 0;
     $pinkieclones.append($(document.createElement('div'))
       .css('left', GetRandNum(0, w - 53*2))
       .css('top', GetRandNum(0, h - 64*2))
@@ -1028,7 +1046,7 @@ var ponyclicker = (function(){
         for(var j = 0; j < Store.length; ++j) updatestore_nstore[j] = 0+Game.store[j];
         
         updatestore_nstore[i]+=1;
-        var nSPS = CalcSPS(updatestore_nstore, Game.upgrades, false),
+        var nSPS = CalcSPS(updatestore_nstore, Game.upgrades, Game.cupcakes, false),
             payPerSmile = Store[i].cost(Game.store[i])/(nSPS - Game.SPS);
         
         if(payPerSmile < minPayPerSmile) {
@@ -1092,7 +1110,7 @@ var ponyclicker = (function(){
     $stat_buildings.html(CountBuildings(Game.store).toFixed(0));
   }
   function UpdateSPS() {
-    Game.SPS = CalcSPS(Game.store, Game.upgrades, true);
+    Game.SPS = CalcSPS(Game.store, Game.upgrades, Game.cupcakes, true);
     $stat_SPC.html(PrettyNum(Math.floor(Game.SPC)));
     if(Game.SPS > 0) {
       var wither = (apocalypseTime < 0)?0:(1-Math.pow(1-PINKIE_WITHER, Game.pinkies.length - pinkie_freelist.length));
@@ -1259,7 +1277,7 @@ var ponyclicker = (function(){
       for(var i = 0; i < Store.length; ++i) { updateoverlay_nstore[i] = 0+Game.store[i]; } //ensure javascript isn't passing references around for some insane reason
 
       updateoverlay_nstore[item]+=1;
-      var nSPS = CalcSPS(updateoverlay_nstore, Game.upgrades, false),
+      var nSPS = CalcSPS(updateoverlay_nstore, Game.upgrades, Game.cupcakes, false),
           sps_increase = nSPS - Game.SPS,
           payPerSmile = xcost/(nSPS - Game.SPS),
           increaseText = sps_increase > 0 ? 'will increase your SPS by <b>'+(sps_increase > lowerbound ? PrettyNum(sps_increase) : 'almost nothing')+'</b>' : "<b>won't</b> increase your SPS",
@@ -1465,7 +1483,7 @@ var ponyclicker = (function(){
       dataType:'json',
       beforeSend: function(xhr) { xhr.overrideMimeType( "application/json" ); }, // Firefox REQUIRES this, dataType is not sufficient. ¯\(°_o)/¯
       success: function(data,status,r) {
-        if(data.major > $ponyversion.major || (data.major == $ponyversion.major && data.minor > $ponyversion.minor)) {
+        if(data.major > $ponyversion.major || (data.major == $ponyversion.major && data.minor > $ponyversion.minor) || (data.major == $ponyversion.major && data.minor == $ponyversion.minor && data.revision > $ponyversion.revision)) {
           $('#pagealert').addClass('pagealertactive');
         }        
       }
@@ -1534,6 +1552,10 @@ var ponyclicker = (function(){
       $stat_buildings = $stats.find('.buildings'),
       $stat_time = $stats.find('.time'),
       $stat_muffins = $stats.find('.muffins'),
+      $stat_legacysmiles = $stats.find('.legacysmiles'),
+      $stat_resets = $stats.find('.resets'),
+      $stat_legacyclicks = $stats.find('.legacyclicks'),
+      $stat_cupcakes = $stats.find('.cupcakes'),
       $achievements_owned = $('#achievements_owned'),
       $achievements_total = $('#achievements_total'),
       $upgrades_owned = $('#upgrades_owned'),
@@ -1707,7 +1729,7 @@ var ponyclicker = (function(){
         if (e) e.returnValue = text;
         return text;
     };
-    $('#ponyversion').html($ponyversion.major + '.' + $ponyversion.minor);
+    $('#ponyversion').html($ponyversion.major + '.' + $ponyversion.minor + (($ponyversion.revision>0)?'.' + $ponyversion.revision:''));
     
     InitializeGame();
     ResizeCanvas();

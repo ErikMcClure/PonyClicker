@@ -61,6 +61,7 @@
   <div id="estimatesps" class="graph"></div>
   <div id="ratiochart" class="graph"></div>
   <div id="costchart" class="graph"></div>
+  <div id="cupcakechart" class="graph"></div>
   
   <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
   <script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -107,7 +108,7 @@
   
   // Find optimal purchase
   function GetOptimalPurchase(g) {
-    var curSPS = ponyclicker.CalcSPS(g.store, g.upgrades, false);
+    var curSPS = ponyclicker.CalcSPS(g.store, g.upgrades, g.cupcakes, false);
     var target = 0;
     var targetPPS = null;
     var targetdelta = null;
@@ -117,7 +118,7 @@
     for(var i = 0; i < ponyclicker.Store.length; ++i) {
       var nstore = g.store.slice();
       nstore[i]+=1;
-      var nSPS = ponyclicker.CalcSPS(nstore, g.upgrades, false),
+      var nSPS = ponyclicker.CalcSPS(nstore, g.upgrades, g.cupcakes, false),
         sps_increase = nSPS - curSPS,
         xcost = ponyclicker.Store[i].cost(g.store[i]),
         payPerSmile = xcost/sps_increase;
@@ -135,7 +136,7 @@
       if(g.upgradeHash[i] !== undefined) continue; // skip upgrades we already have
       var nupgrades = g.upgrades.slice();
       nupgrades.push(i);
-      var nSPS = ponyclicker.CalcSPS(g.store, nupgrades, false),
+      var nSPS = ponyclicker.CalcSPS(g.store, nupgrades, g.cupcakes, false),
         sps_increase = nSPS - curSPS,
         payPerSmile = ponyclicker.Upgrades[i].cost/sps_increase;
       
@@ -175,21 +176,23 @@
       shopdata = [],
       waitdata = [];
   
-  function CalcSteps(optimalsteps) {
+  function CalcSteps(optimalsteps, cupcakes) {
     localStorage.setItem('analysis_steps', optimalsteps);
     $steps.html(optimalsteps);
     game = ponyclicker.CreateGame();
     game.smiles = 100;
     game.totalsmiles = 100;
+    game.cupcakes = cupcakes;
     xdata = [];
     spsdata = [];
     shopdata = [];
     waitdata = [];
   
-    for(var i = 0; i < optimalsteps; ++i) {
+    //for(var i = 0; i < optimalsteps; ++i) {
+    while(game.totalTime < 100000) {
       var opt = GetOptimalPurchase(game);
       var cost = ((opt>=0)?ponyclicker.Store[opt].cost(game.store[opt]):ponyclicker.Upgrades[-opt].cost);
-      var curSPS = ponyclicker.CalcSPS(game.store, game.upgrades, false);
+      var curSPS = ponyclicker.CalcSPS(game.store, game.upgrades, game.cupcakes, false);
       var delta = (cost - game.smiles)/curSPS;
       if(delta < 0) delta = 0;
       game.smiles += delta*curSPS;
@@ -199,7 +202,7 @@
       if(opt>=0) game.store[opt] += 1;
       else { game.upgrades.push(-opt); game.upgradeHash[-opt] = -opt; }
       
-      spsdata.push(Math.floor(ponyclicker.CalcSPS(game.store, game.upgrades, false)));
+      spsdata.push(Math.floor(ponyclicker.CalcSPS(game.store, game.upgrades, game.cupcakes, false)));
       xdata.push(Math.floor(game.totalTime));
       shopdata.push(opt);
       waitdata.push(Math.floor(delta));
@@ -312,10 +315,27 @@
     data.addRows(addrows);
 
     buildChart('ratiochart', data, 'Estimated Cost/SPS Ratio', 'Estimated Cost/SPS ratios for each building', $doc.width()/2 - 50, 500, true);*/
+    
+    data = new google.visualization.DataTable();
+    data.addColumn('number', 'Resets');
+    data.addColumn('number', 'Total Smiles');
+
+    var dat = [];
+    var cupcakes = 0;
+    var legacy = 0;
+    for(var i = 0; i < 6; ++i) {
+      CalcSteps(spsdata.length, cupcakes);
+      dat.push([i, spsdata[spsdata.length-1]]);
+      legacy += game.totalsmiles;
+      cupcakes = Math.max(0, Math.floor(Math.pow(inv_triangular(legacy/1000000000000000000), 0.6))-1);
+    }
+    
+    data.addRows(dat);
+    buildChart('cupcakechart', data, 'Total Smiles After Resets', 'Total smiles after n resets after 24 hours of play', $doc.width()-100, 400);
   }
   function SetSteps(s) {
     var steps = s|0;
-    CalcSteps(steps);
+    CalcSteps(steps, 0);
     drawCharts();
   }
   
@@ -323,7 +343,7 @@
     localStorage.setItem('analysis_steps', '200');
   var sget = localStorage.getItem('analysis_steps');
   document.getElementById('optimalslider').value = sget;
-  CalcSteps(sget);
+  CalcSteps(sget, 0);
   //$w.on('resize',ResizeCanvas);
   </script>
 </body>
