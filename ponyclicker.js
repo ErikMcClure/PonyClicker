@@ -373,7 +373,7 @@ var ponyclicker = (function(){
       if(Game.muffins > 100) {
 
         news.push('Дерпи врезается в огромный маффин. Такова ирония.',
-        "Discord caught eating 40 muffins in one sitting, that’s as many as four 10’s, and that’s terrible.",
+        "Дискорд сожрал 40 маффинов, а это аж 4 раза по 10, и это же ужасно!",
           "Установлено, что Принцесса Селестия в этом году съела как минимум 37 маффинов. «Что, подряд?» — прокомментировала новость Принцесса Луна.",
           "Princess Cadence Announces that all muffins produced in the Crystal Empire now come with ‘Free Shipping’.  Her Highness then winked suggestively.",
           "На фоне захлестнувшей Эквестрию волны маффиннового безумия Сапфир Шорс выпускает новый мьюзикл, «Мои маленькие маффины: Выпечка это магия».",
