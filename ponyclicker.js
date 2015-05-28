@@ -646,7 +646,7 @@ var ponyclicker = (function(){
     '231': { name:"Too Many Pinkie Pies", desc: "Pop <b>10 pinkie clones</b>.", muffins:1, cond:function() { return Game.clonespopped>=10; } },
     '232': { name:"Look, a Birdie!", desc: "Pop <b>100 pinkie clones</b>", muffins:2, cond:function() { return Game.clonespopped>=100; } },
     '233': { name:"Reviewing Is Magic 5", desc: "Pop <b>400 pinkie clones</b>.", muffins:3, cond:function() { return Game.clonespopped>=400; } },
-    '234': { name:"Fixer Upper", desc: "Buy all the upgrades.", muffins:1, cond:function() { return Game.upgrades.count==Object.keys(upgradeList).length; }},
+    '234': { name:"Fixer Upper", desc: "Buy all the upgrades.", muffins:1, cond:function() { return Game.upgrades.length==Object.keys(upgradeList).length; }},
     
     '255': { name:"Completionist", desc: "Get all the achievements.", muffins:100}
   };
@@ -944,7 +944,8 @@ var ponyclicker = (function(){
   }
   
   function ClickPinkie(id) {
-    CheckAchievements(['231','232','233'])
+    Game.clonespopped += 1;
+    CheckAchievements(['231','232','233']);
     Earn(Game.pinkies[id]);
     ShowMouseText("+" + PrettyNum(Game.pinkies[id]), -6, -40);
     Game.pinkies[id] = -1;
@@ -1570,7 +1571,7 @@ var ponyclicker = (function(){
 
   LoadGame();
   $achievements_total.html(achievementCount.toFixed(0));
-  $upgrades_total.html((Object.keys(upgradeList).length-1).toFixed(0)); //-1 for the error one at 0
+  $upgrades_total.html((Object.keys(upgradeList).length).toFixed(0));
   
   // Generate store HTML
   $store.empty();
