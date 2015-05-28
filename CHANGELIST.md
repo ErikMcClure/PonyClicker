@@ -11,6 +11,7 @@ This is the change log for Pony Clicker. Some minor changes may not be reflected
 - Added store icons
 - use strict javascript (I wish I knew about this earlier)
 - Added a ton of upgrades
+- The most efficient store purchase is now tinted green
 
 ## v0.89
 - Cut late game costs to help compensate for upgrade adjustment
