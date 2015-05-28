@@ -646,7 +646,7 @@ var ponyclicker = (function(){
     '231': { name:"Too Many Pinkie Pies", desc: "Pop <b>10 pinkie clones</b>.", muffins:1, cond:function() { return Game.clonespopped>=10; } },
     '232': { name:"Look, a Birdie!", desc: "Pop <b>100 pinkie clones</b>", muffins:2, cond:function() { return Game.clonespopped>=100; } },
     '233': { name:"Reviewing Is Magic 5", desc: "Pop <b>400 pinkie clones</b>.", muffins:3, cond:function() { return Game.clonespopped>=400; } },
-    '234': { name:"Fixer Upper", desc: "Buy all the upgrades.", muffins:1, cond:function() { return Game.upgrades.count==Object.keys(upgradeList).length; }},
+    '234': { name:"Fixer Upper", desc: "Buy all the upgrades.", muffins:1, cond:function() { return Game.upgrades.length==Object.keys(upgradeList).length; }},
     
     '255': { name:"Completionist", desc: "Get all the achievements.", muffins:100}
   };
