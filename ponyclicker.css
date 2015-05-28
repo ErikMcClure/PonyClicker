@@ -13,6 +13,24 @@ body {
   font-size: 12px;
   font-family: "Open Sans", sans-serif;
 }
+#apocalypse {
+  position:absolute;
+  left:0;
+  top:0;
+  width:100%;
+  height:100%;
+  background: #ff5e5e; /* Old browsers */
+  background: -moz-linear-gradient(top,  #ff5e5e 0%, #ad0025 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ff5e5e), color-stop(100%,#ad0025)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top,  #ff5e5e 0%,#ad0025 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top,  #ff5e5e 0%,#ad0025 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top,  #ff5e5e 0%,#ad0025 100%); /* IE10+ */
+  background: linear-gradient(to bottom,  #ff5e5e 0%,#ad0025 100%); /* W3C */
+  opacity:0;
+  -webkit-transition: opacity 10s ease-out; /* Safari */
+  transition: opacity 10s ease-out;
+  z-index:-1;
+}
 .ponies {
   position:relative;
   margin: 0 auto;
@@ -71,7 +89,7 @@ body {
   text-align: center;
 }
 .newsactive p:before {
-  content: "News: ";
+  content: "Новости: ";
 }
 
 #score {
@@ -121,7 +139,7 @@ body {
   margin:0;
   background: #593319;
   color:#fcfcfc;
-  padding: 0 5px 13px 6px;
+  padding: 0 5px 13px 60px;
   font-variant: small-caps;
   font-weight: bold;
   font-size: 24px;
@@ -137,6 +155,7 @@ body {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  overflow:hidden;
 }
 .store li:hover {
   background: #694329;
@@ -148,7 +167,23 @@ body {
   border-bottom: 2px #bb967d solid;
   border-right: 2px #bb967d solid;
   background: #503019;
-  padding: 2px 3px 11px 8px;
+  padding: 2px 3px 11px 62px;
+}
+.store li .icon {
+  position:absolute;
+  top:1px;
+  left:2px;
+  width:54px;
+  height:54px;
+  background-size: 54px 54px;
+}
+.store li:active .icon {
+  top:3px;
+  left:4px; 
+}
+.disable .icon {
+  top:1px !important;
+  left:2px !important;
 }
 .disable {
   color:#aaa !important;
@@ -157,7 +192,7 @@ body {
   border-left: 2px #454033 solid !important;
   border-bottom: 2px #251e0f solid !important;
   border-right: 2px #251e0f solid !important;
-  padding: 0 5px 13px 6px !important;
+  padding: 0 5px 13px 60px !important;
 }
 .store li .cost {
   display:inline-block;
@@ -170,7 +205,7 @@ body {
 .store li .cost span {
   position:relative;
   left: 30px;
-  top:4px;
+  top:6px;
 }
 .store li #ponycost {
   position:absolute;
@@ -178,11 +213,12 @@ body {
   font-size: 14px;
   color: #909090;
   top:3px;
-  left: 124px;
+  left: 184px;
 }
 
 .store li .cost img {
   position:absolute;
+  top:5px;
 }
 .store li .count {
   position:absolute;
@@ -600,6 +636,7 @@ a:hover {
   background-color: #000;
   border: 1px #fff solid;
   margin: 1px;
+  border-radius: 4px;
   -moz-box-shadow:    inset 0 0 20px #f0f0f0;
   -webkit-box-shadow: inset 0 0 20px #f0f0f0;
   box-shadow:         inset 0 0 20px #f0f0f0;
@@ -754,6 +791,35 @@ a:hover {
   display:block !important;
   height:1.5em !important;
   padding:0.25em 0 !important;
+}
+#pinkieclones {
+  position:absolute;
+  width:100%;
+  height:100%;
+  pointer-events: none;
+}
+
+@-webkit-keyframes fadein {
+  from { opacity: 0;}
+  to { opacity: 1; }
+}
+
+/* Standard syntax */
+@keyframes fadein {
+  from { opacity: 0;}
+  to { opacity: 1; }
+}
+
+#pinkieclones div {
+  position:absolute;
+  background: url('./pinkiejump.gif');
+  background-size: 53px 64px;
+  width:53px;
+  height:64px;
+  cursor: pointer;
+  -webkit-animation: fadein 1s ease-out; /* Chrome, Safari, Opera */
+  animation: fadein 1s ease-out;
+  pointer-events: all;
 }
 
 /* SPINNERS!!!! */
