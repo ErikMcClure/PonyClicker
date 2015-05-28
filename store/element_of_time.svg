@@ -9,12 +9,12 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="416.26218"
-   height="166.8847"
+   width="416.17688"
+   height="411.26697"
    id="svg4236"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="New document 7">
+   sodipodi:docname="element_of_time.svg">
   <defs
      id="defs4238" />
   <sodipodi:namedview
@@ -25,15 +25,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.35"
-     inkscape:cx="208.09346"
-     inkscape:cy="80.937443"
+     inkscape:cx="208.08844"
+     inkscape:cy="205.63349"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     fit-margin-top="0"
+     fit-margin-top="124.69"
      fit-margin-left="0"
      fit-margin-right="0"
-     fit-margin-bottom="0"
+     fit-margin-bottom="124.69"
      inkscape:window-width="463"
      inkscape:window-height="423"
      inkscape:window-x="1305"
@@ -47,7 +47,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -55,7 +55,7 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-166.90654,-446.41492)">
+     transform="translate(-166.91156,-326.72871)">
     <g
        style="display:inline"
        id="g4993"

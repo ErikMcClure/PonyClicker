@@ -10,12 +10,12 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="278.71112"
-   height="122.32169"
+   width="278.71667"
+   height="276.48981"
    id="svg4060"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="New document 8">
+   sodipodi:docname="element_of_honesty.svg">
   <defs
      id="defs4062">
     <clipPath
@@ -39,15 +39,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.35"
-     inkscape:cx="452.91736"
-     inkscape:cy="60.009039"
+     inkscape:cx="452.92977"
+     inkscape:cy="138.2449"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     fit-margin-top="0"
+     fit-margin-top="78.2"
      fit-margin-left="0"
      fit-margin-right="0"
-     fit-margin-bottom="0"
+     fit-margin-bottom="78.2"
      inkscape:window-width="705"
      inkscape:window-height="423"
      inkscape:window-x="1305"
@@ -61,7 +61,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -69,7 +69,7 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-363.51121,-470.04953)">
+     transform="translate(-363.4988,-394.11728)">
     <g
        transform="translate(1.4211134,119.64328)"
        id="g186">
@@ -229,7 +229,7 @@
             <polygon
                style="fill:#feb55e;stroke:#a14b14;stroke-width:1.5;stroke-miterlimit:10"
                stroke-miterlimit="10"
-               points="503.478,421.96 514.396,424.126 518.978,434.876 515.146,445.96 502.978,450.876 491.978,447.876 489.145,436.506 492.812,425.543 "
+               points="514.396,424.126 518.978,434.876 515.146,445.96 502.978,450.876 491.978,447.876 489.145,436.506 492.812,425.543 503.478,421.96 "
                id="polygon249" />
             <path
                style="fill:none;stroke:#a14b14;stroke-width:1.5;stroke-miterlimit:10"

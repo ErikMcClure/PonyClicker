@@ -10,12 +10,12 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="340.83615"
-   height="368.77719"
+   width="369.76752"
+   height="368.67856"
    id="svg3634"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="New document 2">
+   sodipodi:docname="element_of_muffins.svg">
   <defs
      id="defs3636">
     <linearGradient
@@ -174,14 +174,14 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.35"
-     inkscape:cx="170.42299"
-     inkscape:cy="184.41571"
+     inkscape:cx="184.88375"
+     inkscape:cy="184.33923"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      fit-margin-top="0"
-     fit-margin-left="0"
-     fit-margin-right="0"
+     fit-margin-left="14.39"
+     fit-margin-right="14.39"
      fit-margin-bottom="0"
      inkscape:window-width="463"
      inkscape:window-height="423"
@@ -196,7 +196,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -204,7 +204,7 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-204.57701,-348.00071)">
+     transform="translate(-190.11625,-348.02288)">
     <g
        style="display:inline"
        id="g6120"
