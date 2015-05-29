@@ -6,7 +6,7 @@ var ponyclicker = (function(){
     return Math.log(x) / Math.LN10;
   };
 
-  var $ponyversion = {major:1,minor:0,revision:0};
+  var $ponyversion = {major:1,minor:0,revision:1};
       
   function CreateGame() {
     return {
@@ -100,7 +100,7 @@ var ponyclicker = (function(){
   // -------------------------------- Store definitions --------------------------------
   //
   var Store = [
-    {cost:function(n) {},name:"Pony", plural: "ponies", desc: "This is a pony. Ponies need friendships to generate smiles.", img: function(n){ return 'ponies/'+PonyList[Game.ponyList[n]]+'.svg'; }},
+    {cost:function(n) {},name:"Pony", plural: "ponies", desc: "This is a pony. Ponies need friendships to generate smiles.", img: function(n){ return 'ponies/'+PonyList[(n>=Game.ponyList.length?0:Game.ponyList[n])]+'.svg'; }},
     {cost:function(n) {},name:"Friendship", plural: "friendships", desc: "A friendship between two ponies. You can't buy a friendship if everypony is friends with everypony else!", img: function(n){ return 'store/hoofbump.svg'; } },
     {cost:function(n) {},name:"Recital", plural: "recitals", desc: "A small recital for everypony you know.", formula: "Generates one smile per pony.<i>SPS = P</i>", img: function(n){ return 'store/cello.svg'; }}, // P
     {cost:function(n) {},name:"Party", plural: "parties", desc: "Throw a party for all your friends!", formula: "Generates one smile per friendship.<i>SPS = F</i>", img: function(n){ return 'store/balloon.svg'; }}, // F
@@ -224,6 +224,7 @@ var ponyclicker = (function(){
     Game.SPC = 1;
     Game.SPS = 0;
     Game.clicks = 0;
+    Game.ponyList = genPonyList();
     SaveGame();
     InitializeGame();
   }
