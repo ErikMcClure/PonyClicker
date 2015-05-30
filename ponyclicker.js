@@ -6,7 +6,7 @@ var ponyclicker = (function(){
     return Math.log(x) / Math.LN10;
   };
 
-  var $ponyversion = {major:1,minor:0,revision:1};
+  var $ponyversion = {major:1,minor:0,revision:2};
       
   function CreateGame() {
     return {
@@ -194,6 +194,9 @@ var ponyclicker = (function(){
   //
   // -------------------------------- Game Loading and Settings --------------------------------
   //
+  function predictcupcakes() {
+    return Math.floor(Math.pow(inv_triangular((Game.legacysmiles + Game.totalsmiles)/1000000000000000000), 0.618)) - Game.cupcakes;
+  }
   function ResetGame() {
     for(var i = 0; i < Game.pinkies.length; ++i) {
       if(Game.pinkies[i]>=0) Earn(Game.pinkies[i]);
@@ -250,6 +253,9 @@ var ponyclicker = (function(){
     $stat_cupcakes.html(PrettyNum(Game.cupcakes));
     ShowLegacyStats();
     CheckAchievements(Object.keys(achievementList));
+    if(Game.clonespopped>0) 
+      $statclonespopped[0].style.display = 'block';
+    $stat_clonespopped.html(Game.clonespopped);
     UpdateSPS();
     ResetApocalypse();
     CheckApocalypse();
@@ -971,6 +977,8 @@ var ponyclicker = (function(){
     ShowMouseText("+" + PrettyNum(Game.pinkies[id]), -6, -40);
     Game.pinkies[id] = -1;
     pinkie_freelist.push(id);
+    $statclonespopped[0].style.display = 'block';
+    $stat_clonespopped.html(Game.clonespopped);
     UpdateSPS();
   }
   //
@@ -1559,6 +1567,7 @@ var ponyclicker = (function(){
       $stat_resets = $stats.find('.resets'),
       $stat_legacyclicks = $stats.find('.legacyclicks'),
       $stat_cupcakes = $stats.find('.cupcakes'),
+      $stat_clonespopped = $stats.find('.clonespopped'),
       $achievements_owned = $('#achievements_owned'),
       $achievements_total = $('#achievements_total'),
       $upgrades_owned = $('#upgrades_owned'),
@@ -1587,6 +1596,7 @@ var ponyclicker = (function(){
       pbg = $('#ponybg')[0],
       $mousetexts = $('#mousetexts'),
       $pinkieclones = $('#pinkieclones'),
+      $statclonespopped = $('#statclonespopped'),
       pb = $board[0];
       
   var Game = CreateGame(),
@@ -1661,7 +1671,7 @@ var ponyclicker = (function(){
     if(x!==null) ImportGame(x);
   });
   $('#resetbtn').on('click',function(){
-    if(window.confirm("This will delete all your smiles, buildings, and upgrades, but you'll keep you're achievements, muffins, and any cupcakes you earned from previous resets. Are you sure you want to do this?")) { 
+    if(window.confirm("This will delete all your smiles, buildings, and upgrades, but you'll keep you're achievements, muffins, and any cupcakes you earned from previous resets. You will earn " + PrettyNum(predictcupcakes()) + " cupcakes. Are you sure you want to do this?")) { 
       ResetGame(); 
     }
   });
