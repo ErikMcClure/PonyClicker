@@ -188,8 +188,8 @@
     shopdata = [];
     waitdata = [];
   
-    //for(var i = 0; i < optimalsteps; ++i) {
-    while(game.totalTime < 100000) {
+    for(var i = 0; i < optimalsteps; ++i) {
+    //while(game.totalTime < 100000) {
       var opt = GetOptimalPurchase(game);
       var cost = ((opt>=0)?ponyclicker.Store[opt].cost(game.store[opt]):ponyclicker.Upgrades[-opt].cost);
       var curSPS = ponyclicker.CalcSPS(game.store, game.upgrades, game.cupcakes, false);
@@ -268,7 +268,7 @@
       return r.concat(storevar);
     }));
 
-    /*buildChart('storechart', data, 'Optimal Game Purchases', 'Store purchases over time', $doc.width()/2 - 50, 500);
+    buildChart('storechart', data, 'Optimal Game Purchases', 'Store purchases over time', $doc.width()/2 - 50, 500);
     
     data = new google.visualization.DataTable();
     data.addColumn('number', 'Game Time (seconds)');
@@ -314,9 +314,9 @@
     }
     data.addRows(addrows);
 
-    buildChart('ratiochart', data, 'Estimated Cost/SPS Ratio', 'Estimated Cost/SPS ratios for each building', $doc.width()/2 - 50, 500, true);*/
+    buildChart('ratiochart', data, 'Estimated Cost/SPS Ratio', 'Estimated Cost/SPS ratios for each building', $doc.width()/2 - 50, 500, true);
     
-    data = new google.visualization.DataTable();
+    /*data = new google.visualization.DataTable();
     data.addColumn('number', 'Resets');
     data.addColumn('number', 'Total Smiles');
 
@@ -331,7 +331,7 @@
     }
     
     data.addRows(dat);
-    buildChart('cupcakechart', data, 'Total Smiles After Resets', 'Total smiles after n resets after 24 hours of play', $doc.width()-100, 400);
+    buildChart('cupcakechart', data, 'Total Smiles After Resets', 'Total smiles after n resets after 24 hours of play', $doc.width()-100, 400);*/
   }
   function SetSteps(s) {
     var steps = s|0;
