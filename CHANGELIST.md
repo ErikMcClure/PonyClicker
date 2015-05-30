@@ -1,6 +1,10 @@
 # Pony Clicker Change Log
 This is the change log for Pony Clicker. Some minor changes may not be reflected in this log.
 
+## v1.0.2
+- Added popped pinkies counter
+- Added predicted cupcakes gained to Reset dialog
+
 ## v1.0.1
 - Reset() generates a new randomized pony list
 - Going past 58 ponies doesn't break the store
