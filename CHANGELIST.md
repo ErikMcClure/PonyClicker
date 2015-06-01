@@ -1,6 +1,9 @@
 # Pony Clicker Change Log
 This is the change log for Pony Clicker. Some minor changes may not be reflected in this log.
 
+## v1.0.3
+- Fix stupid off-by-one error (#85) 
+
 ## v1.0.2
 - Added popped pinkies counter
 - Added predicted cupcakes gained to Reset dialog
