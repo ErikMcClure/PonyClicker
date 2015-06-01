@@ -909,7 +909,7 @@ var ponyclicker = (function(){
   }
   function BuyUpgrade(id) {
     var x = upgradeList[id];
-    if(Game.smiles > x.cost) {
+    if(Game.smiles >= x.cost) {
       Earn(-1 * x.cost);
       Game.upgrades.push(id);
       Game.upgradeHash[id] = id;
