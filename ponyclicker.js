@@ -30,13 +30,14 @@ var ponyclicker = (function(){
       resets:0, // number of times the game has been reset
       legacysmiles:0, // total number of smiles from previous resets
       legacyclicks:0,
-      version:5, // incremented every time this object format changes so we know to deal with it.
+      version:6, // incremented every time this object format changes so we know to deal with it.
       settings: {
         useCanvas:true,
         optimizeFocus:false,
         closingWarn:false,
         showHighlight:false,
         numDisplay:0, // 0 is names, 1 is raw numbers, 2 is scientific notation
+        wheelDisplay:2, // 0 is the entire wheel, 1 is the expanded wheel, 2 is the pony wheel.
       }
     };
   }
@@ -59,6 +60,9 @@ var ponyclicker = (function(){
         g.legacyclicks = 0;
         g.version = 5;
       case 5:
+        g.settings.wheelDisplay = 1; // We use 1 here instead of the new default because back in this version everyone was on 1.
+        g.version = 6;
+      case 6:
         Game = g;
         break;
       default:
@@ -273,6 +277,7 @@ var ponyclicker = (function(){
     $EnableW.prop('checked',Game.settings.closingWarn);
     $EnableH.prop('checked',Game.settings.showHighlight);
     $('#numdisplay' + Game.settings.numDisplay).prop('checked', true);
+    $('#wheeldisplay' + Game.settings.wheelDisplay).prop('checked', true);
   }
   function GetSettings() {
     Game.settings.useCanvas = $EnableE.prop('checked');
@@ -282,6 +287,9 @@ var ponyclicker = (function(){
     if($('#numdisplay0').prop('checked')) Game.settings.numDisplay = 0;
     if($('#numdisplay1').prop('checked')) Game.settings.numDisplay = 1;
     if($('#numdisplay2').prop('checked')) Game.settings.numDisplay = 2;
+    if($('#wheeldisplay0').prop('checked')) Game.settings.wheelDisplay = 0;
+    if($('#wheeldisplay1').prop('checked')) Game.settings.wheelDisplay = 1;
+    if($('#wheeldisplay2').prop('checked')) Game.settings.wheelDisplay = 2;
     UpdateSPS();
   }
   function ShowLegacyStats() {
@@ -496,7 +504,7 @@ var ponyclicker = (function(){
   function Pluralize2(n, s, s2, fixed, display) { return PrettyNumStatic(n, fixed, display) + ((n==1)?s:s2); }
   function Pluralize(n, s, fixed) { return Pluralize2(n, s, s + 's', fixed, Game.settings.numDisplay); }
   
-  function gen_upgradetype1(item, pSPS, mSPS) { return function(sps, store) { sps.pStore[item] += pSPS*store[item]; sps.mStore[item] += mSPS*store[item]; return sps; } }
+  function gen_upgradetype1(item, pSPS, mSPS) { return function(sps, store) { var n = Math.max(store[item]-1,0); sps.pStore[item] += pSPS*n; sps.mStore[item] += mSPS*n; return sps; } }
   function gen_upgradetype2(item, p, m) { return function(sps, store) { sps.pSPC += p*store[item]; sps.mSPC += m; return sps; } }
   function gen_upgradetype3(p, m) { return function(sps, store) { sps.pSPS += p; sps.mSPS += m; return sps; } }
   function gen_finalupgrade(m) { return function(sps, store) { var b = (store[0]+store[1]+CountBuildings(store))*m; for(var i = 0; i < sps.mStore.length; ++i) sps.mStore[i] += b; return sps;} }
@@ -865,7 +873,7 @@ var ponyclicker = (function(){
         numPurchase = 0,
         totalCost = 0;
     for(var i = 0; i < n; ++i) {
-      var cost = Store[id].cost(Game.store[id]);
+      var cost = Math.floor(Store[id].cost(Game.store[id]));
       if(Game.smiles >= cost && (id != 1 || !NeedsMorePonies())) {
         numPurchase++;
         totalCost+=cost;
@@ -909,8 +917,8 @@ var ponyclicker = (function(){
   }
   function BuyUpgrade(id) {
     var x = upgradeList[id];
-    if(Game.smiles >= x.cost) {
-      Earn(-1 * x.cost);
+    if(Game.smiles >= Math.floor(x.cost)) {
+      Earn(-1 * Math.floor(x.cost));
       Game.upgrades.push(id);
       Game.upgradeHash[id] = id;
     }
@@ -1161,10 +1169,10 @@ var ponyclicker = (function(){
     }
     ctx.restore();
   }
-
-   // Ticks are used for things like updating the total playtime
-  var lastTime, startTime, lastTick, lastSave, lastSpin, apocalypseTime=-1;
-  function UpdateGame(timestamp) {
+  
+  // This function is used for non-graphical updates.
+  function GameTick() {
+    var timestamp = Date.now();
     if(!startTime) {
       startTime =
       lastNews =
@@ -1173,14 +1181,7 @@ var ponyclicker = (function(){
       lastSave = timestamp;
     }
     Game.delta = timestamp - lastTime;
-    
-    if(Math.abs(vangle)>0.0005) curangle += vangle*0.9;
-    vangle *= 0.95;
-    if(curangle != lastSpin) {
-      document.getElementById('ponyspin').style.transform = ('rotate('+curangle+'rad)');
-      lastSpin = curangle;
-    }
-    
+
     var hasFocus = !Game.settings.optimizeFocus || document.hasFocus(),
         framelength = (hasFocus?33:500); // 33 is 30 FPS
     if(Game.delta>framelength) { // play at 30 FPS or the text starts flickering
@@ -1189,6 +1190,7 @@ var ponyclicker = (function(){
       //var $overlaytime = $('#overlaytime'); // Can't cache this because it's destroyed often
       //if($overlaytime.length) $overlaytime.html(CalcTimeItem($overlaytime.attr('data-item')));
     }
+    
     if((timestamp - lastNews)>newswait) {
       UpdateNews();
       lastNews = timestamp;
@@ -1207,11 +1209,23 @@ var ponyclicker = (function(){
       if((Game.delta*0.0003)/(Game.pinkies.length - pinkie_freelist.length + 1) > Math.random()) { 
         SpawnPinkie();
       }
-      var ch = $pinkieclones[0].children;
-      for(var i = 0; i < ch; ++i) {
-        
-      }
     }
+    window.setTimeout(GameTick, framelength);
+  }
+  
+   // Ticks are used for things like updating the total playtime
+  var lastTime, startTime, lastTick, lastSave, lastSpin, apocalypseTime=-1;
+  function UpdateGame(timestamp) {
+    var hasFocus = !Game.settings.optimizeFocus || document.hasFocus(),
+        framelength = (hasFocus?33:500); // 33 is 30 FPS
+    
+    if(Math.abs(vangle)>0.0005) curangle += vangle*0.9;
+    vangle *= 0.95;
+    if(curangle != lastSpin) {
+      document.getElementById('ponyspin').style.transform = ('rotate('+curangle+'rad)');
+      lastSpin = curangle;
+    }
+    
     if(Game.settings.useCanvas && (hasFocus || Game.delta>framelength)) {
       var grd = ctx.createLinearGradient(0,0,0,canvas.height);
       grd.addColorStop(0,"#d8f6ff");
@@ -1746,6 +1760,7 @@ var ponyclicker = (function(){
     
     InitializeGame();
     ResizeCanvas();
+    GameTick(); // do the initial tick before the UpdateGame call
     window.requestAnimationFrame(UpdateGame);
     $loadscreen.css('opacity',0).delay(700).hide();
     CheckForUpdates();

@@ -2,7 +2,10 @@
 This is the change log for Pony Clicker. Some minor changes may not be reflected in this log.
 
 ## v1.0.3
-- Fix stupid off-by-one error (#85) 
+- Fix stupid off-by-one error (Resolve #85) 
+- Added Math.floor() for calculating costs to reduce confusion
+- Do not key off of animation frames (Resolve #81)
+- Fix upgrade off-by-one error (Resolve #90)
 
 ## v1.0.2
 - Added popped pinkies counter
