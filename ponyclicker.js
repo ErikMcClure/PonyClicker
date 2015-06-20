@@ -6,7 +6,7 @@ var ponyclicker = (function(){
     return Math.log(x) / Math.LN10;
   };
 
-  var $ponyversion = {major:1,minor:0,revision:2};
+  var $ponyversion = {major:1,minor:0,revision:3};
       
   function CreateGame() {
     return {
