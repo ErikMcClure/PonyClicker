@@ -37,7 +37,7 @@ var ponyclicker = (function(){
         closingWarn:false,
         showHighlight:false,
         numDisplay:0, // 0 is names, 1 is raw numbers, 2 is scientific notation
-        wheelDisplay:2, // 0 is the entire wheel, 1 is the expanded wheel, 2 is the pony wheel.
+        wheelDisplay:1, // 0 is the entire wheel, 1 is the expanded wheel, 2 is the pony wheel.
       }
     };
   }
@@ -60,7 +60,7 @@ var ponyclicker = (function(){
         g.legacyclicks = 0;
         g.version = 5;
       case 5:
-        g.settings.wheelDisplay = 1; // We use 1 here instead of the new default because back in this version everyone was on 1.
+        g.settings.wheelDisplay = 1;
         g.version = 6;
       case 6:
         Game = g;
@@ -291,6 +291,7 @@ var ponyclicker = (function(){
     if($('#wheeldisplay1').prop('checked')) Game.settings.wheelDisplay = 1;
     if($('#wheeldisplay2').prop('checked')) Game.settings.wheelDisplay = 2;
     UpdateSPS();
+    OrganizePonies();
   }
   function ShowLegacyStats() {
     var pclicks = $('#statlegacyclicks')[0],
@@ -756,6 +757,7 @@ var ponyclicker = (function(){
   function ResizeCanvas() {
     canvas.width  = pbg.offsetWidth;
     canvas.height = pb.offsetHeight;
+    if(Game.settings.wheelDisplay == 0) OrganizePonies();
   }
   
   function appendStoreClick($el,index){
@@ -1087,8 +1089,8 @@ var ponyclicker = (function(){
       } else {
         $buyN.attr('class',(cost>Game.smiles)?"disable":"");
       }
-      if(minItem == i) $buyN[0].style.color = '#afa'; //jQuery uses a lot of memory for some reason???
-      else $buyN[0].style.color = '#fff';
+      if(minItem == i) $buyN[0].style.cssText = 'color:#aaffaa !important;'; //jQuery uses a lot of memory for some reason???
+      else $buyN[0].style.cssText = 'color:#fff;';
       
       $("#cost" + i).html(PrettyNum(cost));
       $("#count" + i).html(count);
@@ -1199,7 +1201,7 @@ var ponyclicker = (function(){
       SaveGame();
       lastSave = timestamp;
     }
-    if((timestamp - lastTick)>500) {
+    if((timestamp - lastTick)>100) {
       Game.totalTime += timestamp - lastTick;
       $stat_time.html(displayTime(Game.totalTime));
       UpdateOverlay(null, null);
@@ -1372,12 +1374,16 @@ var ponyclicker = (function(){
      return Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
   }
   function GetEdgeLength(r, n) {
-    switch(n)
-    {
-      case 1: return 400;
-      case 2: return 350;
-      case 3: return 300;
-      case 4: return 260;
+    if(Game.settings.wheelDisplay == 0) {
+      if(n==1) return 350;
+    } else {
+      switch(n)
+      {
+        case 1: return 400;
+        case 2: return 350;
+        case 3: return 300;
+        case 4: return 260;
+      }
     }
     var a = (2*Math.PI)/n;
     var tx = Math.cos(a)*r - r;
@@ -1387,11 +1393,16 @@ var ponyclicker = (function(){
   function OrganizePonies() {
     var n = Game.store[0],
         radd = n*30,
-        r=(n>1?140+radd:0),
+        r = 140+radd,
         a = (2*Math.PI)/ n,
-        th = (n-2)*0.08,
-        edge = GetEdgeLength(r, n);
-
+        th = (n-2)*0.08;
+        
+    if(Game.settings.wheelDisplay == 0) r = pb.offsetHeight*0.25;
+    if(n==1) r = 0;
+    
+    document.getElementById('ponyspin').style.top = (Game.settings.wheelDisplay == 0)?(-r*0.5)+'px':'120px';
+    var edge = GetEdgeLength(r, n);
+    
     $ponywrapper.empty();
     for(var i = 0; i < n; ++i) {
       var pone = ((i<Game.ponyList.length)?Game.ponyList[i]:0),
@@ -1432,8 +1443,9 @@ var ponyclicker = (function(){
       default:
         radd = radd+edge*0.5;
     }
-    document.getElementById('ponywrapper').style.top = radd + 'px';
-    canvaslines.style.top= -r + radd + 'px';
+    document.getElementById('ponywrapper').style.top = r + 'px';
+    document.getElementById('ponyspin').style.height = (r*2) + 'px'; // For some stupid reason the DOM won't calculate this right
+    canvaslines.style.top= '0';
     
     // Draw friendship lines
     ctxlines.clearRect(0, 0, $canvaslines.width(), $canvaslines.height());
