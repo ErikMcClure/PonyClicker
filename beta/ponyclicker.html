@@ -7,7 +7,7 @@
   <meta name="description" content="Pony Clicker by Cloud Hop" />
   <meta name="copyright" content="Copyright (c)2015 Cloud Hop" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
-  <link rel="stylesheet" href="ponyclicker.css?v=1.0.1" media="screen" />
+  <link rel="stylesheet" href="ponyclicker.css?v=1.0.2" media="screen" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:700,400" />
   <link rel="shortcut icon" href="favicon.ico" />
 </head>
@@ -65,6 +65,17 @@
         <input type="radio" name="numdisplay" id="numdisplay2" value="2" /> <span>Use Scientific Notation</span>
       </label>
     </section>
+    <section class="options">
+      <label title="Show the entire friendship circle all at once.">
+        <input type="radio" name="wheeldisplay" id="wheeldisplay0" value="0" /> <span>Show Entire Circle</span>
+      </label>
+      <label title="Show only part of the circle, so the ponies are easier to click. Drag the wheel around to spin it!">
+        <input type="radio" name="wheeldisplay" id="wheeldisplay1" value="1" /> <span>Show Partial Circle</span>
+      </label>
+      <label title="Show one clickable pony in the center and display the other ponies in a circle around them." style="display:none;">
+        <input type="radio" name="wheeldisplay" id="wheeldisplay2" value="2" /> <span>Show Pony Circle</span>
+      </label>
+    </section>
     <section class="stats">
       <p>Smiles Available: <span class="cursmiles" id="stat_cursmiles">0</span></p>
       <p>Total Smiles: <span class="totalsmiles">0</span></p>
@@ -73,6 +84,7 @@
       <p>Smiles Per Second: <span class="SPS">0</span></p>
       <p>Pony Boops: <span class="clicks">0</span></p>
       <p id="statlegacyclicks" class="legacy">Pony Boops (all time): <span class="legacyclicks">0</span></p>
+      <p id="statclonespopped" style="display:none;">Pinkie Clones Popped: <span class="clonespopped">0</span></p>
       <p>Smiles Per Boop: <span class="SPC">0</span></p>
       <p>Buildings Owned: <span class="buildings">0</span></p>
       <p>Time Played: <span class="time">0</span></p>
@@ -174,6 +186,6 @@
     ga('send', 'pageview');
   </script>
   <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-  <script src="ponyclicker.js?v=1.0.1"></script>
+  <script src="ponyclicker.js?v=1.0.2"></script>
 </body>
 </html>

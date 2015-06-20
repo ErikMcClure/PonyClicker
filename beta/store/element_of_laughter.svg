@@ -10,12 +10,12 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="278.711"
-   height="119.89932"
+   width="278.71707"
+   height="276.44327"
    id="svg4402"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="New document 12">
+   sodipodi:docname="element_of_laughter.svg">
   <defs
      id="defs4404">
     <clipPath
@@ -39,15 +39,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.35"
-     inkscape:cx="42.932766"
-     inkscape:cy="-135.46453"
+     inkscape:cx="42.929971"
+     inkscape:cy="-56.064083"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     fit-margin-top="0"
+     fit-margin-top="79.41"
      fit-margin-left="0"
      fit-margin-right="0"
-     fit-margin-bottom="0"
+     fit-margin-bottom="79.41"
      inkscape:window-width="463"
      inkscape:window-height="423"
      inkscape:window-x="1405"
@@ -61,7 +61,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -69,7 +69,7 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-332.06723,-276.99833)">
+     transform="translate(-332.07003,-199.85483)">
     <g
        transform="translate(319.50834,183.43583)"
        id="g122">
@@ -227,7 +227,7 @@
           <polygon
              style="fill:#aee1ff;stroke:#2790db;stroke-width:2;stroke-miterlimit:10"
              stroke-miterlimit="10"
-             points="143.095,158.941 152.095,168.441 164.345,159.942 164.345,146.858 153.47,139.692 142.678,146.442 "
+             points="164.345,146.858 153.47,139.692 142.678,146.442 143.095,158.941 152.095,168.441 164.345,159.942 "
              id="polygon182" />
           <path
              style="fill:none;stroke:#2790db;stroke-width:2;stroke-miterlimit:10"
