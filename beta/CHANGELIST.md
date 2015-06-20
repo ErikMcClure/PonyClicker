@@ -1,6 +1,23 @@
 # Pony Clicker Change Log
 This is the change log for Pony Clicker. Some minor changes may not be reflected in this log.
 
+## v1.0.3
+- Fix stupid off-by-one error (Resolve #85) 
+- Added Math.floor() for calculating costs to reduce confusion
+- Do not key off of animation frames (Resolve #81)
+- Fix upgrade off-by-one error (Resolve #90)
+- Made highlight efficient option work on disabled items (Resolve #83)
+- Improved some CSS
+- Added option to view entire circle (Resolve #71)
+
+## v1.0.2
+- Added popped pinkies counter
+- Added predicted cupcakes gained to Reset dialog
+
+## v1.0.1
+- Reset() generates a new randomized pony list
+- Going past 58 ponies doesn't break the store
+
 ## v1.0
 - Reorganized javascript code
 - Added index.html redirection to ponyclicker.html

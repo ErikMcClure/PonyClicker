@@ -5,8 +5,8 @@ var ponyclicker = (function(){
   Math.log10 = Math.log10 || function(x) {
     return Math.log(x) / Math.LN10;
   };
-  
-  var $ponyversion = {major:1,minor:0,revision:1};
+
+  var $ponyversion = {major:1,minor:0,revision:2};
       
   function CreateGame() {
     return {
@@ -30,13 +30,14 @@ var ponyclicker = (function(){
       resets:0, // number of times the game has been reset
       legacysmiles:0, // total number of smiles from previous resets
       legacyclicks:0,
-      version:5, // incremented every time this object format changes so we know to deal with it.
+      version:6, // incremented every time this object format changes so we know to deal with it.
       settings: {
         useCanvas:true,
         optimizeFocus:false,
         closingWarn:false,
         showHighlight:false,
         numDisplay:0, // 0 is names, 1 is raw numbers, 2 is scientific notation
+        wheelDisplay:1, // 0 is the entire wheel, 1 is the expanded wheel, 2 is the pony wheel.
       }
     };
   }
@@ -59,6 +60,9 @@ var ponyclicker = (function(){
         g.legacyclicks = 0;
         g.version = 5;
       case 5:
+        g.settings.wheelDisplay = 1;
+        g.version = 6;
+      case 6:
         Game = g;
         break;
       default:
@@ -100,7 +104,7 @@ var ponyclicker = (function(){
   // -------------------------------- Store definitions --------------------------------
   //
   var Store = [
-    {cost:function(n) {},name:"Pony", plural: "ponies", desc: "This is a pony. Ponies need friendships to generate smiles.", img: function(n){ return 'ponies/'+PonyList[Game.ponyList[n]]+'.svg'; }},
+    {cost:function(n) {},name:"Pony", plural: "ponies", desc: "This is a pony. Ponies need friendships to generate smiles.", img: function(n){ return 'ponies/'+PonyList[(n>=Game.ponyList.length?0:Game.ponyList[n])]+'.svg'; }},
     {cost:function(n) {},name:"Friendship", plural: "friendships", desc: "A friendship between two ponies. You can't buy a friendship if everypony is friends with everypony else!", img: function(n){ return 'store/hoofbump.svg'; } },
     {cost:function(n) {},name:"Recital", plural: "recitals", desc: "A small recital for everypony you know.", formula: "Generates one smile per pony.<i>SPS = P</i>", img: function(n){ return 'store/cello.svg'; }}, // P
     {cost:function(n) {},name:"Party", plural: "parties", desc: "Throw a party for all your friends!", formula: "Generates one smile per friendship.<i>SPS = F</i>", img: function(n){ return 'store/balloon.svg'; }}, // F
@@ -194,6 +198,9 @@ var ponyclicker = (function(){
   //
   // -------------------------------- Game Loading and Settings --------------------------------
   //
+  function predictcupcakes() {
+    return Math.floor(Math.pow(inv_triangular((Game.legacysmiles + Game.totalsmiles)/1000000000000000000), 0.618)) - Game.cupcakes;
+  }
   function ResetGame() {
     for(var i = 0; i < Game.pinkies.length; ++i) {
       if(Game.pinkies[i]>=0) Earn(Game.pinkies[i]);
@@ -219,9 +226,12 @@ var ponyclicker = (function(){
     Game.upgradeHash = {};
     Game.smiles = 0;
     Game.totalsmiles = 0;
+    Game.pinkies = [];
+    Game.clonespopped = 0;
     Game.SPC = 1;
     Game.SPS = 0;
     Game.clicks = 0;
+    Game.ponyList = genPonyList();
     SaveGame();
     InitializeGame();
   }
@@ -247,6 +257,9 @@ var ponyclicker = (function(){
     $stat_cupcakes.html(PrettyNum(Game.cupcakes));
     ShowLegacyStats();
     CheckAchievements(Object.keys(achievementList));
+    if(Game.clonespopped>0) 
+      $statclonespopped[0].style.display = 'block';
+    $stat_clonespopped.html(Game.clonespopped);
     UpdateSPS();
     ResetApocalypse();
     CheckApocalypse();
@@ -264,6 +277,7 @@ var ponyclicker = (function(){
     $EnableW.prop('checked',Game.settings.closingWarn);
     $EnableH.prop('checked',Game.settings.showHighlight);
     $('#numdisplay' + Game.settings.numDisplay).prop('checked', true);
+    $('#wheeldisplay' + Game.settings.wheelDisplay).prop('checked', true);
   }
   function GetSettings() {
     Game.settings.useCanvas = $EnableE.prop('checked');
@@ -273,7 +287,11 @@ var ponyclicker = (function(){
     if($('#numdisplay0').prop('checked')) Game.settings.numDisplay = 0;
     if($('#numdisplay1').prop('checked')) Game.settings.numDisplay = 1;
     if($('#numdisplay2').prop('checked')) Game.settings.numDisplay = 2;
+    if($('#wheeldisplay0').prop('checked')) Game.settings.wheelDisplay = 0;
+    if($('#wheeldisplay1').prop('checked')) Game.settings.wheelDisplay = 1;
+    if($('#wheeldisplay2').prop('checked')) Game.settings.wheelDisplay = 2;
     UpdateSPS();
+    OrganizePonies();
   }
   function ShowLegacyStats() {
     var pclicks = $('#statlegacyclicks')[0],
@@ -487,7 +505,7 @@ var ponyclicker = (function(){
   function Pluralize2(n, s, s2, fixed, display) { return PrettyNumStatic(n, fixed, display) + ((n==1)?s:s2); }
   function Pluralize(n, s, fixed) { return Pluralize2(n, s, s + 's', fixed, Game.settings.numDisplay); }
   
-  function gen_upgradetype1(item, pSPS, mSPS) { return function(sps, store) { sps.pStore[item] += pSPS*store[item]; sps.mStore[item] += mSPS*store[item]; return sps; } }
+  function gen_upgradetype1(item, pSPS, mSPS) { return function(sps, store) { var n = Math.max(store[item]-1,0); sps.pStore[item] += pSPS*n; sps.mStore[item] += mSPS*n; return sps; } }
   function gen_upgradetype2(item, p, m) { return function(sps, store) { sps.pSPC += p*store[item]; sps.mSPC += m; return sps; } }
   function gen_upgradetype3(p, m) { return function(sps, store) { sps.pSPS += p; sps.mSPS += m; return sps; } }
   function gen_finalupgrade(m) { return function(sps, store) { var b = (store[0]+store[1]+CountBuildings(store))*m; for(var i = 0; i < sps.mStore.length; ++i) sps.mStore[i] += b; return sps;} }
@@ -739,6 +757,7 @@ var ponyclicker = (function(){
   function ResizeCanvas() {
     canvas.width  = pbg.offsetWidth;
     canvas.height = pb.offsetHeight;
+    if(Game.settings.wheelDisplay == 0) OrganizePonies();
   }
   
   function appendStoreClick($el,index){
@@ -856,7 +875,7 @@ var ponyclicker = (function(){
         numPurchase = 0,
         totalCost = 0;
     for(var i = 0; i < n; ++i) {
-      var cost = Store[id].cost(Game.store[id]);
+      var cost = Math.floor(Store[id].cost(Game.store[id]));
       if(Game.smiles >= cost && (id != 1 || !NeedsMorePonies())) {
         numPurchase++;
         totalCost+=cost;
@@ -900,8 +919,8 @@ var ponyclicker = (function(){
   }
   function BuyUpgrade(id) {
     var x = upgradeList[id];
-    if(Game.smiles > x.cost) {
-      Earn(-1 * x.cost);
+    if(Game.smiles >= Math.floor(x.cost)) {
+      Earn(-1 * Math.floor(x.cost));
       Game.upgrades.push(id);
       Game.upgradeHash[id] = id;
     }
@@ -968,6 +987,8 @@ var ponyclicker = (function(){
     ShowMouseText("+" + PrettyNum(Game.pinkies[id]), -6, -40);
     Game.pinkies[id] = -1;
     pinkie_freelist.push(id);
+    $statclonespopped[0].style.display = 'block';
+    $stat_clonespopped.html(Game.clonespopped);
     UpdateSPS();
   }
   //
@@ -1068,8 +1089,8 @@ var ponyclicker = (function(){
       } else {
         $buyN.attr('class',(cost>Game.smiles)?"disable":"");
       }
-      if(minItem == i) $buyN[0].style.color = '#afa'; //jQuery uses a lot of memory for some reason???
-      else $buyN[0].style.color = '#fff';
+      if(minItem == i) $buyN[0].style.cssText = 'color:#aaffaa !important;'; //jQuery uses a lot of memory for some reason???
+      else $buyN[0].style.cssText = 'color:#fff;';
       
       $("#cost" + i).html(PrettyNum(cost));
       $("#count" + i).html(count);
@@ -1150,10 +1171,10 @@ var ponyclicker = (function(){
     }
     ctx.restore();
   }
-
-   // Ticks are used for things like updating the total playtime
-  var lastTime, startTime, lastTick, lastSave, lastSpin, apocalypseTime=-1;
-  function UpdateGame(timestamp) {
+  
+  // This function is used for non-graphical updates.
+  function GameTick() {
+    var timestamp = Date.now();
     if(!startTime) {
       startTime =
       lastNews =
@@ -1162,14 +1183,7 @@ var ponyclicker = (function(){
       lastSave = timestamp;
     }
     Game.delta = timestamp - lastTime;
-    
-    if(Math.abs(vangle)>0.0005) curangle += vangle*0.9;
-    vangle *= 0.95;
-    if(curangle != lastSpin) {
-      document.getElementById('ponyspin').style.transform = ('rotate('+curangle+'rad)');
-      lastSpin = curangle;
-    }
-    
+
     var hasFocus = !Game.settings.optimizeFocus || document.hasFocus(),
         framelength = (hasFocus?33:500); // 33 is 30 FPS
     if(Game.delta>framelength) { // play at 30 FPS or the text starts flickering
@@ -1178,6 +1192,7 @@ var ponyclicker = (function(){
       //var $overlaytime = $('#overlaytime'); // Can't cache this because it's destroyed often
       //if($overlaytime.length) $overlaytime.html(CalcTimeItem($overlaytime.attr('data-item')));
     }
+    
     if((timestamp - lastNews)>newswait) {
       UpdateNews();
       lastNews = timestamp;
@@ -1186,7 +1201,7 @@ var ponyclicker = (function(){
       SaveGame();
       lastSave = timestamp;
     }
-    if((timestamp - lastTick)>500) {
+    if((timestamp - lastTick)>100) {
       Game.totalTime += timestamp - lastTick;
       $stat_time.html(displayTime(Game.totalTime));
       UpdateOverlay(null, null);
@@ -1196,11 +1211,23 @@ var ponyclicker = (function(){
       if((Game.delta*0.0003)/(Game.pinkies.length - pinkie_freelist.length + 1) > Math.random()) { 
         SpawnPinkie();
       }
-      var ch = $pinkieclones[0].children;
-      for(var i = 0; i < ch; ++i) {
-        
-      }
     }
+    window.setTimeout(GameTick, framelength);
+  }
+  
+   // Ticks are used for things like updating the total playtime
+  var lastTime, startTime, lastTick, lastSave, lastSpin, apocalypseTime=-1;
+  function UpdateGame(timestamp) {
+    var hasFocus = !Game.settings.optimizeFocus || document.hasFocus(),
+        framelength = (hasFocus?33:500); // 33 is 30 FPS
+    
+    if(Math.abs(vangle)>0.0005) curangle += vangle*0.9;
+    vangle *= 0.95;
+    if(curangle != lastSpin) {
+      document.getElementById('ponyspin').style.transform = ('rotate('+curangle+'rad)');
+      lastSpin = curangle;
+    }
+    
     if(Game.settings.useCanvas && (hasFocus || Game.delta>framelength)) {
       var grd = ctx.createLinearGradient(0,0,0,canvas.height);
       grd.addColorStop(0,"#d8f6ff");
@@ -1347,12 +1374,16 @@ var ponyclicker = (function(){
      return Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
   }
   function GetEdgeLength(r, n) {
-    switch(n)
-    {
-      case 1: return 400;
-      case 2: return 350;
-      case 3: return 300;
-      case 4: return 260;
+    if(Game.settings.wheelDisplay == 0) {
+      if(n==1) return 350;
+    } else {
+      switch(n)
+      {
+        case 1: return 400;
+        case 2: return 350;
+        case 3: return 300;
+        case 4: return 260;
+      }
     }
     var a = (2*Math.PI)/n;
     var tx = Math.cos(a)*r - r;
@@ -1362,11 +1393,16 @@ var ponyclicker = (function(){
   function OrganizePonies() {
     var n = Game.store[0],
         radd = n*30,
-        r=(n>1?140+radd:0),
+        r = 140+radd,
         a = (2*Math.PI)/ n,
-        th = (n-2)*0.08,
-        edge = GetEdgeLength(r, n);
-
+        th = (n-2)*0.08;
+        
+    if(Game.settings.wheelDisplay == 0) r = pb.offsetHeight*0.25;
+    if(n==1) r = 0;
+    
+    document.getElementById('ponyspin').style.top = (Game.settings.wheelDisplay == 0)?(-r*0.5)+'px':'120px';
+    var edge = GetEdgeLength(r, n);
+    
     $ponywrapper.empty();
     for(var i = 0; i < n; ++i) {
       var pone = ((i<Game.ponyList.length)?Game.ponyList[i]:0),
@@ -1407,8 +1443,9 @@ var ponyclicker = (function(){
       default:
         radd = radd+edge*0.5;
     }
-    document.getElementById('ponywrapper').style.top = radd + 'px';
-    canvaslines.style.top= -r + radd + 'px';
+    document.getElementById('ponywrapper').style.top = r + 'px';
+    document.getElementById('ponyspin').style.height = (r*2) + 'px'; // For some stupid reason the DOM won't calculate this right
+    canvaslines.style.top= '0';
     
     // Draw friendship lines
     ctxlines.clearRect(0, 0, $canvaslines.width(), $canvaslines.height());
@@ -1556,6 +1593,7 @@ var ponyclicker = (function(){
       $stat_resets = $stats.find('.resets'),
       $stat_legacyclicks = $stats.find('.legacyclicks'),
       $stat_cupcakes = $stats.find('.cupcakes'),
+      $stat_clonespopped = $stats.find('.clonespopped'),
       $achievements_owned = $('#achievements_owned'),
       $achievements_total = $('#achievements_total'),
       $upgrades_owned = $('#upgrades_owned'),
@@ -1584,6 +1622,7 @@ var ponyclicker = (function(){
       pbg = $('#ponybg')[0],
       $mousetexts = $('#mousetexts'),
       $pinkieclones = $('#pinkieclones'),
+      $statclonespopped = $('#statclonespopped'),
       pb = $board[0];
       
   var Game = CreateGame(),
@@ -1658,7 +1697,7 @@ var ponyclicker = (function(){
     if(x!==null) ImportGame(x);
   });
   $('#resetbtn').on('click',function(){
-    if(window.confirm("This will delete all your smiles, buildings, and upgrades, but you'll keep you're achievements, muffins, and any cupcakes you earned from previous resets. Are you sure you want to do this?")) { 
+    if(window.confirm("This will delete all your smiles, buildings, and upgrades, but you'll keep you're achievements, muffins, and any cupcakes you earned from previous resets. You will earn " + PrettyNum(predictcupcakes()) + " cupcakes. Are you sure you want to do this?")) { 
       ResetGame(); 
     }
   });
@@ -1733,6 +1772,7 @@ var ponyclicker = (function(){
     
     InitializeGame();
     ResizeCanvas();
+    GameTick(); // do the initial tick before the UpdateGame call
     window.requestAnimationFrame(UpdateGame);
     $loadscreen.css('opacity',0).delay(700).hide();
     CheckForUpdates();
