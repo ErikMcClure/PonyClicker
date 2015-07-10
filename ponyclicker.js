@@ -498,8 +498,8 @@ var ponyclicker = (function(){
     if (t[0] > 100) return "Centuries"; // more than 100 years
     for (var i = 3; i <= 4; i++) if (t[i] < 10) t[i] = "0" + t[i];
     var output = (t[2]>0?(t[2] + ":"):"") + t[3] + ":" + t[4];
-    if (t[1]) output = t[1] + " days and " + output;
-    if (t[0]) output = t[0] + " years, " + output;
+    if (t[1]) output = t[1] + " day"+(t[1]!==1?'s':'')+" and " + output;
+    if (t[0]) output = t[0] + " year"+(t[0]!==1?'s':'')+", " + output;
     return output;
   }
   function Pluralize2(n, s, s2, fixed, display) { return PrettyNumStatic(n, fixed, display) + ((n==1)?s:s2); }
