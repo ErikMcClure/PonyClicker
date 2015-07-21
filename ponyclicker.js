@@ -1421,7 +1421,7 @@ var ponyclicker = (function(){
         backgroundSize: edge+'px',
         backgroundImage: 'url("ponies/'+PonyList[pone]+'.svg")',
       });*/
-      var $innerpony = CacheSVG($(new Image()).attr('src','ponies/'+PonyList[pone]+'.svg'), edge, edge).css({
+      var $innerpony = CacheSVG('ponies/'+PonyList[pone]+'.svg', edge, edge).css({
         transform: 'rotate('+(a*i + th + Math.PI/2)+'rad)'
       });
       $ponyDiv.append($innerpony);
@@ -1529,18 +1529,20 @@ var ponyclicker = (function(){
     window.setTimeout(CheckForUpdates, 60000); //check every minute
   }
   
-  function CacheSVG($img, w, h)
+  function CacheSVG(src, w, h)
   {
+    var $img = $(new Image());
     var cache_canvas = document.createElement('canvas');
     if(w) cache_canvas.width = w;
     if(h) cache_canvas.height = h;
     var $cache_canvas = $(cache_canvas);
     $img.on('load', function() { 
       var cache_ctx = cache_canvas.getContext('2d');
-      cache_canvas.width = (!w?$img[0].width:w);
-      cache_canvas.height = (!h?$img[0].height:h);
-      cache_ctx.drawImage($img[0], 0, 0, cache_canvas.width, cache_canvas.height);
+      cache_canvas.width = (!w?this.width:w);
+      cache_canvas.height = (!h?this.height:h);
+      cache_ctx.drawImage(this, 0, 0, cache_canvas.width, cache_canvas.height);
       $cache_canvas.doneLoading = true; });
+    $img.attr('src', src); // You're technically supposed to set src after setting the onload function
     return $cache_canvas;
   }
   // You would not believe the horrific sequence of events that led to the creation of this function.
@@ -1622,8 +1624,8 @@ var ponyclicker = (function(){
       canvaslines = document.getElementById('canvaslines'),
       $canvaslines = $(canvaslines),
       ctxlines = canvaslines.getContext("2d"),
-      $img_rays = CacheSVG($(new Image()).attr('src','rays.svg')), // the onload check is done for firefox, which gets overeager
-      $img_ground = CacheSVG($(new Image()).attr('src','ground.svg')),
+      $img_rays = CacheSVG('rays.svg'), // the onload check is done for firefox, which gets overeager
+      $img_ground = CacheSVG('ground.svg'),
       $overlay = $('#overlay'),
       $upgradeoverlay = $('#upgradeoverlay'),
       $storeupgrades = $('#storeupgrades'),
