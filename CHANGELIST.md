@@ -1,6 +1,10 @@
 # Pony Clicker Change Log
 This is the change log for Pony Clicker. Some minor changes may not be reflected in this log.
 
+## v1.0.4
+- Minor typo fixes
+- Cache SVG images to prevent webpage from melting CPUs
+
 ## v1.0.3
 - Fix stupid off-by-one error (Resolve #85) 
 - Added Math.floor() for calculating costs to reduce confusion
