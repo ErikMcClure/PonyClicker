@@ -6,7 +6,7 @@ var ponyclicker = (function(){
     return Math.log(x) / Math.LN10;
   };
 
-  var $ponyversion = {major:1,minor:0,revision:3};
+  var $ponyversion = {major:1,minor:0,revision:4};
       
   function CreateGame() {
     return {
@@ -1253,19 +1253,17 @@ var ponyclicker = (function(){
         ctx.fillRect(0,0,canvas.width,canvas.height);
       }
       
-      $img_rays.css({width:2470,height:2460});
-      $img_ground.css({width:2501,height:560});
       ctx.save();
 
       var calc = function(k, $el){
         return canvas[k]/(k === 'width'?2:1) - $el[k]()/2;
       };
       drawImage($img_rays, calc('width',$img_rays), calc('height',$img_rays), ((timestamp - startTime)/3000)%(2*Math.PI));
-      drawImage($img_ground, calc('width',$img_ground)*.64, calc('height',$img_ground), 0);
+      drawImage($img_ground, calc('width',$img_ground)*0.64, calc('height',$img_ground), 0);
     }
     window.requestAnimationFrame(UpdateGame);
   }
-
+      
   function CalcTimeItem(item) {
     var time = Math.ceil((Store[item].cost(Game.store[item]) - Game.smiles) / Game.SPS);
     return (time <= 0)?'<b>now</b>':('in <b>' + PrintTime(time)+'</b>');
@@ -1418,10 +1416,13 @@ var ponyclicker = (function(){
 
       (function($el,index){ $el.on('click', function(){ Click(index) }) })($ponyDiv,i);
 
-      var $innerpony = $(document.createElement('div')).css({
+      /*var $innerpony = $(document.createElement('div')).css({
         transform: 'rotate('+(a*i + th + Math.PI/2)+'rad)',
         backgroundSize: edge+'px',
         backgroundImage: 'url("ponies/'+PonyList[pone]+'.svg")',
+      });*/
+      var $innerpony = CacheSVG($(new Image()).attr('src','ponies/'+PonyList[pone]+'.svg'), edge, edge).css({
+        transform: 'rotate('+(a*i + th + Math.PI/2)+'rad)'
       });
       $ponyDiv.append($innerpony);
       
@@ -1527,7 +1528,21 @@ var ponyclicker = (function(){
     });
     window.setTimeout(CheckForUpdates, 60000); //check every minute
   }
-    
+  
+  function CacheSVG($img, w, h)
+  {
+    var cache_canvas = document.createElement('canvas');
+    if(w) cache_canvas.width = w;
+    if(h) cache_canvas.height = h;
+    var $cache_canvas = $(cache_canvas);
+    $img.on('load', function() { 
+      var cache_ctx = cache_canvas.getContext('2d');
+      cache_canvas.width = (!w?$img[0].width:w);
+      cache_canvas.height = (!h?$img[0].height:h);
+      cache_ctx.drawImage($img[0], 0, 0, cache_canvas.width, cache_canvas.height);
+      $cache_canvas.doneLoading = true; });
+    return $cache_canvas;
+  }
   // You would not believe the horrific sequence of events that led to the creation of this function.
   var setMouseMove = function(event){
     var root = $('#buy0')[0],
@@ -1607,8 +1622,8 @@ var ponyclicker = (function(){
       canvaslines = document.getElementById('canvaslines'),
       $canvaslines = $(canvaslines),
       ctxlines = canvaslines.getContext("2d"),
-      $img_rays = $(new Image()).attr('src','rays.svg').on('load', function(){ $img_rays.doneLoading = true; }), // the onload check is done for firefox, which gets overeager
-      $img_ground = $(new Image()).attr('src','ground.svg').on('load', function(){ $img_ground.doneLoading = true; }),
+      $img_rays = CacheSVG($(new Image()).attr('src','rays.svg')), // the onload check is done for firefox, which gets overeager
+      $img_ground = CacheSVG($(new Image()).attr('src','ground.svg')),
       $overlay = $('#overlay'),
       $upgradeoverlay = $('#upgradeoverlay'),
       $storeupgrades = $('#storeupgrades'),
@@ -1630,6 +1645,9 @@ var ponyclicker = (function(){
       curMouseY = 0,
       pinkie_freelist = [];
 
+  $img_rays.css({width:2470,height:2460});
+  $img_ground.css({width:2501,height:560});
+  
   LoadGame();
   $achievements_total.html(achievementCount.toFixed(0));
   $upgrades_total.html((Object.keys(upgradeList).length).toFixed(0));
@@ -1769,7 +1787,7 @@ var ponyclicker = (function(){
         return text;
     };
     $('#ponyversion').html($ponyversion.major + '.' + $ponyversion.minor + (($ponyversion.revision>0)?'.' + $ponyversion.revision:''));
-    
+      
     InitializeGame();
     ResizeCanvas();
     GameTick(); // do the initial tick before the UpdateGame call
