@@ -6,7 +6,7 @@ var ponyclicker = (function(){
     return Math.log(x) / Math.LN10;
   };
 
-  var $ponyversion = {major:1,minor:0,revision:4};
+  var $ponyversion = {major:1,minor:0,revision:5};
       
   function CreateGame() {
     return {
@@ -1224,7 +1224,7 @@ var ponyclicker = (function(){
     if(Math.abs(vangle)>0.0005) curangle += vangle*0.9;
     vangle *= 0.95;
     if(curangle != lastSpin) {
-      document.getElementById('ponyspin').style.transform = ('rotate('+curangle+'rad)');
+      document.getElementById('ponyspin').style.transform = ('rotateZ('+curangle+'rad)');
       lastSpin = curangle;
     }
     
@@ -1417,12 +1417,12 @@ var ponyclicker = (function(){
       (function($el,index){ $el.on('click', function(){ Click(index) }) })($ponyDiv,i);
 
       /*var $innerpony = $(document.createElement('div')).css({
-        transform: 'rotate('+(a*i + th + Math.PI/2)+'rad)',
+        transform: 'rotateZ('+(a*i + th + Math.PI/2)+'rad)',
         backgroundSize: edge+'px',
         backgroundImage: 'url("ponies/'+PonyList[pone]+'.svg")',
       });*/
       var $innerpony = CacheSVG('ponies/'+PonyList[pone]+'.svg', edge, edge).css({
-        transform: 'rotate('+(a*i + th + Math.PI/2)+'rad)'
+        transform: 'rotateZ('+(a*i + th + Math.PI/2)+'rad)'
       });
       $ponyDiv.append($innerpony);
       
