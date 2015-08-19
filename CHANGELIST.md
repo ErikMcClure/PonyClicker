@@ -1,6 +1,9 @@
 # Pony Clicker Change Log
 This is the change log for Pony Clicker. Some minor changes may not be reflected in this log.
 
+## v1.0.5
+- change rotate to rotateZ
+
 ## v1.0.4
 - Minor typo fixes
 - Cache SVG images to prevent webpage from melting CPUs
