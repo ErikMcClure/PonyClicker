@@ -1,6 +1,12 @@
 # Pony Clicker Change Log
 This is the change log for Pony Clicker. Some minor changes may not be reflected in this log.
 
+## v1.0.6
+- Added function to generate names for all possible representable numbers
+- Fixed bug in loading code that could incorrectly calculate the wither amount for pinkie pie clones.
+- Getting Infinite smiles no longer crashes the game
+- Attempting to load infinite smiles no longer crashes the game.
+
 ## v1.0.5
 - change rotate to rotateZ
 
