@@ -6,7 +6,7 @@ var ponyclicker = (function(){
     return Math.log(x) / Math.LN10;
   };
 
-  var $ponyversion = {major:1,minor:0,revision:5};
+  var $ponyversion = {major:1,minor:0,revision:6};
       
   function CreateGame() {
     return {
@@ -42,6 +42,11 @@ var ponyclicker = (function(){
     };
   }
   
+  // JSON cannot encode Infinity or NaN, so it simply writes it as "null". Luckily, we only encounter this
+  // when a player reaches Infinity, so we can assume all nulls in numeric variables were infinities.
+  function ReplaceInfinity(x) {
+    return (x === null) ? Number.POSITIVE_INFINITY : x;
+  }
   function ParseGame(src) {
     var g = JSON.parse(src);
     switch(g.version)
@@ -68,6 +73,12 @@ var ponyclicker = (function(){
       default:
         alert('Unrecognized version! Game not loaded.');
     }
+    g.smiles = ReplaceInfinity(g.smiles);
+    g.totalsmiles = ReplaceInfinity(g.totalsmiles);
+    g.SPC = ReplaceInfinity(g.SPC);
+    g.SPS = ReplaceInfinity(g.SPS);
+    g.cupcakes = ReplaceInfinity(g.cupcakes);
+    g.legacysmiles = ReplaceInfinity(g.legacysmiles);
   }
 
   //
@@ -456,28 +467,95 @@ var ponyclicker = (function(){
   "septillion",
   "octillion",
   "nonillion",
-  "decillion",
-  "undecillion",
-  "duodecillion",
-  "tredecillion",
-  "quattuordecillion", // This name is so long it breaks formatting in places :C
-  "quindecillion",
-  "sexdecillion",
-  "septendecillion",
-  "octodecillion",
-  "novendecillion",
-  "vigintillion"];
+  "decillion"];
   
+  var number_units = [
+    "",
+    "un",
+    "duo",
+    "tre",
+    "quattuor",
+    "quinqua",
+    "se",
+    "septe",
+    "octo",
+    "nove",
+  ];
+  
+  var number_tens = [
+    "",
+    "deci",
+    "viginti",
+    "triginta",
+    "quadraginta",
+    "quinquaginta",
+    "sexaginta",
+    "septuaginta",
+    "octoginta",
+    "nonaginta",
+  ];
+  // Flags: 1 - S, 2 - X, 4 - N, 8 - M
+  var number_tens_flags = [0, 4, 9, 5, 5, 5, 4, 4, 10];
+  
+  var number_hundreds = [
+    "",
+    "centi",
+    "ducenti",
+    "trecenti",
+    "quadringenti",
+    "quingenti",
+    "sescenti",
+    "septingenti",
+    "octingenti",
+    "nongenti",
+  ];
+  var number_hundreds_flags = [0, 6, 4, 5, 5, 5, 4, 4, 10];
+  
+  function NumberFlag(d2,d3,f)
+  {
+    if(d2 == 0)
+      return (number_hundreds_flags[d3]&f) != 0; 
+    return (number_tens_flags[d2]&f) != 0;
+  }
+  function GetNumberName(d)
+  {
+    var n = Math.floor((d-3)/3);
+    if(n<=number_names.length) return number_names[n-1];
+    if(n>999) return "Infinity"; // this is actually impossible to reach because doubles don't go that high but I left it in here anyway.
+    var d1 = (n%10);
+    var d2 = (Math.floor(n/10)%10);
+    var d3 = Math.floor(n/100);
+    var n1 = number_units[d1];
+    var n2 = number_tens[d2];
+    var n3 = number_hundreds[d3];
+    switch(d1)
+    {
+      case 3: // if flags has s or x, add s
+        if(NumberFlag(d2, d3, 3)) n1 += "s";
+        break;
+      case 6: // if flags has s, add s, if x, add x
+        if(NumberFlag(d2, d3, 1)) n1 += "s";
+        else if(NumberFlag(d2, d3, 2)) n1 += "x";
+        break;
+      case 7: // if flags has n, add n, if m, add m
+      case 9: // if flags has n, add n, if m, add m
+        if(NumberFlag(d2, d3, 4)) n1 += "n";
+        else if(NumberFlag(d2, d3, 8)) n1 += "m";
+        break;
+    }
+    
+    var s = n1 + n2 + n3;
+    return s.substr(0, s.length-1) + "illion";
+  }
   function PrettyNumStatic(x, fixed, display) {
+    if(!isFinite(x)) return "Infinity";
     switch(display)
     {
     case 0:
       var d = Math.floor(Math.log10(x));
       if(d<6) return NumCommas(x);
       x = Math.floor(x/Math.pow(10,d-(d%3)-3));
-      var n = Math.floor((d-3)/3) - 1;
-      if(n >= number_names.length) return "Infinity";
-      return (fixed?(x/1000).toFixed(3):(x/1000)) + " " + number_names[n];
+      return (fixed?(x/1000).toFixed(3):(x/1000)) + " " + GetNumberName(d);
     case 1:
       return NumCommas(Math.floor(x));
     case 2:
@@ -953,6 +1031,7 @@ var ponyclicker = (function(){
           else pinkie_freelist.push(i);
         }
       }
+      UpdateSPS(); // This is crucial so we capture the true value of pinkie_freelist
     }
   }
   function ResetApocalypse() {
