@@ -1,6 +1,11 @@
 # Pony Clicker Change Log
 This is the change log for Pony Clicker. Some minor changes may not be reflected in this log.
 
+## v1.0.7
+- Cupcake dialog no longer tries to use HTML (Resolve #98)
+- The import function replaces unicode quotes with ascii quotes now (Resolve #99)
+- Fixed #100 alignment issue by manually specifying width.
+
 ## v1.0.6
 - Added function to generate names for all possible representable numbers
 - Fixed bug in loading code that could incorrectly calculate the wither amount for pinkie pie clones.
