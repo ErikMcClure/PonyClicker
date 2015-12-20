@@ -6,7 +6,7 @@ var ponyclicker = (function(){
     return Math.log(x) / Math.LN10;
   };
 
-  var $ponyversion = {major:1,minor:0,revision:6};
+  var $ponyversion = {major:1,minor:0,revision:7};
       
   function CreateGame() {
     return {
@@ -248,6 +248,7 @@ var ponyclicker = (function(){
   }
   function WipeAllData() { localStorage.removeItem('game'); Game = CreateGame(); InitializeGame(); }
   function ImportGame(src) {
+    src = src.replace(/[\u0022\u201C\u201D]/g, "\"");
     ParseGame(src);
     InitializeGame();
     EarnAchievement(202);
@@ -547,7 +548,7 @@ var ponyclicker = (function(){
     var s = n1 + n2 + n3;
     return s.substr(0, s.length-1) + "illion";
   }
-  function PrettyNumStatic(x, fixed, display) {
+  function PrettyNumStatic(x, fixed, display, nohtml) {
     if(!isFinite(x)) return "Infinity";
     switch(display)
     {
@@ -559,10 +560,12 @@ var ponyclicker = (function(){
     case 1:
       return NumCommas(Math.floor(x));
     case 2:
+      if(nohtml)
+        return (x<=999999)?NumCommas(x):(x.toExponential(3).replace("e+","\u00D710^"));
       return (x<=999999)?NumCommas(x):(x.toExponential(3).replace("e+","&times;10<sup>")+'</sup>');
     }
   }
-  function PrettyNum(x, fixed) { return PrettyNumStatic(x, fixed, Game.settings.numDisplay); }
+  function PrettyNum(x, fixed, nohtml) { return PrettyNumStatic(x, fixed, Game.settings.numDisplay, nohtml); }
   function PrintTime(time) {
     var t = [0, 0, 0, 0, 0]; // years, days, hours, minutes, seconds
     t[4] = time % 60;
@@ -1338,7 +1341,7 @@ var ponyclicker = (function(){
         return canvas[k]/(k === 'width'?2:1) - $el[k]()/2;
       };
       drawImage($img_rays, calc('width',$img_rays), calc('height',$img_rays), ((timestamp - startTime)/3000)%(2*Math.PI));
-      drawImage($img_ground, calc('width',$img_ground)*0.64, calc('height',$img_ground), 0);
+      drawImage($img_ground, canvas['width']*0.5 - 2051*0.5, calc('height',$img_ground), 0);
     }
     window.requestAnimationFrame(UpdateGame);
   }
@@ -1796,7 +1799,7 @@ var ponyclicker = (function(){
     if(x!==null) ImportGame(x);
   });
   $('#resetbtn').on('click',function(){
-    if(window.confirm("This will delete all your smiles, buildings, and upgrades, but you'll keep you're achievements, muffins, and any cupcakes you earned from previous resets. You will earn " + PrettyNum(predictcupcakes()) + " cupcakes. Are you sure you want to do this?")) { 
+    if(window.confirm("This will delete all your smiles, buildings, and upgrades, but you'll keep you're achievements, muffins, and any cupcakes you earned from previous resets. You will earn " + PrettyNum(predictcupcakes(), null, true) + " cupcakes. Are you sure you want to do this?")) { 
       ResetGame(); 
     }
   });
