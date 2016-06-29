@@ -71,7 +71,7 @@ This is the change log for Pony Clicker. Some minor changes may not be reflected
 
 ## v0.86
 - Fix timer so it uses the delta properly when tab isn't visible.
-- Rewrite everything in jQuery (DJDavid98)
+- Rewrite everything in jQuery (SeinopSys)
 - Implement automatic version check (Resolve #31)
 - Fix a gajillion subtle bugs
 - Fixed store overlay information list

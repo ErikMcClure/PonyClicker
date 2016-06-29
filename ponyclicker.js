@@ -407,7 +407,7 @@ var ponyclicker = (function(){
           "As muffin craze sweeps Equestria, Sapphire Shores to star in new musical, ‘My Little Muffin, Baked-goods are Magic’.",
           "Diamond Tiara insists that her father has a bigger muffin collection than you, no matter how improbable that sounds.",
           "New Poll from the Foal Free Press reveals that no food makes a young filly smile as much as a muffin.",
-          'Sugarcube Corner hold muffin bake sale. Ponyville mourns the loss of many ponies during the ensuring muffin frenzy.',
+          'Sugarcube Corner holds muffin bake sale. Ponyville mourns the loss of many ponies during the ensuing muffin frenzy.',
           "Chrysalis returns! Says she's just buying muffins."
           );
       }
