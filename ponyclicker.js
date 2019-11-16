@@ -210,7 +210,7 @@ var ponyclicker = (function(){
   // -------------------------------- Game Loading and Settings --------------------------------
   //
   function predictcupcakes() {
-    return Math.floor(Math.pow(inv_triangular((Game.legacysmiles + Game.totalsmiles)/1000000000000000000), 0.618)) - Game.cupcakes;
+    return Math.floor(Math.pow(inv_triangular((Game.legacysmiles + Game.totalsmiles)/1000000000000000000)-1, 0.618)) - Game.cupcakes;
   }
   function ResetGame() {
     for(var i = 0; i < Game.pinkies.length; ++i) {
@@ -228,7 +228,7 @@ var ponyclicker = (function(){
     Game.legacysmiles += Game.totalsmiles;
     Game.legacyclicks += Game.clicks;
     var diff = Game.cupcakes;
-    Game.cupcakes = Math.floor(Math.pow(inv_triangular(Game.legacysmiles/1000000000000000000), 0.618));
+    Game.cupcakes = Math.floor(Math.pow(inv_triangular(Game.legacysmiles/1000000000000000000)-1, 0.618));
     diff = Game.cupcakes - diff;
     ShowNotice("Game reset", ((diff==0)?null:"You get <b>" + Pluralize(diff, " cupcake") + "</b> for your <b>" + Pluralize(Game.totalsmiles, " smile") + "</b>"), null);
     Game.resets += 1;
