@@ -1644,7 +1644,7 @@ var ponyclicker = (function(){
     item = -1;
     actualTop = $('#storeupgrades')[0].offsetTop-wrapper.scrollTop+wrapper.offsetTop;
     if((event.clientX>wrapper.offsetLeft) && (event.clientY>actualTop) && (!mobile || event.clientY>wrapper.offsetTop)) {
-      item = Math.floor((event.clientY - actualTop)/52)*6 + Math.floor((event.clientX - wrapper.offsetLeft)/52);
+      item = Math.floor((event.clientY - actualTop)/54)*6 + Math.floor((event.clientX - wrapper.offsetLeft - 4)/54);
     }
     UpdateUpgradeOverlay(item, event.clientX, event.clientY);
 
