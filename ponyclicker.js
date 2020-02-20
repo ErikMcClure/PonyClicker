@@ -1219,7 +1219,7 @@ var ponyclicker = (function(){
       var wither = (apocalypseTime < 0)?0:(1-Math.pow(1-PINKIE_WITHER, Game.pinkies.length - pinkie_freelist.length));
       if(wither > 0) {
         var nsps = (1-wither)*Game.SPS;
-        $SPS.html("+" + ((nsps<=999)?nsps.toFixed(1):PrettyNum(nsps)) + ' per second <span style="color:#900">(-'+(wither*100).toFixed(1)+'% lost)</span>').show();
+    	 $SPS.html("+" + ((nsps<=999)?nsps.toFixed(1):PrettyNum(nsps)) + ' per second <span style="color:#900">(-'+(wither*100).toFixed(1)+'% )</span>').show();
       } else {
         $SPS.html("+" + ((Game.SPS<=999)?Game.SPS.toFixed(1):PrettyNum(Game.SPS)) + " per second").show();
       }
