@@ -824,7 +824,7 @@ var ponyclicker = (function(){
     ["Best Buds", "Camaraderie Crusaders", "Inner Circle", "Friend-Of-The-Month Club", "No Pony Left Behind", "Reference Chart Not Optional"],
     [2,3,6,12,18,24],
     function(n) { return 'Have at least <b>'+n+' ponies</b> and a completed friendship graph.'; },
-    function(n) { return function(){ return (Game.store[0]>=n) && (Game.store[1] >= triangular(n)); }; }
+    function(n) { return function(){ return (Game.store[0]>=n) && (Game.store[1] >= triangular(Game.store[0])); }; }
   ));
    
   achievements_shop.push('234'); // Fixer Upper achievement
