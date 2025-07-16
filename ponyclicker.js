@@ -558,7 +558,7 @@ var ponyclicker = (function(){
       x = Math.floor(x/Math.pow(10,d-(d%3)-3));
       return (fixed?(x/1000).toFixed(3):(x/1000)) + " " + GetNumberName(d);
     case 1:
-      return NumCommas(Math.floor(x));
+      return NumCommas(Math.round(x));
     case 2:
       if(nohtml)
         return (x<=999999)?NumCommas(x):(x.toExponential(3).replace("e+","\u00D710^"));
@@ -1169,7 +1169,7 @@ var ponyclicker = (function(){
         $buyN.addClass("disable");
         $ponycost.show();
       } else {
-        $buyN.attr('class',(cost>Game.smiles)?"disable":"");
+        $buyN.attr('class',(Math.round(cost)>Game.smiles)?"disable":"");
       }
       if(minItem == i) $buyN[0].style.cssText = 'color:#aaffaa !important;'; //jQuery uses a lot of memory for some reason???
       else $buyN[0].style.cssText = 'color:#fff;';
